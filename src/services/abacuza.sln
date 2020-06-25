@@ -1,0 +1,30 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.30114.105
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "cluster-manager", "cluster-manager", "{77C14D6F-E5B4-4A57-8AF1-D5C5BF3375B9}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Abacuza.ClusterManager.Common", "cluster-manager\Abacuza.ClusterManager.Common\Abacuza.ClusterManager.Common.csproj", "{035F9093-9E52-4E5B-9892-53CC529AD857}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{035F9093-9E52-4E5B-9892-53CC529AD857}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{035F9093-9E52-4E5B-9892-53CC529AD857}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{035F9093-9E52-4E5B-9892-53CC529AD857}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{035F9093-9E52-4E5B-9892-53CC529AD857}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{035F9093-9E52-4E5B-9892-53CC529AD857} = {77C14D6F-E5B4-4A57-8AF1-D5C5BF3375B9}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {30C8F159-50AD-477B-8D53-6B5973F371E1}
+	EndGlobalSection
+EndGlobal
