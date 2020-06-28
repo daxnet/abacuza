@@ -68,7 +68,11 @@ namespace Abacuza.JobSchedulers
             }
 
             services.AddSingleton<IEnumerable<ICluster>>(clusters);
-            services.AddTransient<IDataAccessObject, MongoDataAccessObject>();
+
+            var mongoHost = Configuration["mongo:host"];
+            var mongoPort = int.Parse(Configuration["mongo:port"]);
+            var mongoDatabase = Configuration["mongo:database"];
+            services.AddTransient<IDataAccessObject>(sp => new MongoDataAccessObject(mongoDatabase, mongoHost, mongoPort));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
