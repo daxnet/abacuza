@@ -1,6 +1,6 @@
 using System;
 
-namespace Abacuza.JobSchedulers.Common.Models
+namespace Abacuza.JobSchedulers.Common
 {
     /// <summary>
     /// Represents that the decorated classes are Abacuza clusters.
@@ -35,6 +35,6 @@ namespace Abacuza.JobSchedulers.Common.Models
         /// Gets or sets the description of the cluster.
         /// </summary>
         /// <value></value>
-        public string Description { get; }
+        public string Description { get; set; }
     }
 }

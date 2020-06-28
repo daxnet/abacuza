@@ -1,4 +1,4 @@
-namespace Abacuza.JobSchedulers.Common.Models
+namespace Abacuza.JobSchedulers.Common
 {
     public enum ClusterState
     {

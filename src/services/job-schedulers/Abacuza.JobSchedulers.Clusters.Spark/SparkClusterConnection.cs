@@ -2,6 +2,7 @@
 using System.ComponentModel;
 using System;
 using Abacuza.JobSchedulers.Common.Models;
+using Abacuza.JobSchedulers.Common;
 
 namespace Abacuza.JobSchedulers.Clusters.Spark
 {

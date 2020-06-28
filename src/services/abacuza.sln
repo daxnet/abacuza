@@ -1,19 +1,24 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.26124.0
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.30204.135
 MinimumVisualStudioVersion = 15.0.26124.0
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "job-schedulers", "job-schedulers", "{BB8DE1AB-1AFE-4B02-892F-13B3EDC49329}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Abacuza.JobSchedulers.Common", "job-schedulers\Abacuza.JobSchedulers.Common\Abacuza.JobSchedulers.Common.csproj", "{5EA4ED91-427D-4681-8614-3D9E3321BC4B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Abacuza.JobSchedulers.Common", "job-schedulers\Abacuza.JobSchedulers.Common\Abacuza.JobSchedulers.Common.csproj", "{5EA4ED91-427D-4681-8614-3D9E3321BC4B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Abacuza.JobSchedulers.Clusters.Spark", "job-schedulers\Abacuza.JobSchedulers.Clusters.Spark\Abacuza.JobSchedulers.Clusters.Spark.csproj", "{23BAE1BE-AAA4-48AA-A0BF-41D5DEF0B804}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Abacuza.JobSchedulers.Clusters.Spark", "job-schedulers\Abacuza.JobSchedulers.Clusters.Spark\Abacuza.JobSchedulers.Clusters.Spark.csproj", "{23BAE1BE-AAA4-48AA-A0BF-41D5DEF0B804}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "common", "common", "{2E95125B-BC7C-47DB-842B-AFDA6D2DF7F9}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Abacuza.Common", "common\Abacuza.Common\Abacuza.Common.csproj", "{8C81629C-3854-409B-AE1F-74BACB3660EA}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Abacuza.Common", "common\Abacuza.Common\Abacuza.Common.csproj", "{8C81629C-3854-409B-AE1F-74BACB3660EA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Abacuza.JobSchedulers", "job-schedulers\Abacuza.JobSchedulers\Abacuza.JobSchedulers.csproj", "{B7F18221-A0C5-4D12-B397-EC887B9438A5}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Abacuza.JobSchedulers", "job-schedulers\Abacuza.JobSchedulers\Abacuza.JobSchedulers.csproj", "{B7F18221-A0C5-4D12-B397-EC887B9438A5}"
+	ProjectSection(ProjectDependencies) = postProject
+		{23BAE1BE-AAA4-48AA-A0BF-41D5DEF0B804} = {23BAE1BE-AAA4-48AA-A0BF-41D5DEF0B804}
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Abacuza.DataAccess.Mongo", "common\Abacuza.DataAccess.Mongo\Abacuza.DataAccess.Mongo.csproj", "{C8B49E6E-2A26-4EA9-91B2-7A9567E8DDD5}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -23,9 +28,6 @@ Global
 		Release|Any CPU = Release|Any CPU
 		Release|x64 = Release|x64
 		Release|x86 = Release|x86
-	EndGlobalSection
-	GlobalSection(SolutionProperties) = preSolution
-		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{5EA4ED91-427D-4681-8614-3D9E3321BC4B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
@@ -76,11 +78,30 @@ Global
 		{B7F18221-A0C5-4D12-B397-EC887B9438A5}.Release|x64.Build.0 = Release|Any CPU
 		{B7F18221-A0C5-4D12-B397-EC887B9438A5}.Release|x86.ActiveCfg = Release|Any CPU
 		{B7F18221-A0C5-4D12-B397-EC887B9438A5}.Release|x86.Build.0 = Release|Any CPU
+		{C8B49E6E-2A26-4EA9-91B2-7A9567E8DDD5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C8B49E6E-2A26-4EA9-91B2-7A9567E8DDD5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C8B49E6E-2A26-4EA9-91B2-7A9567E8DDD5}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{C8B49E6E-2A26-4EA9-91B2-7A9567E8DDD5}.Debug|x64.Build.0 = Debug|Any CPU
+		{C8B49E6E-2A26-4EA9-91B2-7A9567E8DDD5}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{C8B49E6E-2A26-4EA9-91B2-7A9567E8DDD5}.Debug|x86.Build.0 = Debug|Any CPU
+		{C8B49E6E-2A26-4EA9-91B2-7A9567E8DDD5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C8B49E6E-2A26-4EA9-91B2-7A9567E8DDD5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C8B49E6E-2A26-4EA9-91B2-7A9567E8DDD5}.Release|x64.ActiveCfg = Release|Any CPU
+		{C8B49E6E-2A26-4EA9-91B2-7A9567E8DDD5}.Release|x64.Build.0 = Release|Any CPU
+		{C8B49E6E-2A26-4EA9-91B2-7A9567E8DDD5}.Release|x86.ActiveCfg = Release|Any CPU
+		{C8B49E6E-2A26-4EA9-91B2-7A9567E8DDD5}.Release|x86.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{5EA4ED91-427D-4681-8614-3D9E3321BC4B} = {BB8DE1AB-1AFE-4B02-892F-13B3EDC49329}
 		{23BAE1BE-AAA4-48AA-A0BF-41D5DEF0B804} = {BB8DE1AB-1AFE-4B02-892F-13B3EDC49329}
 		{8C81629C-3854-409B-AE1F-74BACB3660EA} = {2E95125B-BC7C-47DB-842B-AFDA6D2DF7F9}
 		{B7F18221-A0C5-4D12-B397-EC887B9438A5} = {BB8DE1AB-1AFE-4B02-892F-13B3EDC49329}
+		{C8B49E6E-2A26-4EA9-91B2-7A9567E8DDD5} = {2E95125B-BC7C-47DB-842B-AFDA6D2DF7F9}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {37762C87-D4E9-4C03-9476-E519F44ED3D1}
 	EndGlobalSection
 EndGlobal

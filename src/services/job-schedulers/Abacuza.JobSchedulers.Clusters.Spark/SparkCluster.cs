@@ -7,13 +7,14 @@ using Abacuza.JobSchedulers.Common.Models;
 using Abacuza.Common;
 using Newtonsoft.Json;
 using Abacuza.JobSchedulers.Clusters.Spark.Models;
+using Abacuza.JobSchedulers.Common;
 
 namespace Abacuza.JobSchedulers.Clusters.Spark
 {
-    [AbacuzaCluster("fbc7b771-1053-44b1-bb1b-5c162b5fd91b", "spark")]
+    [AbacuzaCluster("fbc7b771-1053-44b1-bb1b-5c162b5fd91b", "spark", Description = "Apache Spark Cluster")]
     public sealed class SparkCluster : Cluster<SparkClusterConnection>
     {
-        public override async Task<PagedResult<JobResponse>> GetJobsAsync(SparkClusterConnection connection, int pageNumber = 0, int pageSize = 10, CancellationToken cancellationToken = default)
+        protected override async Task<PagedResult<JobResponse>> GetJobsAsync(SparkClusterConnection connection, int pageNumber = 0, int pageSize = 10, CancellationToken cancellationToken = default)
         {
             using (var httpClient = new HttpClient())
             {

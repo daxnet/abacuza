@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Abacuza.JobSchedulers</name>
+    </assembly>
+    <members>
+        <member name="T:Abacuza.JobSchedulers.Controllers.ClustersController">
+            <summary>
+            Represents the APIs for Clusters.
+            </summary>
+        </member>
+    </members>
+</doc>
