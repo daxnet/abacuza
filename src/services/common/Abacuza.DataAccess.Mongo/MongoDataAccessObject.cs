@@ -23,14 +23,14 @@ namespace Abacuza.DataAccess.Mongo
             _database = _client.GetDatabase(databaseName);
         }
 
-        public async Task AddAsync<TObject>(TObject entity) where TObject : IHasGuidId
+        public async Task AddAsync<TObject>(TObject entity) where TObject : IEntity
         {
             var collection = GetCollection<TObject>();
             var options = new InsertOneOptions { BypassDocumentValidation = true };
             await collection.InsertOneAsync(entity, options);
         }
 
-        public async Task DeleteByIdAsync<TObject>(Guid id) where TObject : IHasGuidId
+        public async Task DeleteByIdAsync<TObject>(Guid id) where TObject : IEntity
         {
             var filterDefinition = Builders<TObject>.Filter.Eq(x => x.Id, id);
             await GetCollection<TObject>().DeleteOneAsync(filterDefinition);
@@ -38,17 +38,17 @@ namespace Abacuza.DataAccess.Mongo
 
         public void Dispose() => Dispose(true);
 
-        public async Task<IEnumerable<TObject>> FindBySpecificationAsync<TObject>(Expression<Func<TObject, bool>> expr) where TObject : IHasGuidId
+        public async Task<IEnumerable<TObject>> FindBySpecificationAsync<TObject>(Expression<Func<TObject, bool>> expr) where TObject : IEntity
             => await(await GetCollection<TObject>().FindAsync(expr)).ToListAsync();
 
-        public async Task<IEnumerable<TObject>> GetAllAsync<TObject>() where TObject : IHasGuidId
+        public async Task<IEnumerable<TObject>> GetAllAsync<TObject>() where TObject : IEntity
             => await FindBySpecificationAsync<TObject>(_ => true);
 
-        public async Task<TObject> GetByIdAsync<TObject>(Guid id) where TObject : IHasGuidId
+        public async Task<TObject> GetByIdAsync<TObject>(Guid id) where TObject : IEntity
             => (await FindBySpecificationAsync<TObject>(x => x.Id.Equals(id))).FirstOrDefault();
 
         public async Task UpdateByIdAsync<TObject>(Guid id, TObject entity)
-             where TObject : IHasGuidId
+             where TObject : IEntity
         {
             var filterDefinition = Builders<TObject>.Filter.Eq(x => x.Id, id);
             await GetCollection<TObject>().ReplaceOneAsync(filterDefinition, entity);
@@ -70,6 +70,16 @@ namespace Abacuza.DataAccess.Mongo
             }
         }
 
-        private IMongoCollection<TObject> GetCollection<TObject>() where TObject : IHasGuidId => _database.GetCollection<TObject>(typeof(TObject).Name.Pluralize());
+        private IMongoCollection<TObject> GetCollection<TObject>() where TObject : IEntity => _database.GetCollection<TObject>(NormalizedCollectionName<TObject>());
+
+        private string NormalizedCollectionName<TObject>() where TObject : IEntity
+        {
+            if (typeof(TObject).IsInterface && typeof(TObject).Name.StartsWith("I"))
+            {
+                return typeof(TObject).Name.Substring(1).Pluralize();
+            }
+
+            return typeof(TObject).Name.Pluralize();
+        }
     }
 }

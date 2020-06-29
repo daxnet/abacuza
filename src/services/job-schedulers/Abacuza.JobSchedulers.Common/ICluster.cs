@@ -18,6 +18,10 @@ namespace Abacuza.JobSchedulers.Common
 
         string Description { get; }
 
+        Type ConnectionType { get; }
+
+        IClusterConnection CreateConnection(string name, string jsonSettings);
+
         Task<PagedResult<JobResponse>> GetJobsAsync(IClusterConnection connection, int pageNumber = 0, int pageSize = 10, CancellationToken cancellationToken = default);
     }
 }

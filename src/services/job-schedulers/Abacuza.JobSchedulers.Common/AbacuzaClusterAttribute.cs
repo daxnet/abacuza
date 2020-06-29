@@ -13,10 +13,12 @@ namespace Abacuza.JobSchedulers.Common
         /// </summary>
         /// <param name="id">The id of the cluster.</param>
         /// <param name="name">The name of the cluster.</param>
-        public AbacuzaClusterAttribute(string id, string name)
+        /// <param name="connectionType">The type of the connection.</param>
+        public AbacuzaClusterAttribute(string id, string name, Type connectionType)
         {
             this.Id = Guid.Parse(id);
             this.Name = name;
+            this.ConnectionType = connectionType;
         }
 
         /// <summary>
@@ -36,5 +38,13 @@ namespace Abacuza.JobSchedulers.Common
         /// </summary>
         /// <value></value>
         public string Description { get; set; }
+
+        /// <summary>
+        /// Gets or sets the type of the connection.
+        /// </summary>
+        /// <value>
+        /// The type of the connection.
+        /// </value>
+        public Type ConnectionType { get; set; }
     }
 }

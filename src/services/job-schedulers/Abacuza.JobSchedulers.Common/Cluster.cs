@@ -4,6 +4,7 @@ using System;
 using System.Reflection;
 using Abacuza.Common;
 using Abacuza.JobSchedulers.Common.Models;
+using Newtonsoft.Json;
 
 namespace Abacuza.JobSchedulers.Common
 {
@@ -23,6 +24,8 @@ namespace Abacuza.JobSchedulers.Common
 
         public string Description => this.GetAbacuzaClusterAttribute()?.Description;
 
+        public Type ConnectionType => this.GetAbacuzaClusterAttribute()?.ConnectionType;
+
         protected abstract Task<PagedResult<JobResponse>> GetJobsAsync(TConnection connection, int pageNumber = 0, int pageSize = 10, CancellationToken cancellationToken = default);
 
         public Task<PagedResult<JobResponse>> GetJobsAsync(IClusterConnection connection, int pageNumber = 0, int pageSize = 10, CancellationToken cancellationToken = default)
@@ -34,5 +37,12 @@ namespace Abacuza.JobSchedulers.Common
 
         public override string ToString() => Name;
 
+        public IClusterConnection CreateConnection(string name, string jsonSettings)
+        {
+            var connection = (ClusterConnection)JsonConvert.DeserializeObject(jsonSettings, ConnectionType);
+            connection.Name = name;
+            connection.Type = this.Name;
+            return connection;
+        }
     }
 }
