@@ -78,14 +78,14 @@ namespace Abacuza.JobSchedulers.Controllers
         /// <param name="id">The identifier of the connection.</param>
         /// <returns>The connection.</returns>
         [HttpGet("{id}")]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<IActionResult> GetConnectionAsync(Guid id)
         {
             var connection = await _daoConnections.GetByIdAsync<ClusterConnection>(id);
             if (connection == null)
             {
-                return NotFound();
+                return NotFound($"The cluster connection '{id}' could not be found.");
             }
 
             return Ok(connection);

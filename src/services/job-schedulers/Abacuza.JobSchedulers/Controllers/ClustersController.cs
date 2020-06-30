@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Abacuza.Common.DataAccess;
 using Abacuza.JobSchedulers.Common;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -19,7 +20,13 @@ namespace Abacuza.JobSchedulers.Controllers
         private readonly ILogger<ClustersController> _logger;
         private readonly IEnumerable<ICluster> _clusters;
 
-        public ClustersController(ILogger<ClustersController> logger, IEnumerable<ICluster> clusters)
+        /// <summary>
+        /// Initializes a new instance of the <c>ClustersController</c> class.
+        /// </summary>
+        /// <param name="logger"></param>
+        /// <param name="clusters"></param>
+        public ClustersController(ILogger<ClustersController> logger, 
+            IEnumerable<ICluster> clusters)
         {
             _logger = logger;
             _clusters = clusters;
