@@ -62,9 +62,14 @@ namespace Abacuza.JobSchedulers.Controllers
                 return NotFound($"The cluster '{payload.Type}' is not found.");
             }
 
-            var clusterConnection = cluster.CreateConnection(payload.Name, payload.Settings);
-            await _daoConnections.AddAsync(clusterConnection);
-            return CreatedAtAction(nameof(GetConnectionAsync), new { id = clusterConnection.Id }, clusterConnection.Id);
+            if ((await _daoConnections.FindBySpecificationAsync<ClusterConnection>(expr => expr.Name == payload.Name))?.Count() > 0)
+            {
+                return Conflict($"The cluster connection '{payload.Name}' already exists.");
+            }
+
+            var connection = cluster.CreateConnection(payload.Name, payload.Settings);
+            await _daoConnections.AddAsync(connection);
+            return CreatedAtAction(nameof(GetConnectionAsync), new { id = connection.Id }, connection.Id);
         }
 
         /// <summary>
@@ -73,6 +78,8 @@ namespace Abacuza.JobSchedulers.Controllers
         /// <param name="id">The identifier of the connection.</param>
         /// <returns>The connection.</returns>
         [HttpGet("{id}")]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<IActionResult> GetConnectionAsync(Guid id)
         {
             var connection = await _daoConnections.GetByIdAsync<ClusterConnection>(id);
