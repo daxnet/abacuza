@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Mime;
 using System.Threading.Tasks;
 using Abacuza.Common.DataAccess;
 using Abacuza.JobSchedulers.Common;
@@ -29,7 +30,15 @@ namespace Abacuza.JobSchedulers.Controllers
             _clusters = clusters;
         }
 
+        /// <summary>
+        /// Creates a new cluster connection.
+        /// </summary>
+        /// <param name="payload">The request body to be posted.</param>
+        /// <returns>The create connection result.</returns>
         [HttpPost]
+        [Consumes(MediaTypeNames.Application.Json)]
+        [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> CreateConnectionAsync([FromBody] CreateConnectionRequest payload)
         {
             if (string.IsNullOrEmpty(payload?.Name))
@@ -55,7 +64,24 @@ namespace Abacuza.JobSchedulers.Controllers
 
             var clusterConnection = cluster.CreateConnection(payload.Name, payload.Settings);
             await _daoConnections.AddAsync(clusterConnection);
-            return Ok();
+            return CreatedAtAction(nameof(GetConnectionAsync), new { id = clusterConnection.Id }, clusterConnection.Id);
+        }
+
+        /// <summary>
+        /// Retrieves a cluster connection by its identifier.
+        /// </summary>
+        /// <param name="id">The identifier of the connection.</param>
+        /// <returns>The connection.</returns>
+        [HttpGet("{id}")]
+        public async Task<IActionResult> GetConnectionAsync(Guid id)
+        {
+            var connection = await _daoConnections.GetByIdAsync<ClusterConnection>(id);
+            if (connection == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(connection);
         }
     }
 }

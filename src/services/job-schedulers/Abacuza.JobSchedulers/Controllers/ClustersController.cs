@@ -26,7 +26,7 @@ namespace Abacuza.JobSchedulers.Controllers
         }
 
         /// <summary>
-        /// Gets all clusters.
+        /// Gets all clusters that are registered in the job scheduler.
         /// </summary>
         /// <returns></returns>
         [HttpGet]
