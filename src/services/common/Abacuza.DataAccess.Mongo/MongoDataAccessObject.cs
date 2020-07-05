@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Reflection;
 using System.Threading.Tasks;
 
 namespace Abacuza.DataAccess.Mongo
@@ -74,12 +75,20 @@ namespace Abacuza.DataAccess.Mongo
 
         private string NormalizedCollectionName<TObject>() where TObject : IEntity
         {
-            if (typeof(TObject).IsInterface && typeof(TObject).Name.StartsWith("I"))
+            if (typeof(TObject).IsDefined(typeof(StorageModelAttribute), false))
             {
-                return typeof(TObject).Name.Substring(1).Pluralize();
+                var storageModelAttribute = typeof(TObject).GetCustomAttribute<StorageModelAttribute>();
+                return storageModelAttribute.TableName;
             }
+            else
+            {
+                if (typeof(TObject).IsInterface && typeof(TObject).Name.StartsWith("I"))
+                {
+                    return typeof(TObject).Name.Substring(1).Pluralize();
+                }
 
-            return typeof(TObject).Name.Pluralize();
+                return typeof(TObject).Name.Pluralize();
+            }
         }
     }
 }

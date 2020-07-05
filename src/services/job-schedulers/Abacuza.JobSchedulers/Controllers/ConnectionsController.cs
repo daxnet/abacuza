@@ -39,7 +39,7 @@ namespace Abacuza.JobSchedulers.Controllers
         [Consumes(MediaTypeNames.Application.Json)]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<IActionResult> CreateConnectionAsync([FromBody] CreateConnectionRequest payload)
+        public async Task<IActionResult> CreateConnectionAsync([FromBody] ClusterConnectionStorageModel payload)
         {
             if (string.IsNullOrEmpty(payload?.Name))
             {
@@ -62,30 +62,49 @@ namespace Abacuza.JobSchedulers.Controllers
                 return NotFound($"The cluster '{payload.Type}' is not found.");
             }
 
-            if ((await _daoConnections.FindBySpecificationAsync<ClusterConnection>(expr => expr.Name == payload.Name))?.Count() > 0)
+            if ((await _daoConnections.FindBySpecificationAsync<ClusterConnectionStorageModel>(expr => expr.Name == payload.Name))?.Count() > 0)
             {
                 return Conflict($"The cluster connection '{payload.Name}' already exists.");
             }
 
-            var connection = cluster.CreateConnection(payload.Name, payload.Settings);
-            await _daoConnections.AddAsync(connection);
-            return CreatedAtAction(nameof(GetConnectionAsync), new { id = connection.Id }, connection.Id);
+            payload.Id = Guid.NewGuid();
+            await _daoConnections.AddAsync(payload);
+            return CreatedAtAction(nameof(GetConnectionAsync), new { id = payload.Id }, payload.Id);
         }
 
         /// <summary>
         /// Retrieves a cluster connection by its identifier.
         /// </summary>
-        /// <param name="id">The identifier of the connection.</param>
+        /// <param name="id">The id of the connection.</param>
         /// <returns>The connection.</returns>
         [HttpGet("{id}")]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<IActionResult> GetConnectionAsync(Guid id)
         {
-            var connection = await _daoConnections.GetByIdAsync<ClusterConnection>(id);
+            var connection = await _daoConnections.GetByIdAsync<ClusterConnectionStorageModel>(id);
             if (connection == null)
             {
                 return NotFound($"The cluster connection '{id}' could not be found.");
+            }
+
+            return Ok(connection);
+        }
+
+        /// <summary>
+        /// Retrieves a cluster connection by its name.
+        /// </summary>
+        /// <param name="name">The name of the connection.</param>
+        /// <returns>The connection.</returns>
+        [HttpGet("get-by-name/{name}")]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task<IActionResult> GetConnectionByNameAsync(string name)
+        {
+            var connection = (await _daoConnections.FindBySpecificationAsync<ClusterConnectionStorageModel>(m => m.Name == name)).FirstOrDefault();
+            if (connection == null)
+            {
+                return NotFound($"The cluster connection '{name}' could not be found.");
             }
 
             return Ok(connection);
