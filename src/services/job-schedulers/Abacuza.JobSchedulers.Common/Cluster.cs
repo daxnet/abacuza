@@ -3,8 +3,9 @@ using System.Threading.Tasks;
 using System;
 using System.Reflection;
 using Abacuza.Common;
-using Abacuza.JobSchedulers.Common.Models;
 using Newtonsoft.Json;
+using System.Collections;
+using System.Collections.Generic;
 
 namespace Abacuza.JobSchedulers.Common
 {
@@ -26,10 +27,7 @@ namespace Abacuza.JobSchedulers.Common
 
         public Type ConnectionType => this.GetAbacuzaClusterAttribute()?.ConnectionType;
 
-        protected abstract Task<PagedResult<JobResponse>> GetJobsAsync(TConnection connection, int pageNumber = 0, int pageSize = 10, CancellationToken cancellationToken = default);
-
-        public Task<PagedResult<JobResponse>> GetJobsAsync(IClusterConnection connection, int pageNumber = 0, int pageSize = 10, CancellationToken cancellationToken = default)
-            => connection is TConnection conn ? GetJobsAsync(conn, pageNumber, pageSize, cancellationToken) : throw new NotSupportedException();
+        public abstract bool ValidateJobParameters(IEnumerable<KeyValuePair<string, object>> jobParameters);
 
         private AbacuzaClusterAttribute GetAbacuzaClusterAttribute() =>
             this.GetType().IsDefined(typeof(AbacuzaClusterAttribute), true) ?

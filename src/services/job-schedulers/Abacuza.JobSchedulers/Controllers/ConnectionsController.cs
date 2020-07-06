@@ -18,15 +18,15 @@ namespace Abacuza.JobSchedulers.Controllers
     public class ConnectionsController : ControllerBase
     {
         private readonly ILogger<ConnectionsController> _logger;
-        private readonly IDataAccessObject _daoConnections;
+        private readonly IDataAccessObject _dao;
         private readonly IEnumerable<ICluster> _clusters;
 
         public ConnectionsController(ILogger<ConnectionsController> logger,
-            IDataAccessObject daoConnections,
+            IDataAccessObject dao,
             IEnumerable<ICluster> clusters)
         {
             _logger = logger;
-            _daoConnections = daoConnections;
+            _dao = dao;
             _clusters = clusters;
         }
 
@@ -62,13 +62,13 @@ namespace Abacuza.JobSchedulers.Controllers
                 return NotFound($"The cluster '{payload.Type}' is not found.");
             }
 
-            if ((await _daoConnections.FindBySpecificationAsync<ClusterConnectionStorageModel>(expr => expr.Name == payload.Name))?.Count() > 0)
+            if ((await _dao.FindBySpecificationAsync<ClusterConnectionStorageModel>(expr => expr.Name == payload.Name))?.Count() > 0)
             {
                 return Conflict($"The cluster connection '{payload.Name}' already exists.");
             }
 
             payload.Id = Guid.NewGuid();
-            await _daoConnections.AddAsync(payload);
+            await _dao.AddAsync(payload);
             return CreatedAtAction(nameof(GetConnectionAsync), new { id = payload.Id }, payload.Id);
         }
 
@@ -82,7 +82,7 @@ namespace Abacuza.JobSchedulers.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<IActionResult> GetConnectionAsync(Guid id)
         {
-            var connection = await _daoConnections.GetByIdAsync<ClusterConnectionStorageModel>(id);
+            var connection = await _dao.GetByIdAsync<ClusterConnectionStorageModel>(id);
             if (connection == null)
             {
                 return NotFound($"The cluster connection '{id}' could not be found.");
@@ -101,7 +101,7 @@ namespace Abacuza.JobSchedulers.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<IActionResult> GetConnectionByNameAsync(string name)
         {
-            var connection = (await _daoConnections.FindBySpecificationAsync<ClusterConnectionStorageModel>(m => m.Name == name)).FirstOrDefault();
+            var connection = (await _dao.FindBySpecificationAsync<ClusterConnectionStorageModel>(m => m.Name == name)).FirstOrDefault();
             if (connection == null)
             {
                 return NotFound($"The cluster connection '{name}' could not be found.");
