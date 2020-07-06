@@ -35,6 +35,11 @@ namespace Abacuza.JobSchedulers.Common
 
         public override string ToString() => Name;
 
+        public Task<Job> SubmitJobAsync(IClusterConnection connection, IEnumerable<KeyValuePair<string, object>> jobParameters)
+            => connection is TConnection conn ? this.SubmitJobInternalAsync(conn, jobParameters) : throw new InvalidCastException();
+
+        protected abstract Task<Job> SubmitJobInternalAsync(TConnection connection, IEnumerable<KeyValuePair<string, object>> jobParameters);
+
         public IClusterConnection CreateConnection(string name, string jsonSettings)
         {
             var connection = (ClusterConnection)JsonConvert.DeserializeObject(jsonSettings, ConnectionType);

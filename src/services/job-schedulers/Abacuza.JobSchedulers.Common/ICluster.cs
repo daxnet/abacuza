@@ -23,6 +23,6 @@ namespace Abacuza.JobSchedulers.Common
 
         bool ValidateJobParameters(IEnumerable<KeyValuePair<string, object>> jobParameters);
 
-
+        Task<Job> SubmitJobAsync(IClusterConnection connection, IEnumerable<KeyValuePair<string, object>> jobParameters);
     }
 }

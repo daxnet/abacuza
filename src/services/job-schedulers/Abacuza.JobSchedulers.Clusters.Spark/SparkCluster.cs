@@ -1,3 +1,5 @@
+using System.Data;
+using System.Text;
 // ==============================================================
 //           _
 //     /\   | |
@@ -12,6 +14,7 @@
 // ==============================================================
 
 using Abacuza.Common;
+using Abacuza.Common.Utilities;
 using Abacuza.JobSchedulers.Clusters.Spark.Models;
 using Abacuza.JobSchedulers.Common;
 using Newtonsoft.Json;
@@ -34,11 +37,33 @@ namespace Abacuza.JobSchedulers.Clusters.Spark
         Description = "Apache Spark Cluster")]
     public sealed class SparkCluster : Cluster<SparkClusterConnection>
     {
+
         #region Protected Methods
 
         public override bool ValidateJobParameters(IEnumerable<KeyValuePair<string, object>> jobParameters)
         {
             return true;
+        }
+
+        protected override async Task<Job> SubmitJobInternalAsync(SparkClusterConnection connection, IEnumerable<KeyValuePair<string, object>> jobParameters)
+        {
+            var payload = jobParameters.ToExpando();
+            using var httpClient = new HttpClient();
+            httpClient.BaseAddress = new Uri(connection.Uri);
+            var requestMessage = new HttpRequestMessage(HttpMethod.Post, "batches")
+            {
+                Content = new StringContent(JsonConvert.SerializeObject(payload), Encoding.UTF8)
+            };
+
+            var responseMessage = await httpClient.SendAsync(requestMessage);
+            responseMessage.EnsureSuccessStatusCode();
+            var batch = JsonConvert.DeserializeObject<Batch>(await responseMessage.Content.ReadAsStringAsync());
+            return new Job
+            {
+                JobId = batch.Id.ToString(),
+                Logs = batch.Logs.ToList(),
+                State = batch.State
+            };
         }
 
         #endregion Protected Methods
