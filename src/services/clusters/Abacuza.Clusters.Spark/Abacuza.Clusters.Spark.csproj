@@ -5,7 +5,21 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
+    <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\Abacuza.Clusters.Common\Abacuza.Clusters.Common.csproj" />
   </ItemGroup>
+
+  <Target Name="CopyBuildArtifacts" AfterTargets="Build">
+    <ItemGroup>
+      <BuildArtifacts Include="$(OutDir)*.*" />
+    </ItemGroup>
+    <Copy SourceFiles="@(BuildArtifacts)"
+          DestinationFolder="$(SolutionDir)clusters\Abacuza.Clusters.ApiService\bin\$(ConfigurationName)\plugins\clusters\spark\%(RecursiveDir)"
+          SkipUnchangedFiles="true" />
+  </Target>
 
 </Project>
