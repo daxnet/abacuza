@@ -5,6 +5,8 @@ using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
 using Abacuza.Clusters.ApiService.Models;
+using Abacuza.Clusters.Common;
+using McMaster.NETCore.Plugins;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
@@ -41,7 +43,10 @@ namespace Abacuza.Clusters.ApiService
             var clusterImplementations = DiscoverClusterImplementations();
             services.AddSingleton(clusterImplementations);
 
-            services.AddControllers();
+            services.AddControllers(options =>
+            {
+                options.SuppressAsyncSuffixInActionNames = false;
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -70,7 +75,32 @@ namespace Abacuza.Clusters.ApiService
 
         private ClusterCollection DiscoverClusterImplementations()
         {
-            throw new NotImplementedException();
+            var pluginsDirectory = Path.Combine(AppContext.BaseDirectory, "plugins");
+            var loaders = new List<PluginLoader>();
+            var clusterImplementations = new ClusterCollection();
+            foreach (var file in Directory.EnumerateFiles(pluginsDirectory, "*.dll", SearchOption.AllDirectories))
+            {
+                if (File.Exists(file))
+                {
+                    var loader = PluginLoader.CreateFromAssemblyFile(file, sharedTypes: new[] { typeof(ICluster) });
+                    loaders.Add(loader);
+                }
+            }
+
+            foreach (var loader in loaders)
+            {
+                foreach (var clusterType in loader
+                    .LoadDefaultAssembly()
+                    .GetTypes()
+                    .Where(t => typeof(ICluster).IsAssignableFrom(t) && !t.IsAbstract))
+                {
+                    // This assumes the implementation of IPlugin has a parameterless constructor
+                    var cluster = (ICluster)Activator.CreateInstance(clusterType);
+                    clusterImplementations.Add(cluster);
+                }
+            }
+
+            return clusterImplementations;
         }
     }
 }
