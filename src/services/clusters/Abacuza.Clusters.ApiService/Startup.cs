@@ -6,6 +6,8 @@ using System.Reflection;
 using System.Threading.Tasks;
 using Abacuza.Clusters.ApiService.Models;
 using Abacuza.Clusters.Common;
+using Abacuza.Common.DataAccess;
+using Abacuza.DataAccess.InMemory;
 using McMaster.NETCore.Plugins;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -42,6 +44,8 @@ namespace Abacuza.Clusters.ApiService
 
             var clusterImplementations = DiscoverClusterImplementations();
             services.AddSingleton(clusterImplementations);
+
+            services.AddSingleton<IDataAccessObject, InMemoryDataAccessObject>();
 
             services.AddControllers(options =>
             {
