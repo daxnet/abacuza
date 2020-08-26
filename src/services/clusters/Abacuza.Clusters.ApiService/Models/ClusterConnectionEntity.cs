@@ -87,6 +87,17 @@ namespace Abacuza.Clusters.ApiService.Models
             return result;
         }
 
+        public IClusterConnection Create(Type clusterConnectionType)
+        {
+            var result = (IClusterConnection)Activator.CreateInstance(clusterConnectionType);
+            result.ClusterType = ClusterType;
+            result.Description = Description;
+            result.Name = Name;
+            result.DeserializeConfiguration(Settings);
+
+            return result;
+        }
+
         public override string ToString() => Name;
     }
 }
