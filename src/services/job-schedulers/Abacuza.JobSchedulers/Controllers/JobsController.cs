@@ -1,8 +1,8 @@
 using Abacuza.Common.DataAccess;
-using Abacuza.JobSchedulers.Common;
 using Abacuza.JobSchedulers.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,15 +15,18 @@ namespace Abacuza.JobSchedulers.Controllers
     [ApiController]
     public class JobsController : ControllerBase
     {
-        private readonly IEnumerable<ICluster> _clusters;
+        //private readonly IEnumerable<ICluster> _clusters;
         private readonly IDataAccessObject _dao;
+        private readonly IConfiguration _configuration;
 
-        public JobsController(IEnumerable<ICluster> clusters,
-            IDataAccessObject dao)
+        public JobsController(IDataAccessObject dao, IConfiguration configuration)
         {
-            _clusters = clusters;
             _dao = dao;
+            _configuration = configuration;
         }
+
+        [HttpGet("get-service-url")]
+        public async Task<IActionResult> GetServiceUrlAsync() => Ok(_configuration["CLUSTER_SERVICE_URL"]);
         
         [HttpPost("submit")]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -31,27 +34,28 @@ namespace Abacuza.JobSchedulers.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> SubmitJobAsync([FromBody] SubmitJobRequest request)
         {
-            if (string.IsNullOrEmpty(request.ClusterConnectionName))
-            {
-                return BadRequest($"The connection of the cluster that is used for submitting the job is not specified.");
-            }
+            
+            //if (string.IsNullOrEmpty(request.ClusterConnectionName))
+            //{
+            //    return BadRequest($"The connection of the cluster that is used for submitting the job is not specified.");
+            //}
 
-            var clusterConnection = (await _dao.FindBySpecificationAsync<ClusterConnectionStorageModel>(cc => cc.Name == request.ClusterConnectionName)).FirstOrDefault();
-            if (clusterConnection == null)
-            {
-                return NotFound($"The cluster connection '{request.ClusterConnectionName}' does not exist.");
-            }
+            //var clusterConnection = (await _dao.FindBySpecificationAsync<ClusterConnectionStorageModel>(cc => cc.Name == request.ClusterConnectionName)).FirstOrDefault();
+            //if (clusterConnection == null)
+            //{
+            //    return NotFound($"The cluster connection '{request.ClusterConnectionName}' does not exist.");
+            //}
 
-            var cluster = _clusters.FirstOrDefault(c => c.Name == clusterConnection.Type);
-            if (cluster == null)
-            {
-                return NotFound($"The cluster '{clusterConnection.Type}' does not exist.");
-            }
+            //var cluster = _clusters.FirstOrDefault(c => c.Name == clusterConnection.Type);
+            //if (cluster == null)
+            //{
+            //    return NotFound($"The cluster '{clusterConnection.Type}' does not exist.");
+            //}
 
-            if (!cluster.ValidateJobParameters(request.JobParameters))
-            {
-                return BadRequest($"The cluster '{cluster.Name}' cannot accept the job parameters specified.");
-            }
+            //if (!cluster.ValidateJobParameters(request.JobParameters))
+            //{
+            //    return BadRequest($"The cluster '{cluster.Name}' cannot accept the job parameters specified.");
+            //}
 
 
 

@@ -23,13 +23,13 @@ namespace Abacuza.Clusters.Common
     {
         #region Public Properties
 
+        public Type ConnectionType => this.ClusterAttribute?.ConnectionType;
         public string Description => this.ClusterAttribute?.Description;
         public Guid Id => this.ClusterAttribute?.Id ?? Guid.Empty;
 
         public string Name => this.ClusterAttribute?.Name;
 
         public string Type => this.ClusterAttribute?.Type;
-
         #endregion Public Properties
 
         #region Private Properties
@@ -71,6 +71,13 @@ namespace Abacuza.Clusters.Common
 
         #region Public Methods
 
+        public void Dispose()
+        {
+            // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
+            Dispose(disposing: true);
+            GC.SuppressFinalize(this);
+        }
+
         public abstract Task<ClusterState> GetStateAsync(IClusterConnection connection, CancellationToken cancellationToken = default);
 
         /// <summary>
@@ -81,6 +88,13 @@ namespace Abacuza.Clusters.Common
         /// </returns>
         public override string ToString() => this.Name;
 
+        protected virtual void Dispose(bool disposing) { }
+        // // TODO: override finalizer only if 'Dispose(bool disposing)' has code to free unmanaged resources
+        // ~Cluster()
+        // {
+        //     // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
+        //     Dispose(disposing: false);
+        // }
         #endregion Public Methods
     }
 }

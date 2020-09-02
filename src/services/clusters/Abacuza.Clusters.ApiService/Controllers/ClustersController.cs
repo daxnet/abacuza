@@ -52,8 +52,9 @@ namespace Abacuza.Clusters.ApiService.Controllers
                 return NotFound($"The cluster with the type of {connectionEntity.ClusterType} does not exist.");
             }
 
-            // connectionEntity.Create
-            return Ok();
+            var clusterConnection = connectionEntity.Create(clusterImplementation.ConnectionType);
+            var clusterState = await clusterImplementation.GetStateAsync(clusterConnection);
+            return Ok(clusterState);
         }
     }
 }

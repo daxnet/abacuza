@@ -37,9 +37,12 @@ namespace Abacuza.Clusters.Spark
             this.BaseUrl = (string)deserializedObject.baseUrl;
             var props = (Dictionary<string, object>)deserializedObject.properties;
             _properties.Clear();
-            foreach(var kvp in props)
+            if (props != null)
             {
-                _properties.Add(kvp.Key, kvp.Value);
+                foreach (var kvp in props)
+                {
+                    _properties.Add(kvp.Key, kvp.Value);
+                }
             }
         }
 

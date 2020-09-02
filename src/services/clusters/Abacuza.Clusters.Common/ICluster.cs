@@ -7,7 +7,7 @@ namespace Abacuza.Clusters.Common
     /// <summary>
     /// Represents that the implemented classes are data transforming clusters.
     /// </summary>
-    public interface ICluster
+    public interface ICluster : IDisposable
     {
         #region Public Properties
 
@@ -34,6 +34,11 @@ namespace Abacuza.Clusters.Common
         /// The name.
         /// </value>
         string Name { get; }
+
+        /// <summary>
+        /// Gets the type of the connection.
+        /// </summary>
+        Type ConnectionType { get; }
 
         /// <summary>
         /// Gets the type of the cluster. The cluster type is a human readable

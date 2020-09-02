@@ -57,6 +57,12 @@ namespace Abacuza.Clusters.ApiService.Controllers
                 return BadRequest($"The cluster whose type is '{model.ClusterType}' was not found.");
             }
 
+            var existingEntity = (await _dao.FindBySpecificationAsync<ClusterConnectionEntity>(x => x.Name == model.Name)).FirstOrDefault();
+            if (existingEntity != null)
+            {
+                return Conflict($"Duplicated name '{model.Name}'.");
+            }
+
             await _dao.AddAsync(model);
 
             return CreatedAtAction(nameof(GetClusterConnectionByIdAsync), new { id = model.Id }, model.Id);

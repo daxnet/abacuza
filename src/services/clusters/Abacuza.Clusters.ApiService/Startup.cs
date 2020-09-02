@@ -54,7 +54,7 @@ namespace Abacuza.Clusters.ApiService
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, IHostApplicationLifetime lifetime)
         {
             if (env.IsDevelopment())
             {
@@ -74,6 +74,15 @@ namespace Abacuza.Clusters.ApiService
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
+            });
+
+            lifetime.ApplicationStopping.Register(() =>
+            {
+                var clusterImplementations = app.ApplicationServices.GetRequiredService<ClusterCollection>();
+                foreach (var impl in clusterImplementations)
+                {
+                    impl.Dispose();
+                }
             });
         }
 

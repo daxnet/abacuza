@@ -24,7 +24,6 @@
   <ItemGroup>
     <ProjectReference Include="..\..\common\Abacuza.Common\Abacuza.Common.csproj" />
     <ProjectReference Include="..\..\common\Abacuza.DataAccess.Mongo\Abacuza.DataAccess.Mongo.csproj" />
-    <ProjectReference Include="..\Abacuza.JobSchedulers.Common\Abacuza.JobSchedulers.Common.csproj" />
   </ItemGroup>
 
 

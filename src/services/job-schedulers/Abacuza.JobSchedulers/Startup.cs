@@ -7,7 +7,6 @@ using System.Threading.Tasks;
 using Abacuza.Common;
 using Abacuza.Common.DataAccess;
 using Abacuza.DataAccess.Mongo;
-using Abacuza.JobSchedulers.Common;
 using McMaster.NETCore.Plugins;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -46,32 +45,7 @@ namespace Abacuza.JobSchedulers
 
             var pluginsDirectory = Path.Combine(AppContext.BaseDirectory, "plugins");
             var loaders = new List<PluginLoader>();
-            var clusters = new List<ICluster>();
-            foreach (var file in Directory.EnumerateFiles(pluginsDirectory, "*.dll", SearchOption.AllDirectories))
-            {
-                if (File.Exists(file))
-                {
-                    var loader = PluginLoader.CreateFromAssemblyFile(file, sharedTypes: new[] { typeof(ICluster) });
-                    loaders.Add(loader);
-                }
-            }
-
-            // Create an instance of plugin types
-            foreach (var loader in loaders)
-            {
-                foreach (var clusterType in loader
-                    .LoadDefaultAssembly()
-                    .GetTypes()
-                    .Where(t => typeof(ICluster).IsAssignableFrom(t) && !t.IsAbstract))
-                {
-                    // This assumes the implementation of IPlugin has a parameterless constructor
-                    var cluster = (ICluster)Activator.CreateInstance(clusterType);
-                    clusters.Add(cluster);
-                }
-            }
-
-            services.AddSingleton<IEnumerable<ICluster>>(clusters);
-
+            
             var mongoHost = Configuration["mongo:host"];
             var mongoPort = int.Parse(Configuration["mongo:port"]);
             var mongoDatabase = Configuration["mongo:database"];
