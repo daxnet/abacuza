@@ -1,8 +1,10 @@
 using Abacuza.Common.DataAccess;
 using Abacuza.JobSchedulers.Models;
+using Abacuza.JobSchedulers.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
+using Quartz;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,18 +17,18 @@ namespace Abacuza.JobSchedulers.Controllers
     [ApiController]
     public class JobsController : ControllerBase
     {
-        //private readonly IEnumerable<ICluster> _clusters;
         private readonly IDataAccessObject _dao;
         private readonly IConfiguration _configuration;
+        private readonly ClusterApiService _clusterService;
+        private readonly IScheduler _quartzScheduler;
 
-        public JobsController(IDataAccessObject dao, IConfiguration configuration)
+        public JobsController(IDataAccessObject dao, IConfiguration configuration, ClusterApiService clusterService, IScheduler quartzScheduler)
         {
             _dao = dao;
             _configuration = configuration;
+            _clusterService = clusterService;
+            _quartzScheduler = quartzScheduler;
         }
-
-        [HttpGet("get-service-url")]
-        public async Task<IActionResult> GetServiceUrlAsync() => Ok(_configuration["CLUSTER_SERVICE_URL"]);
         
         [HttpPost("submit")]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -34,11 +36,10 @@ namespace Abacuza.JobSchedulers.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> SubmitJobAsync([FromBody] SubmitJobRequest request)
         {
-            
-            //if (string.IsNullOrEmpty(request.ClusterConnectionName))
-            //{
-            //    return BadRequest($"The connection of the cluster that is used for submitting the job is not specified.");
-            //}
+            if (string.IsNullOrEmpty(request.ClusterConnectionName))
+            {
+                return BadRequest($"The connection of the cluster that is used for submitting the job is not specified.");
+            }
 
             //var clusterConnection = (await _dao.FindBySpecificationAsync<ClusterConnectionStorageModel>(cc => cc.Name == request.ClusterConnectionName)).FirstOrDefault();
             //if (clusterConnection == null)

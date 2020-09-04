@@ -4,9 +4,9 @@ using Abacuza.Common;
 
 namespace Abacuza.JobSchedulers.Models
 {
-    public sealed class JobStorageModel : IEntity
+    public sealed class JobEntity : IEntity
     {
-        public JobStorageModel()
+        public JobEntity()
         {
 
         }

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -60,6 +61,8 @@ namespace Abacuza.Clusters.Common
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns>The cluster state.</returns>
         Task<ClusterState> GetStateAsync(IClusterConnection connection, CancellationToken cancellationToken = default);
+
+        Task<Job> SubmitJobAsync(IClusterConnection connection, IDictionary<string, object> properties, CancellationToken cancellationToken = default);
 
         #endregion Public Methods
     }

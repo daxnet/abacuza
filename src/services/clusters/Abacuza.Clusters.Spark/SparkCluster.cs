@@ -1,7 +1,12 @@
 ﻿using Abacuza.Clusters.Common;
+using Newtonsoft.Json;
 using System;
+using System.Collections.Generic;
+using System.Dynamic;
+using System.Linq;
 using System.Net.Http;
 using System.Security.Cryptography;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -27,6 +32,27 @@ namespace Abacuza.Clusters.Spark
             {
                 return ClusterState.Offline;
             }
+        }
+
+        public override async Task<Job> SubmitJobAsync(IClusterConnection connection, IDictionary<string, object> properties, CancellationToken cancellationToken = default)
+        {
+            var connectionInformation = connection.As<SparkClusterConnection>();
+            dynamic payload = new ExpandoObject();
+            foreach(var property in properties)
+            {
+                ((IDictionary<string, object>)payload)[property.Key] = property.Value;
+            }
+
+            if (connectionInformation.Properties?.Count() > 0)
+            {
+                ((IDictionary<string, object>)payload)["conf"] = new Dictionary<string, object>(connectionInformation.Properties);
+            }
+
+            var payloadJson = JsonConvert.SerializeObject(payload);
+            var postBatchesUrl = new Uri(new Uri(connectionInformation.BaseUrl), "batches");
+            var responseMessage = await _httpClient.PostAsync(postBatchesUrl,
+                new StringContent(payloadJson, Encoding.UTF8, "application/json"),
+                cancellationToken);
         }
 
         protected override void Dispose(bool disposing)

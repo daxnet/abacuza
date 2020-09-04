@@ -1,4 +1,5 @@
 ﻿using Abacuza.Clusters.ApiService.Models;
+using Abacuza.Clusters.Common;
 using Abacuza.Common.DataAccess;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -40,6 +41,11 @@ namespace Abacuza.Clusters.ApiService.Controllers
         [HttpGet("state/{connectionName}")]
         public async Task<IActionResult> GetClusterStateAsync(string connectionName)
         {
+            if (string.IsNullOrEmpty(connectionName))
+            {
+                return BadRequest("The connectionName is not specified.");
+            }
+
             var connectionEntity = (await _dao.FindBySpecificationAsync<ClusterConnectionEntity>(ce => ce.Name == connectionName)).FirstOrDefault();
             if (connectionEntity == null)
             {
@@ -55,6 +61,29 @@ namespace Abacuza.Clusters.ApiService.Controllers
             var clusterConnection = connectionEntity.Create(clusterImplementation.ConnectionType);
             var clusterState = await clusterImplementation.GetStateAsync(clusterConnection);
             return Ok(clusterState);
+        }
+
+        [HttpPost("jobs/execute")]
+        public async Task<IActionResult> ExecuteJobAsync([FromBody] ExecuteJobRequest request)
+        {
+            var clusterConnections = await _dao.FindBySpecificationAsync<ClusterConnectionEntity>(ce => ce.Name == request.ConnectionName);
+            var availableClusters = new List<ICluster>();
+            foreach (var clusterConnection in clusterConnections)
+            {
+                var clusterImplementation = _clusterImplementations.FirstOrDefault(ci => ci.Type == clusterConnection.ClusterType);
+                var state = await clusterImplementation.GetStateAsync(clusterConnection.Create(clusterImplementation.ConnectionType));
+                if (state == ClusterState.Online)
+                {
+                    availableClusters.Add(clusterImplementation);
+                }
+            }
+
+            if (availableClusters.Count > 0)
+            {
+                // TODO: cluster scheduling
+                var cluster = availableClusters[0];
+                
+            }
         }
     }
 }

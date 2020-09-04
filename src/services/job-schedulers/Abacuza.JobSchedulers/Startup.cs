@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -7,6 +8,7 @@ using System.Threading.Tasks;
 using Abacuza.Common;
 using Abacuza.Common.DataAccess;
 using Abacuza.DataAccess.Mongo;
+using Abacuza.JobSchedulers.Services;
 using McMaster.NETCore.Plugins;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -15,6 +17,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Quartz.Impl;
 
 namespace Abacuza.JobSchedulers
 {
@@ -50,6 +53,31 @@ namespace Abacuza.JobSchedulers
             var mongoPort = int.Parse(Configuration["mongo:port"]);
             var mongoDatabase = Configuration["mongo:database"];
             services.AddTransient<IDataAccessObject>(sp => new MongoDataAccessObject(mongoDatabase, mongoHost, mongoPort));
+
+            services.AddHttpClient<ClusterApiService>(config =>
+            {
+                config.BaseAddress = new Uri(Configuration["CLUSTER_SERVICE_URL"]);
+                config.Timeout = TimeSpan.FromMinutes(5);
+            });
+
+            // Initializes the job scheduler
+            var quartzSchedulerSettings = new NameValueCollection
+            {
+                { "quartz.jobStore.type", " Quartz.Impl.AdoJobStore.JobStoreTX, Quartz" },
+                { "quartz.jobStore.driverDelegateType", "Quartz.Impl.AdoJobStore.SqlServerDelegate, Quartz" },
+                { "quartz.jobStore.dataSource", "myDS" },
+                { "quartz.dataSource.myDS.connectionString", "Server=localhost\\sqlexpress; Database=QuartzNET; Integrated Security=SSPI;" },
+                { "quartz.dataSource.myDS.provider", "SqlServer" },
+                { "quartz.jobStore.useProperties", "true" },
+                { "quartz.serializer.type", "json" },
+                { "quartz.scheduler.instanceId", "AUTO" },
+                { "quartz.jobStore.clustered", "true" }
+            };
+
+            var schedulerFactory = new StdSchedulerFactory(quartzSchedulerSettings);
+            var scheduler = schedulerFactory.GetScheduler().GetAwaiter().GetResult();
+            services.AddSingleton(scheduler);
+            services.AddHostedService<JobSchedulingHostedService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
