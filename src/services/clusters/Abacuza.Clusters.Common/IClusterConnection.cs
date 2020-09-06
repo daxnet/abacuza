@@ -12,6 +12,8 @@ namespace Abacuza.Clusters.Common
     /// </summary>
     public interface IClusterConnection
     {
+        Guid Id { get; set; }
+
         /// <summary>
         /// Gets or sets the name of the connection.
         /// </summary>

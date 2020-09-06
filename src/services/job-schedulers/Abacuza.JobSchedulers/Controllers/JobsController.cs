@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Quartz;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -17,16 +18,11 @@ namespace Abacuza.JobSchedulers.Controllers
     [ApiController]
     public class JobsController : ControllerBase
     {
-        private readonly IDataAccessObject _dao;
-        private readonly IConfiguration _configuration;
-        private readonly ClusterApiService _clusterService;
+        private const string JobGroupName = "job-execution";
         private readonly IScheduler _quartzScheduler;
 
-        public JobsController(IDataAccessObject dao, IConfiguration configuration, ClusterApiService clusterService, IScheduler quartzScheduler)
+        public JobsController(IScheduler quartzScheduler)
         {
-            _dao = dao;
-            _configuration = configuration;
-            _clusterService = clusterService;
             _quartzScheduler = quartzScheduler;
         }
         
@@ -36,30 +32,29 @@ namespace Abacuza.JobSchedulers.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> SubmitJobAsync([FromBody] SubmitJobRequest request)
         {
-            if (string.IsNullOrEmpty(request.ClusterConnectionName))
+            if (string.IsNullOrEmpty(request.Type))
             {
-                return BadRequest($"The connection of the cluster that is used for submitting the job is not specified.");
+                return BadRequest($"The type of the job is not specified.");
             }
 
-            //var clusterConnection = (await _dao.FindBySpecificationAsync<ClusterConnectionStorageModel>(cc => cc.Name == request.ClusterConnectionName)).FirstOrDefault();
-            //if (clusterConnection == null)
-            //{
-            //    return NotFound($"The cluster connection '{request.ClusterConnectionName}' does not exist.");
-            //}
+            var jobName = $"job-submit-{DateTime.UtcNow.ToString("yyyyMMddHHmmss")}";
 
-            //var cluster = _clusters.FirstOrDefault(c => c.Name == clusterConnection.Type);
-            //if (cluster == null)
-            //{
-            //    return NotFound($"The cluster '{clusterConnection.Type}' does not exist.");
-            //}
+            var jobDetail = JobBuilder.Create<JobSubmitExecutor>()
+                .WithIdentity(new JobKey(jobName, JobGroupName))
+                .WithDescription("")
+                .SetJobData(new JobDataMap
+                {
+                    { "clusterType", request.Type },
+                    { "properties", request.Properties }
+                })
+                .Build();
 
-            //if (!cluster.ValidateJobParameters(request.JobParameters))
-            //{
-            //    return BadRequest($"The cluster '{cluster.Name}' cannot accept the job parameters specified.");
-            //}
+            var jobTrigger = TriggerBuilder.Create()
+                .WithIdentity(new TriggerKey($"trigger-{jobName}", JobGroupName))
+                .StartNow() // TODO: Apply advanced scheduling mechanism.
+                .Build();
 
-
-
+            await _quartzScheduler.ScheduleJob(jobDetail, jobTrigger);
             return Ok();
         }
     }

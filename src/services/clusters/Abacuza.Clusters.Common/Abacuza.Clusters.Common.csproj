@@ -4,4 +4,8 @@
     <TargetFramework>netstandard2.1</TargetFramework>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\..\common\Abacuza.Common\Abacuza.Common.csproj" />
+  </ItemGroup>
+
 </Project>

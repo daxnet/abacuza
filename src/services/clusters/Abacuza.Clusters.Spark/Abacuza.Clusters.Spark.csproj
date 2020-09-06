@@ -10,6 +10,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\common\Abacuza.Common\Abacuza.Common.csproj" />
     <ProjectReference Include="..\Abacuza.Clusters.Common\Abacuza.Clusters.Common.csproj" />
   </ItemGroup>
 
@@ -17,9 +18,7 @@
     <ItemGroup>
       <BuildArtifacts Include="$(OutDir)*.*" />
     </ItemGroup>
-    <Copy SourceFiles="@(BuildArtifacts)"
-          DestinationFolder="$(SolutionDir)clusters\Abacuza.Clusters.ApiService\bin\$(ConfigurationName)\plugins\clusters\spark\%(RecursiveDir)"
-          SkipUnchangedFiles="true" />
+    <Copy SourceFiles="@(BuildArtifacts)" DestinationFolder="$(SolutionDir)clusters\Abacuza.Clusters.ApiService\bin\$(ConfigurationName)\plugins\clusters\spark\%(RecursiveDir)" SkipUnchangedFiles="true" />
   </Target>
 
 </Project>

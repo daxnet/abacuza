@@ -62,6 +62,13 @@ namespace Abacuza.Clusters.Common
         /// <returns>The cluster state.</returns>
         Task<ClusterState> GetStateAsync(IClusterConnection connection, CancellationToken cancellationToken = default);
 
+        /// <summary>
+        /// Submits a data processing job to the current cluster.
+        /// </summary>
+        /// <param name="connection">The connection that is used for connecting the cluster.</param>
+        /// <param name="properties">The job properties.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        /// <returns></returns>
         Task<Job> SubmitJobAsync(IClusterConnection connection, IDictionary<string, object> properties, CancellationToken cancellationToken = default);
 
         #endregion Public Methods

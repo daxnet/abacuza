@@ -5,7 +5,6 @@ using DnsClient.Internal;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -30,6 +29,11 @@ namespace Abacuza.Clusters.ApiService.Controllers
             _clusterImplementations = clusterImplementations;
             _dao = dao;
         }
+
+        [HttpGet]
+        [ProducesResponseType(typeof(ClusterConnectionEntity[]), StatusCodes.Status200OK)]
+        public async Task<IActionResult> GetClusterConnectionsAsync()
+            => Ok(await _dao.GetAllAsync<ClusterConnectionEntity>());
 
         [HttpGet("{id}")]
         [ProducesResponseType(typeof(ClusterConnectionEntity), StatusCodes.Status200OK)]

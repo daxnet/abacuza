@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using Abacuza.Common;
 using Abacuza.Common.DataAccess;
 using Abacuza.DataAccess.Mongo;
+using Abacuza.JobSchedulers.Models;
 using Abacuza.JobSchedulers.Services;
 using McMaster.NETCore.Plugins;
 using Microsoft.AspNetCore.Builder;
@@ -18,6 +19,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Quartz.Impl;
+using Quartz.Spi;
 
 namespace Abacuza.JobSchedulers
 {
@@ -66,9 +68,9 @@ namespace Abacuza.JobSchedulers
                 { "quartz.jobStore.type", " Quartz.Impl.AdoJobStore.JobStoreTX, Quartz" },
                 { "quartz.jobStore.driverDelegateType", "Quartz.Impl.AdoJobStore.SqlServerDelegate, Quartz" },
                 { "quartz.jobStore.dataSource", "myDS" },
-                { "quartz.dataSource.myDS.connectionString", "Server=localhost\\sqlexpress; Database=QuartzNET; Integrated Security=SSPI;" },
+                { "quartz.dataSource.myDS.connectionString", "Server=localhost\\sqlexpress; Database=AbacuzaQuartzDB; Integrated Security=SSPI;" },
                 { "quartz.dataSource.myDS.provider", "SqlServer" },
-                { "quartz.jobStore.useProperties", "true" },
+                { "quartz.jobStore.useProperties", "false" },
                 { "quartz.serializer.type", "json" },
                 { "quartz.scheduler.instanceId", "AUTO" },
                 { "quartz.jobStore.clustered", "true" }
@@ -76,7 +78,10 @@ namespace Abacuza.JobSchedulers
 
             var schedulerFactory = new StdSchedulerFactory(quartzSchedulerSettings);
             var scheduler = schedulerFactory.GetScheduler().GetAwaiter().GetResult();
+            services.AddSingleton<IJobFactory, JobFactory>();
             services.AddSingleton(scheduler);
+            services.AddSingleton<JobSubmitExecutor>();
+            services.AddSingleton<JobUpdateExecutor>();
             services.AddHostedService<JobSchedulingHostedService>();
         }
 

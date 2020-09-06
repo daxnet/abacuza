@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 using Abacuza.Clusters.ApiService.Models;
 using Abacuza.Clusters.Common;
 using Abacuza.Common.DataAccess;
-using Abacuza.DataAccess.InMemory;
+using Abacuza.DataAccess.Mongo;
 using McMaster.NETCore.Plugins;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -45,7 +45,10 @@ namespace Abacuza.Clusters.ApiService
             var clusterImplementations = DiscoverClusterImplementations();
             services.AddSingleton(clusterImplementations);
 
-            services.AddSingleton<IDataAccessObject, InMemoryDataAccessObject>();
+            var mongoHost = Configuration["mongo:host"];
+            var mongoPort = int.Parse(Configuration["mongo:port"]);
+            var mongoDatabase = Configuration["mongo:database"];
+            services.AddTransient<IDataAccessObject>(sp => new MongoDataAccessObject(mongoDatabase, mongoHost, mongoPort));
 
             services.AddControllers(options =>
             {

@@ -12,6 +12,8 @@ namespace Abacuza.Clusters.Spark
     {
         private readonly Dictionary<string, object> _properties = new Dictionary<string, object>();
 
+        public Guid Id { get; set; }
+
         public string Name { get; set; }
 
         public string Description { get; set; }

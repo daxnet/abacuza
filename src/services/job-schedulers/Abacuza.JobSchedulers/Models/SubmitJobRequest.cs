@@ -7,12 +7,29 @@ using System.Threading.Tasks;
 
 namespace Abacuza.JobSchedulers.Models
 {
+    /// <summary>
+    /// Represents the request schema of the job submission.
+    /// </summary>
     public sealed class SubmitJobRequest
     {
-        [JsonProperty("connection")]
-        public string ClusterConnectionName { get; set; }
+        /// <summary>
+        /// Gets or sets the type of the cluster to which the job is submitted.
+        /// </summary>
+        /// <value>
+        /// The cluster type.
+        /// </value>
+        [JsonProperty("type")]
+        public string Type { get; set; }
 
+        /// <summary>
+        /// Gets or sets the job parameters.
+        /// </summary>
+        /// <value>
+        /// The job parameters.
+        /// </value>
         [JsonProperty("parameters")]
-        public Dictionary<string, object> JobParameters { get; set; }
+        public Dictionary<string, object> Properties { get; set; }
+
+
     }
 }

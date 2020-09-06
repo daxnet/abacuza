@@ -1,9 +1,11 @@
 ﻿using Abacuza.Clusters.Common;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Dynamic;
 using System.Linq;
+using System.Net;
 using System.Net.Http;
 using System.Security.Cryptography;
 using System.Text;
@@ -53,6 +55,27 @@ namespace Abacuza.Clusters.Spark
             var responseMessage = await _httpClient.PostAsync(postBatchesUrl,
                 new StringContent(payloadJson, Encoding.UTF8, "application/json"),
                 cancellationToken);
+
+            if (responseMessage.StatusCode == HttpStatusCode.Created)
+            {
+                var responseJson = await responseMessage.Content.ReadAsStringAsync();
+                var responseObj = JObject.Parse(responseJson);
+                var sparkBatchId = responseObj["id"].Value<int>();
+                var sparkBatchName = responseObj["name"]?.Value<string>();
+              
+                return new Job
+                {
+                    ConnectionId = connectionInformation.Id,
+                    LocalJobId = sparkBatchId.ToString(),
+                    Created = DateTime.UtcNow,
+                    Name = sparkBatchName
+                };
+            }
+            else
+            {
+                var errorMessage = await responseMessage.Content.ReadAsStringAsync();
+                throw new JobException($"Failed to create the job. Details: {errorMessage}");
+            }
         }
 
         protected override void Dispose(bool disposing)

@@ -1,6 +1,7 @@
 ﻿using Abacuza.Clusters.ApiService.Models;
 using Abacuza.Clusters.Common;
 using Abacuza.Common.DataAccess;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System;
@@ -63,27 +64,45 @@ namespace Abacuza.Clusters.ApiService.Controllers
             return Ok(clusterState);
         }
 
-        [HttpPost("jobs/execute")]
+        [HttpPost("jobs/submit")]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(Job))]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> ExecuteJobAsync([FromBody] ExecuteJobRequest request)
         {
-            var clusterConnections = await _dao.FindBySpecificationAsync<ClusterConnectionEntity>(ce => ce.Name == request.ConnectionName);
-            var availableClusters = new List<ICluster>();
-            foreach (var clusterConnection in clusterConnections)
+            var clusterConnectionEntities = await _dao.FindBySpecificationAsync<ClusterConnectionEntity>(ce => ce.ClusterType == request.ClusterType);
+            var availableClusters = new List<(ICluster, IClusterConnection)>();
+            foreach (var clusterConnectionEntity in clusterConnectionEntities)
             {
-                var clusterImplementation = _clusterImplementations.FirstOrDefault(ci => ci.Type == clusterConnection.ClusterType);
-                var state = await clusterImplementation.GetStateAsync(clusterConnection.Create(clusterImplementation.ConnectionType));
+                var clusterImplementation = _clusterImplementations.FirstOrDefault(ci => ci.Type == clusterConnectionEntity.ClusterType);
+                var clusterConnection = clusterConnectionEntity.Create(clusterImplementation.ConnectionType);
+                var state = await clusterImplementation.GetStateAsync(clusterConnection);
                 if (state == ClusterState.Online)
                 {
-                    availableClusters.Add(clusterImplementation);
+                    availableClusters.Add((clusterImplementation, clusterConnection));
                 }
             }
 
             if (availableClusters.Count > 0)
             {
                 // TODO: cluster scheduling
-                var cluster = availableClusters[0];
-                
+                var (cluster, connection) = availableClusters[0];
+                try
+                {
+                    var job = await cluster.SubmitJobAsync(connection, request.Properties);
+                    return Ok(job);
+                }
+                catch (JobException je)
+                {
+                    return BadRequest(je.ToString());
+                }
+                catch (Exception ex)
+                {
+                    return StatusCode(500, ex.ToString());
+                }
             }
+
+            return BadRequest($"There is no available cluster whose type is '{request.ClusterType}' that can serve the job execution request.");
         }
     }
 }

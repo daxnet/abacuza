@@ -1,4 +1,4 @@
-﻿using Newtonsoft.Json;
+﻿
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -14,12 +14,9 @@ namespace Abacuza.Clusters.ApiService.Models
             Properties = new Dictionary<string, object>();
         }
 
-        [JsonProperty("connection")]
-        [JsonRequired]
         [Required]
-        public string ConnectionName { get; set; }
+        public string ClusterType { get; set; }
 
-        [JsonProperty("properties")]
         public Dictionary<string, object> Properties { get; set; }
     }
 }

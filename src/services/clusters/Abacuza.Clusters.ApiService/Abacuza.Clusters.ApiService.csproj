@@ -7,13 +7,11 @@
 
   <ItemGroup>
     <PackageReference Include="McMaster.NETCore.Plugins" Version="1.3.0" />
-    <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="5.5.1" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\..\common\Abacuza.Common\Abacuza.Common.csproj" />
-    <ProjectReference Include="..\..\common\Abacuza.DataAccess.InMemory\Abacuza.DataAccess.InMemory.csproj" />
     <ProjectReference Include="..\..\common\Abacuza.DataAccess.Mongo\Abacuza.DataAccess.Mongo.csproj" />
     <ProjectReference Include="..\Abacuza.Clusters.Common\Abacuza.Clusters.Common.csproj" />
   </ItemGroup>

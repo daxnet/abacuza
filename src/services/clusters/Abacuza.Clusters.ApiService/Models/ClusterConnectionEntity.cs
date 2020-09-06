@@ -2,7 +2,6 @@
 using Abacuza.Common;
 using Abacuza.Common.DataAccess;
 using MongoDB.Driver.Core.Clusters;
-using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -45,32 +44,27 @@ namespace Abacuza.Clusters.ApiService.Models
         /// <summary>
         /// Gets or sets the type of the cluster that the current cluster connection entity is used for.
         /// </summary>
-        [JsonProperty("clusterType")]
         [Required]
         public string ClusterType { get; set; }
 
         /// <summary>
         /// Gets or sets the description of the cluster connection entity.
         /// </summary>
-        [JsonProperty("description")]
         public string Description { get; set; }
 
         /// <summary>
         /// Gets or sets the id of the cluster connection entity.
         /// </summary>
-        [JsonProperty("id")]
         public Guid Id { get; set; }
 
         /// <summary>
         /// Gets or sets the name of the cluster connection entity.
         /// </summary>
-        [JsonProperty("name")]
         [Required]
         public string Name { get; set; }
         /// <summary>
         /// Gets or sets a JSON serialized string of the cluster connection.
         /// </summary>
-        [JsonProperty("settings")]
         public string Settings { get; set; }
 
         public TClusterConnection Create<TClusterConnection>()
@@ -80,7 +74,8 @@ namespace Abacuza.Clusters.ApiService.Models
             {
                 ClusterType = ClusterType,
                 Description = Description,
-                Name = Name
+                Name = Name,
+                Id = Id
             };
 
             result.DeserializeConfiguration(Settings);
@@ -93,6 +88,7 @@ namespace Abacuza.Clusters.ApiService.Models
             result.ClusterType = ClusterType;
             result.Description = Description;
             result.Name = Name;
+            result.Id = Id;
             result.DeserializeConfiguration(Settings);
 
             return result;
