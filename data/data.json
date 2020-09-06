@@ -1,0 +1,5 @@
+{
+    "file":"local:/home/daxnet/Projects/SparkDemo/bin/Debug/netcoreapp3.1/microsoft-spark-2.4.x-0.11.0.jar",
+    "className":"org.apache.spark.deploy.dotnet.DotnetRunner",
+    "args":["dotnet", "/home/daxnet/Projects/SparkDemo/bin/Debug/netcoreapp3.1/SparkDemo.dll"]
+}
