@@ -16,6 +16,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Newtonsoft.Json.Serialization;
 
 namespace Abacuza.Clusters.ApiService
 {
@@ -53,7 +54,14 @@ namespace Abacuza.Clusters.ApiService
             services.AddControllers(options =>
             {
                 options.SuppressAsyncSuffixInActionNames = false;
-            });
+            })
+            .AddNewtonsoftJson(/*options =>
+            {
+                options.SerializerSettings.ContractResolver = new DefaultContractResolver
+                {
+                    NamingStrategy = new CamelCaseNamingStrategy()
+                };
+            }*/);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

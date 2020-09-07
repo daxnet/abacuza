@@ -39,18 +39,26 @@ namespace Abacuza.Clusters.Spark
         public override async Task<Job> SubmitJobAsync(IClusterConnection connection, IDictionary<string, object> properties, CancellationToken cancellationToken = default)
         {
             var connectionInformation = connection.As<SparkClusterConnection>();
-            dynamic payload = new ExpandoObject();
-            foreach(var property in properties)
-            {
-                ((IDictionary<string, object>)payload)[property.Key] = property.Value;
-            }
+            //dynamic payload = new ExpandoObject();
+            //foreach(var property in properties)
+            //{
+            //    ((IDictionary<string, object>)payload)[property.Key] = property.Value;
+            //}
 
-            if (connectionInformation.Properties?.Count() > 0)
-            {
-                ((IDictionary<string, object>)payload)["conf"] = new Dictionary<string, object>(connectionInformation.Properties);
-            }
+            //if (connectionInformation.Properties?.Count() > 0)
+            //{
+            //    ((IDictionary<string, object>)payload)["conf"] = new Dictionary<string, object>(connectionInformation.Properties);
+            //}
 
+            //var payloadJson = JsonConvert.SerializeObject(payload);
+
+            var payload = new JObject();
+            foreach (var property in properties)
+            {
+                payload[property.Key] = JToken.FromObject(property.Value);
+            }
             var payloadJson = JsonConvert.SerializeObject(payload);
+
             var postBatchesUrl = new Uri(new Uri(connectionInformation.BaseUrl), "batches");
             var responseMessage = await _httpClient.PostAsync(postBatchesUrl,
                 new StringContent(payloadJson, Encoding.UTF8, "application/json"),

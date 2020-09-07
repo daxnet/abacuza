@@ -2,10 +2,12 @@
 using Abacuza.JobSchedulers.Services;
 using Microsoft.Extensions.Logging;
 using Quartz;
+using System.Text.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Newtonsoft.Json;
 
 namespace Abacuza.JobSchedulers.Models
 {

@@ -18,7 +18,6 @@ namespace Abacuza.JobSchedulers.Models
         /// <value>
         /// The cluster type.
         /// </value>
-        [JsonProperty("type")]
         public string Type { get; set; }
 
         /// <summary>
@@ -27,7 +26,6 @@ namespace Abacuza.JobSchedulers.Models
         /// <value>
         /// The job parameters.
         /// </value>
-        [JsonProperty("parameters")]
         public Dictionary<string, object> Properties { get; set; }
 
 

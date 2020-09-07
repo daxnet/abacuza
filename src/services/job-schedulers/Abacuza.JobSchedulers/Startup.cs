@@ -18,6 +18,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Newtonsoft.Json.Serialization;
 using Quartz.Impl;
 using Quartz.Spi;
 
@@ -38,6 +39,13 @@ namespace Abacuza.JobSchedulers
             services.AddControllers(options =>
             {
                 options.SuppressAsyncSuffixInActionNames = false;
+            })
+            .AddNewtonsoftJson(options =>
+            {
+                options.SerializerSettings.ContractResolver = new DefaultContractResolver
+                {
+                    NamingStrategy = new CamelCaseNamingStrategy()
+                };
             });
 
             services.AddSwaggerGen(c =>

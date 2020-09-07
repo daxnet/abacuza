@@ -10,6 +10,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.CompilerServices;
+using System.Text.Json;
 using System.Threading.Tasks;
 
 namespace Abacuza.JobSchedulers.Controllers
@@ -37,7 +38,8 @@ namespace Abacuza.JobSchedulers.Controllers
                 return BadRequest($"The type of the job is not specified.");
             }
 
-            var jobName = $"job-submit-{DateTime.UtcNow.ToString("yyyyMMddHHmmss")}";
+            var jobName = $"job-submit-{DateTime.UtcNow:yyyyMMddHHmmss}";
+
 
             var jobDetail = JobBuilder.Create<JobSubmitExecutor>()
                 .WithIdentity(new JobKey(jobName, JobGroupName))
