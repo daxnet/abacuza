@@ -90,7 +90,7 @@ namespace Abacuza.Clusters.Common
 
         protected virtual void Dispose(bool disposing) { }
 
-        public abstract Task<Job> SubmitJobAsync(IClusterConnection connection, IDictionary<string, object> properties, CancellationToken cancellationToken = default);
+        public abstract Task<Job> SubmitJobAsync(IClusterConnection connection, Dictionary<string, object> properties, CancellationToken cancellationToken = default);
 
         // // TODO: override finalizer only if 'Dispose(bool disposing)' has code to free unmanaged resources
         // ~Cluster()

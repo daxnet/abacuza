@@ -16,6 +16,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 
 namespace Abacuza.Clusters.ApiService
@@ -106,7 +107,12 @@ namespace Abacuza.Clusters.ApiService
             {
                 if (File.Exists(file))
                 {
-                    var loader = PluginLoader.CreateFromAssemblyFile(file, sharedTypes: new[] { typeof(ICluster) });
+                    var loader = PluginLoader.CreateFromAssemblyFile(file, 
+                        sharedTypes: new[] { typeof(ICluster) },
+                        configure: (pc) =>
+                        {
+                            pc.SharedAssemblies.Add(typeof(JsonConvert).Assembly.GetName());
+                        });
                     loaders.Add(loader);
                 }
             }
