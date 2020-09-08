@@ -36,11 +36,23 @@ namespace Abacuza.Clusters.Spark
             }
         }
 
-        public override async Task<Job> SubmitJobAsync(IClusterConnection connection, Dictionary<string, object> properties, CancellationToken cancellationToken = default)
+        public override async Task<Job> SubmitJobAsync(IClusterConnection connection, IEnumerable<KeyValuePair<string, object>> properties, CancellationToken cancellationToken = default)
         {
             var connectionInformation = connection.As<SparkClusterConnection>();
-           
-            var payloadJson = JsonConvert.SerializeObject(properties);
+
+            dynamic payload = new ExpandoObject();
+            foreach (var kvp in properties)
+            {
+                ((IDictionary<string, object>)payload)[kvp.Key] = kvp.Value;
+            }
+
+            if (connectionInformation.Properties?.Count() > 0)
+            {
+                var conf = new Dictionary<string, object>(connectionInformation.Properties);
+                ((IDictionary<string, object>)payload)["conf"] = conf;
+            }
+
+            var payloadJson = JsonConvert.SerializeObject(payload);
 
             var postBatchesUrl = new Uri(new Uri(connectionInformation.BaseUrl), "batches");
             var responseMessage = await _httpClient.PostAsync(postBatchesUrl,
@@ -58,7 +70,6 @@ namespace Abacuza.Clusters.Spark
                 {
                     ConnectionId = connectionInformation.Id,
                     LocalJobId = sparkBatchId.ToString(),
-                    Created = DateTime.UtcNow,
                     Name = sparkBatchName
                 };
             }

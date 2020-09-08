@@ -39,11 +39,6 @@ namespace Abacuza.Clusters.Common
         /// </value>
         public string Name { get; set; }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        public DateTime Created { get; set; }
-
 
         #endregion Public Properties
 

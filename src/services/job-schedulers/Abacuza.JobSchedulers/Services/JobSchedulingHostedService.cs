@@ -28,19 +28,21 @@ namespace Abacuza.JobSchedulers.Services
         public async Task StartAsync(CancellationToken cancellationToken)
         {
             var jobUpdateExecutorJobDetail = await _scheduler.GetJobDetail(jobUpdateExecutorJobKey, cancellationToken);
-            if (jobUpdateExecutorJobDetail == null)
+            if (jobUpdateExecutorJobDetail != null)
             {
-                jobUpdateExecutorJobDetail = JobBuilder.Create<JobUpdateExecutor>()
-                    .WithIdentity(jobUpdateExecutorJobKey)
-                    .Build();
-                var jobUpdateExecutorTrigger = TriggerBuilder.Create()
-                    .WithIdentity(jobUpdateExecutorTriggerKey)
-                    .StartNow()
-                    .WithSimpleSchedule(s => s.WithIntervalInSeconds(5).RepeatForever())
-                    .Build();
-
-                await _scheduler.ScheduleJob(jobUpdateExecutorJobDetail, jobUpdateExecutorTrigger, cancellationToken);
+                await _scheduler.DeleteJob(jobUpdateExecutorJobKey, cancellationToken);
             }
+
+            jobUpdateExecutorJobDetail = JobBuilder.Create<JobUpdateExecutor>()
+                .WithIdentity(jobUpdateExecutorJobKey)
+                .Build();
+            var jobUpdateExecutorTrigger = TriggerBuilder.Create()
+                .WithIdentity(jobUpdateExecutorTriggerKey)
+                .StartNow()
+                .WithSimpleSchedule(s => s.WithIntervalInSeconds(8).RepeatForever().WithMisfireHandlingInstructionIgnoreMisfires())
+                .Build();
+
+            await _scheduler.ScheduleJob(jobUpdateExecutorJobDetail, jobUpdateExecutorTrigger, cancellationToken);
 
             await _scheduler.Start(cancellationToken);
         }

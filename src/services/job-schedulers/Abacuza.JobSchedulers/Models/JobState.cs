@@ -7,8 +7,8 @@ namespace Abacuza.JobSchedulers.Models
     public enum JobState
     {
         Created,
-        Queued,
-        Started,
+        Initializing,
+        Running,
         Completed,
         Cancelled,
         Failed

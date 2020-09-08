@@ -29,34 +29,26 @@ namespace Abacuza.JobSchedulers.Services
 
         public async Task<JobEntity> SubmitJobAsync(string clusterType, IEnumerable<KeyValuePair<string, object>> properties, CancellationToken cancellationToken = default)
         {
-            try
+            var submitJobUrl = new Uri(_clusterApiBaseUri, "api/jobs/submit");
+            var payloadJson = JsonConvert.SerializeObject(new
             {
-                var submitJobUrl = new Uri(_clusterApiBaseUri, "api/jobs/submit");
-                var payload = new
-                {
-                    clusterType,
-                    properties
-                };
-                var payloadJson = JsonConvert.SerializeObject(payload);
-                var responseMessage = await _httpClient.PostAsync(submitJobUrl, new StringContent(payloadJson, Encoding.UTF8, "application/json"));
-                responseMessage.EnsureSuccessStatusCode();
-                var jsonObj = JObject.Parse(await responseMessage.Content.ReadAsStringAsync());
-                var jobEntity = new JobEntity
-                {
-                    ConnectionId = jsonObj["connectionId"]?.Value<Guid>(),
-                    LocalJobId = jsonObj["localJobId"]?.Value<string>(),
-                    Name = jsonObj["name"]?.Value<string>(),
-                    Created = jsonObj["created"]?.Value<DateTime>(),
-                    State = JobState.Created
-                };
+                clusterType,
+                properties
+            });
 
-                return jobEntity;
-            }
-            catch (Exception ex)
+            var responseMessage = await _httpClient.PostAsync(submitJobUrl, new StringContent(payloadJson, Encoding.UTF8, "application/json"));
+            responseMessage.EnsureSuccessStatusCode();
+            var jsonObj = JObject.Parse(await responseMessage.Content.ReadAsStringAsync());
+            var jobEntity = new JobEntity
             {
-                throw;
-            }
+                ConnectionId = Guid.Parse(jsonObj["connectionId"]?.Value<string>()),
+                LocalJobId = jsonObj["localJobId"]?.Value<string>(),
+                Name = jsonObj["name"]?.Value<string>(),
+                Created = DateTime.UtcNow,
+                State = JobState.Created
+            };
 
+            return jobEntity;
         }
     }
 }

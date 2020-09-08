@@ -1,5 +1,6 @@
 ﻿using Abacuza.Clusters.Common;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -35,9 +36,9 @@ namespace Abacuza.Clusters.Spark
 
         public void DeserializeConfiguration(string serializedConfiguration)
         {
-            dynamic deserializedObject = JsonConvert.DeserializeObject<dynamic>(serializedConfiguration);
-            this.BaseUrl = (string)deserializedObject.baseUrl;
-            var props = (Dictionary<string, object>)deserializedObject.properties;
+            var configurationJObject = JObject.Parse(serializedConfiguration);
+            this.BaseUrl = configurationJObject["baseUrl"].Value<string>();
+            var props = configurationJObject["properties"].ToObject<Dictionary<string, object>>();
             _properties.Clear();
             if (props != null)
             {

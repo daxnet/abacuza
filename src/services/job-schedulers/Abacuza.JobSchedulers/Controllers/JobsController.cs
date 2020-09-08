@@ -21,10 +21,12 @@ namespace Abacuza.JobSchedulers.Controllers
     {
         private const string JobGroupName = "job-execution";
         private readonly IScheduler _quartzScheduler;
+        private readonly IDataAccessObject _dao;
 
-        public JobsController(IScheduler quartzScheduler)
+        public JobsController(IScheduler quartzScheduler, IDataAccessObject dao)
         {
             _quartzScheduler = quartzScheduler;
+            _dao = dao;
         }
         
         [HttpPost("submit")]
@@ -38,7 +40,7 @@ namespace Abacuza.JobSchedulers.Controllers
                 return BadRequest($"The type of the job is not specified.");
             }
 
-            var jobName = $"job-submit-{DateTime.UtcNow:yyyyMMddHHmmss}";
+            var jobName = $"job-submit-{DateTime.UtcNow:yyyyMMddHHmmss.fff}";
 
 
             var jobDetail = JobBuilder.Create<JobSubmitExecutor>()
@@ -57,7 +59,12 @@ namespace Abacuza.JobSchedulers.Controllers
                 .Build();
 
             await _quartzScheduler.ScheduleJob(jobDetail, jobTrigger);
-            return Ok();
+            return Ok($"The job has been submitted successfully, scheduled job submission ID: {jobName}.");
         }
+
+        [HttpGet]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(JobEntity))]
+        public async Task<IActionResult> GetAllJobsAsync()
+            => Ok(await _dao.GetAllAsync<JobEntity>());
     }
 }

@@ -11,6 +11,7 @@ namespace Abacuza.JobSchedulers.Models
     public class JobUpdateExecutor : IJob
     {
         private readonly IDataAccessObject _dao;
+        private int cnt = 0;
 
         public JobUpdateExecutor(IDataAccessObject dao)
         {
@@ -19,6 +20,7 @@ namespace Abacuza.JobSchedulers.Models
 
         public Task Execute(IJobExecutionContext context)
         {
+            cnt++;
             return Task.CompletedTask;
         }
     }

@@ -27,9 +27,6 @@ namespace Abacuza.JobSchedulers.Models
 
         public DateTime? Created { get; set; }
 
-
-        // public Dictionary<string, object> Parameters { get; set; } = new Dictionary<string, object>();
-
         public JobState State { get; set; }
     }
 }
