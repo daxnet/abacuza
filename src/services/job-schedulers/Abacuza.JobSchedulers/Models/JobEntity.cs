@@ -28,5 +28,7 @@ namespace Abacuza.JobSchedulers.Models
         public DateTime? Created { get; set; }
 
         public JobState State { get; set; }
+
+        public JobTraceability? Traceability { get; set; }
     }
 }

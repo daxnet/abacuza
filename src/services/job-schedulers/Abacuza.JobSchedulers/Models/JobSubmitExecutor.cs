@@ -42,7 +42,7 @@ namespace Abacuza.JobSchedulers.Models
 
             if (!context.MergedJobDataMap.ContainsKey("clusterType"))
             {
-                _logger.LogError($"Failed to start the job, the clusterType is not specified in the job data. Reference ID: {jobName}");
+                _logger.LogError($"Failed to start the job, the clusterType is not specified in the job data. Execution ID: {jobName}");
                 return;
             }
 
@@ -59,19 +59,20 @@ namespace Abacuza.JobSchedulers.Models
                     properties = new Dictionary<string, object>();
                 }
 
-                _logger.LogInformation($"Submitting job, Reference ID: {jobName}, Cluster Type: {clusterType}");
+                _logger.LogInformation($"Submitting job, Execution ID: {jobName}, Cluster Type: {clusterType}");
 
                 var jobEntity = await _clusterService.SubmitJobAsync(clusterType, properties, context.CancellationToken);
 
                 _logger.LogInformation($"Job {jobName} has been successfully submitted to the cluster whose type is {clusterType}");
 
+                jobEntity.Traceability = JobTraceability.Tracked;
                 await _dao.AddAsync(jobEntity);
 
                 _logger.LogInformation($"Job {jobName} has been saved successfully, Tracking ID: {jobEntity.Id}");
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, $"Failed to submit the job to the cluster, Reference ID: {jobName}");
+                _logger.LogError(ex, $"Failed to submit the job to the cluster, Execution ID: {jobName}");
             }
         }
     }

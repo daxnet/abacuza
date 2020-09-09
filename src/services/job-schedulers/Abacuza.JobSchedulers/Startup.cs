@@ -7,6 +7,7 @@ using System.Reflection;
 using System.Threading.Tasks;
 using Abacuza.Common;
 using Abacuza.Common.DataAccess;
+using Abacuza.DataAccess.DistributedCached;
 using Abacuza.DataAccess.Mongo;
 using Abacuza.JobSchedulers.Models;
 using Abacuza.JobSchedulers.Services;
@@ -14,6 +15,7 @@ using McMaster.NETCore.Plugins;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -48,6 +50,11 @@ namespace Abacuza.JobSchedulers
                 };
             });
 
+            services.AddStackExchangeRedisCache(options =>
+            {
+                options.Configuration = "40.121.39.71:443";
+            });
+
             services.AddSwaggerGen(c =>
             {
                 // Set the comments path for the Swagger JSON and UI.
@@ -62,7 +69,9 @@ namespace Abacuza.JobSchedulers
             var mongoHost = Configuration["mongo:host"];
             var mongoPort = int.Parse(Configuration["mongo:port"]);
             var mongoDatabase = Configuration["mongo:database"];
-            services.AddTransient<IDataAccessObject>(sp => new MongoDataAccessObject(mongoDatabase, mongoHost, mongoPort));
+            var wrapperDao = new MongoDataAccessObject(mongoDatabase, mongoHost, mongoPort);
+
+            services.AddTransient<IDataAccessObject>(sp => new DistributedCachedDataAccessObject(sp.GetService<IDistributedCache>(), wrapperDao));
 
             services.AddHttpClient<ClusterApiService>(config =>
             {
