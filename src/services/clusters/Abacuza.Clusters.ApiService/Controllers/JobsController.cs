@@ -68,5 +68,11 @@ namespace Abacuza.Clusters.ApiService.Controllers
 
             return BadRequest($"There is no available cluster whose type is '{request.ClusterType}' that can serve the job execution request.");
         }
+
+        [HttpPost("statuses")]
+        public async Task<IActionResult> GetJobStatusesAsync([FromBody] GetJobStatusesRequest request)
+        {
+            return Ok();
+        }
     }
 }

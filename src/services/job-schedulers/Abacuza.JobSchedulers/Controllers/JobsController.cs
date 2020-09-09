@@ -63,8 +63,22 @@ namespace Abacuza.JobSchedulers.Controllers
         }
 
         [HttpGet]
-        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(JobEntity))]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(JobEntity[]))]
         public async Task<IActionResult> GetAllJobsAsync()
-            => Ok(await _dao.GetAllAsync<JobEntity>());
+            => Ok(await _dao.GetAllAsync<JobEntity>()); // TODO: Pagination should be supported.
+
+        [HttpGet("{id}")]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(JobEntity))]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<IActionResult> GetJobByIdAsync(Guid id)
+        {
+            var jobEntity = await _dao.GetByIdAsync<JobEntity>(id);
+            if (jobEntity == null)
+            {
+                return NotFound($"The job {id} doesn't exist.");
+            }
+
+            return Ok(jobEntity);
+        }
     }
 }

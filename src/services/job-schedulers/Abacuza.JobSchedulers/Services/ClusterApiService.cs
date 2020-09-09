@@ -50,5 +50,11 @@ namespace Abacuza.JobSchedulers.Services
 
             return jobEntity;
         }
+
+        public async Task GetJobStatusesAsync(string payloadJson)
+        {
+            var url = new Uri(_clusterApiBaseUri, "api/jobs/statuses");
+            var responseMessage = await _httpClient.PostAsync(url, new StringContent(payloadJson, Encoding.UTF8, "application/json"));
+        }
     }
 }
