@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Abacuza.Clusters.ApiService.Models
 {
-    public class GetJobStatusesRequest : ItemCollection<GetJobStatusesRequestItem>
+    public class GetJobStatusesResponse : ItemCollection<GetJobStatusesResponseItem>
     {
     }
 }

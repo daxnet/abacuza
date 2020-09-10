@@ -39,7 +39,7 @@ namespace Abacuza.JobSchedulers.Services
             var jobUpdateExecutorTrigger = TriggerBuilder.Create()
                 .WithIdentity(jobUpdateExecutorTriggerKey)
                 .StartNow()
-                .WithSimpleSchedule(s => s.WithIntervalInSeconds(8).RepeatForever().WithMisfireHandlingInstructionIgnoreMisfires())
+                .WithSimpleSchedule(s => s.WithIntervalInSeconds(15).RepeatForever().WithMisfireHandlingInstructionIgnoreMisfires())
                 .Build();
 
             await _scheduler.ScheduleJob(jobUpdateExecutorJobDetail, jobUpdateExecutorTrigger, cancellationToken);

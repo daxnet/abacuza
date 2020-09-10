@@ -1,6 +1,8 @@
 {
     "file":"local:/home/ubuntu/spark-test/SparkStart/microsoft-spark-2.4.x-0.12.1.jar",
     "className":"org.apache.spark.deploy.dotnet.DotnetRunner",
-    "name": "test-session",
-    "args":["dotnet", "/home/ubuntu/spark-test/SparkStart/SparkStart.dll"]
+    "args":["dotnet", "/home/ubuntu/spark-test/SparkStart/SparkStart.dll"],
+    "conf": {
+      "livy.server.session.state-retain.sec": "1200s"
+    }
 }

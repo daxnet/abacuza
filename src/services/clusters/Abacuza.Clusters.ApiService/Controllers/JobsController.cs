@@ -29,7 +29,7 @@ namespace Abacuza.Clusters.ApiService.Controllers
         }
 
         [HttpPost("submit")]
-        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(Job))]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ClusterJob))]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> ExecuteJobAsync([FromBody] ExecuteJobRequest request)
@@ -56,7 +56,7 @@ namespace Abacuza.Clusters.ApiService.Controllers
                     var job = await cluster.SubmitJobAsync(connection, request.Properties);
                     return Ok(job);
                 }
-                catch (JobException je)
+                catch (ClusterJobException je)
                 {
                     return BadRequest(je.ToString());
                 }
@@ -72,6 +72,12 @@ namespace Abacuza.Clusters.ApiService.Controllers
         [HttpPost("statuses")]
         public async Task<IActionResult> GetJobStatusesAsync([FromBody] GetJobStatusesRequest request)
         {
+            foreach (var requestItem in request)
+            {
+                var clusterConnectionEntity = await _dao.GetByIdAsync<ClusterConnectionEntity>(requestItem.ConnectionId);
+
+            }
+
             return Ok();
         }
     }

@@ -8,8 +8,19 @@ namespace Abacuza.Clusters.Common
     /// Represents a data processing and transforming job that is running
     /// on a certain data processing cluster.
     /// </summary>
-    public class Job
+    public class ClusterJob
     {
+        public ClusterJob()
+        {
+
+        }
+
+        public ClusterJob(Guid connectionId, string localJobId)
+        {
+            ConnectionId = connectionId;
+            LocalJobId = localJobId;
+        }
+
         #region Public Properties
 
         /// <summary>
@@ -39,6 +50,10 @@ namespace Abacuza.Clusters.Common
         /// </value>
         public string Name { get; set; }
 
+        public ClusterJobState State { get; set; }
+
+        public List<string> Logs { get; set; } = new List<string>();
+
 
         #endregion Public Properties
 
@@ -46,7 +61,7 @@ namespace Abacuza.Clusters.Common
 
         public override bool Equals(object obj)
         {
-            return obj is Job job &&
+            return obj is ClusterJob job &&
                    ConnectionId.Equals(job.ConnectionId) &&
                    LocalJobId == job.LocalJobId;
         }

@@ -5,17 +5,17 @@ using System.Text;
 
 namespace Abacuza.Clusters.Common
 {
-    public class JobException : AbacuzaException
+    public class ClusterJobException : AbacuzaException
     {
-        public JobException()
+        public ClusterJobException()
             : base()
         { }
 
-        public JobException(string message)
+        public ClusterJobException(string message)
             : base(message)
         { }
 
-        public JobException(string message, Exception innerException)
+        public ClusterJobException(string message, Exception innerException)
             : base(message, innerException)
         { }
     }

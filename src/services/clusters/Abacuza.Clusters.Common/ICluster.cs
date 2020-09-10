@@ -69,7 +69,16 @@ namespace Abacuza.Clusters.Common
         /// <param name="properties">The job properties.</param>
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns></returns>
-        Task<Job> SubmitJobAsync(IClusterConnection connection, IEnumerable<KeyValuePair<string, object>> properties, CancellationToken cancellationToken = default);
+        Task<ClusterJob> SubmitJobAsync(IClusterConnection connection, IEnumerable<KeyValuePair<string, object>> properties, CancellationToken cancellationToken = default);
+
+        /// <summary>
+        /// Retrieves the job information by the specified cluster connection and the ID of the job on that cluster.
+        /// </summary>
+        /// <param name="connection"></param>
+        /// <param name="localJobId"></param>
+        /// <param name="cancellation"></param>
+        /// <returns></returns>
+        Task<ClusterJob> GetJobAsync(IClusterConnection connection, string localJobId, CancellationToken cancellation = default);
 
         #endregion Public Methods
     }

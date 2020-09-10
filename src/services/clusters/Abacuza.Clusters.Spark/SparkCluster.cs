@@ -36,7 +36,7 @@ namespace Abacuza.Clusters.Spark
             }
         }
 
-        public override async Task<Job> SubmitJobAsync(IClusterConnection connection, IEnumerable<KeyValuePair<string, object>> properties, CancellationToken cancellationToken = default)
+        public override async Task<ClusterJob> SubmitJobAsync(IClusterConnection connection, IEnumerable<KeyValuePair<string, object>> properties, CancellationToken cancellationToken = default)
         {
             var connectionInformation = connection.As<SparkClusterConnection>();
 
@@ -54,7 +54,7 @@ namespace Abacuza.Clusters.Spark
 
             var payloadJson = JsonConvert.SerializeObject(payload);
 
-            var postBatchesUrl = new Uri(new Uri(connectionInformation.BaseUrl), "batches");
+            var postBatchesUrl = BuildEndpointUrl(connectionInformation.BaseUrl, "batches");
             var responseMessage = await _httpClient.PostAsync(postBatchesUrl,
                 new StringContent(payloadJson, Encoding.UTF8, "application/json"),
                 cancellationToken);
@@ -66,19 +66,73 @@ namespace Abacuza.Clusters.Spark
                 var sparkBatchId = responseObj["id"].Value<int>();
                 var sparkBatchName = responseObj["name"]?.Value<string>();
               
-                return new Job
+                return new ClusterJob
                 {
                     ConnectionId = connectionInformation.Id,
                     LocalJobId = sparkBatchId.ToString(),
-                    Name = sparkBatchName
+                    Name = sparkBatchName,
+                    State = ClusterJobState.Created
                 };
             }
             else
             {
                 var errorMessage = await responseMessage.Content.ReadAsStringAsync();
-                throw new JobException($"Failed to create the job. Details: {errorMessage}");
+                throw new ClusterJobException($"Failed to create the job. Details: {errorMessage}");
             }
         }
+
+        public override async Task<ClusterJob> GetJobAsync(IClusterConnection connection, string localJobId, CancellationToken cancellationToken = default)
+        {
+            HttpResponseMessage responseMessage = null;
+            try
+            {
+                var connectionInformation = connection.As<SparkClusterConnection>();
+                var retrieveBatchUrl = BuildEndpointUrl(connectionInformation.BaseUrl, $"batches/{localJobId}");
+                responseMessage = await _httpClient.GetAsync(retrieveBatchUrl, cancellationToken);
+                responseMessage.EnsureSuccessStatusCode();
+                var responseJson = await responseMessage.Content.ReadAsStringAsync();
+                var responseObj = JObject.Parse(responseJson);
+                var jobName = responseObj["name"]?.Value<string>();
+                var jobState = ConvertToJobState(responseObj["state"]?.Value<string>());
+
+                var retrieveBatchLogUrl = BuildEndpointUrl(connectionInformation.BaseUrl, $"batches/{localJobId}/log");
+                responseMessage = await _httpClient.GetAsync(retrieveBatchLogUrl);
+                responseMessage.EnsureSuccessStatusCode();
+                var logResponseJson = await responseMessage.Content.ReadAsStringAsync();
+                var logResponseObj = JObject.Parse(logResponseJson);
+                var jobLogs = logResponseObj["log"]?.Value<string[]>();
+
+                return new ClusterJob(connection.Id, localJobId)
+                {
+                    Name = jobName,
+                    State = jobState,
+                    Logs = jobLogs.ToList()
+                };
+            }
+            catch (HttpRequestException ex) when (responseMessage?.StatusCode == HttpStatusCode.NotFound)
+            {
+                throw new ClusterJobException($"The job {localJobId} doesn't exist on cluster {connection.Id}.", ex);
+            }
+            catch (Exception ex)
+            {
+                throw new ClusterJobException(ex.Message, ex);
+            }
+        }
+
+        private static Uri BuildEndpointUrl(string baseUrl, string relativeUrl)
+            => new Uri(new Uri(baseUrl), relativeUrl);
+
+        private static ClusterJobState ConvertToJobState(string jobStateValue) => jobStateValue?.ToLower() switch
+        {
+            "not_started" => ClusterJobState.Created,
+            "starting" => ClusterJobState.Initializing,
+            "busy" => ClusterJobState.Running,
+            "error" => ClusterJobState.Failed,
+            "dead" => ClusterJobState.Failed,
+            "killed" => ClusterJobState.Cancelled,
+            "success" => ClusterJobState.Completed,
+            _ => ClusterJobState.Unknown
+        };
 
         protected override void Dispose(bool disposing)
         {

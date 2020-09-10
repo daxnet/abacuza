@@ -11,6 +11,7 @@ namespace Abacuza.JobSchedulers.Models
         Running,
         Completed,
         Cancelled,
-        Failed
+        Failed,
+        Unknown
     }
 }
