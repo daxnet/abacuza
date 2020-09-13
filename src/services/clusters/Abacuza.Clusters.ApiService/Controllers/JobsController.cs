@@ -34,11 +34,16 @@ namespace Abacuza.Clusters.ApiService.Controllers
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> ExecuteJobAsync([FromBody] ExecuteJobRequest request)
         {
+            var clusterImplementation = _clusterImplementations.FirstOrDefault(ci => ci.Type == request.ClusterType);
+            if (clusterImplementation == null)
+            {
+                return NotFound($"The cluster whose type is {request.ClusterType} does not exist.");
+            }
+
             var clusterConnectionEntities = await _dao.FindBySpecificationAsync<ClusterConnectionEntity>(ce => ce.ClusterType == request.ClusterType);
             var availableClusters = new List<(ICluster, IClusterConnection)>();
             foreach (var clusterConnectionEntity in clusterConnectionEntities)
             {
-                var clusterImplementation = _clusterImplementations.FirstOrDefault(ci => ci.Type == clusterConnectionEntity.ClusterType);
                 var clusterConnection = clusterConnectionEntity.Create(clusterImplementation.ConnectionType);
                 var state = await clusterImplementation.GetStateAsync(clusterConnection);
                 if (state == ClusterState.Online)
@@ -72,13 +77,69 @@ namespace Abacuza.Clusters.ApiService.Controllers
         [HttpPost("statuses")]
         public async Task<IActionResult> GetJobStatusesAsync([FromBody] GetJobStatusesRequest request)
         {
+            var response = new GetJobStatusesResponse();
+
             foreach (var requestItem in request)
             {
                 var clusterConnectionEntity = await _dao.GetByIdAsync<ClusterConnectionEntity>(requestItem.ConnectionId);
+                if (clusterConnectionEntity == null)
+                {
+                    response.AddRange(
+                        requestItem.LocalJobIdentifiers.Select(jobid =>
+                            new GetJobStatusesResponseItem
+                            {
+                                ConnectionId = requestItem.ConnectionId,
+                                LocalJobId = jobid,
+                                Succeeded = false,
+                                ErrorMessage = $"The connection {requestItem.ConnectionId} does not exist.",
+                                State = ClusterJobState.Unknown
+                            }));
+                    continue;
+                }
 
+                var cluster = _clusterImplementations.FirstOrDefault(ci => ci.Type == clusterConnectionEntity.ClusterType);
+                if (cluster == null)
+                {
+                    response.AddRange(
+                        requestItem.LocalJobIdentifiers.Select(jobid =>
+                            new GetJobStatusesResponseItem
+                            {
+                                ConnectionId = requestItem.ConnectionId,
+                                LocalJobId = jobid,
+                                Succeeded = false,
+                                ErrorMessage = $"The cluster whose type is {clusterConnectionEntity.ClusterType} does not exist.",
+                                State = ClusterJobState.Unknown
+                            }));
+                    continue;
+                }
+
+                var connection = clusterConnectionEntity.Create(cluster.ConnectionType);
+                foreach (var localJobId in requestItem.LocalJobIdentifiers)
+                {
+                    var responseItem = new GetJobStatusesResponseItem
+                    {
+                        ConnectionId = requestItem.ConnectionId,
+                        LocalJobId = localJobId
+                    };
+
+                    try
+                    {
+                        var localJob = await cluster.GetJobAsync(connection, localJobId);
+                        responseItem.Succeeded = true;
+                        responseItem.State = localJob.State;
+                        responseItem.Logs = localJob.Logs;
+                    }
+                    catch (Exception ex)
+                    {
+                        responseItem.Succeeded = false;
+                        responseItem.ErrorMessage = ex.ToString();
+                    }
+
+                    response.Add(responseItem);
+                }
             }
 
-            return Ok();
+            return Ok(response);
         }
     }
 }

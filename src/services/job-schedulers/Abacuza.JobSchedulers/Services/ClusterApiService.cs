@@ -12,7 +12,7 @@ using System.Threading.Tasks;
 
 namespace Abacuza.JobSchedulers.Services
 {
-    public class ClusterApiService
+    public sealed class ClusterApiService
     {
         private const string ClusterServiceUrlConfigurationKey = "CLUSTER_SERVICE_URL";
         private readonly HttpClient _httpClient;
@@ -45,16 +45,45 @@ namespace Abacuza.JobSchedulers.Services
                 LocalJobId = jsonObj["localJobId"]?.Value<string>(),
                 Name = jsonObj["name"]?.Value<string>(),
                 Created = DateTime.UtcNow,
-                State = JobState.Created
+                State = JobState.Created,
+                Traceability = JobTraceability.Tracked,
+                TracingFailures = 0
             };
 
             return jobEntity;
         }
 
-        public async Task GetJobStatusesAsync(string payloadJson)
+        public async Task<IEnumerable<JobStatusEntity>> GetJobStatusesAsync(IEnumerable<KeyValuePair<Guid?, IEnumerable<string>>> jobIdentifiers, CancellationToken cancellationToken = default)
         {
             var url = new Uri(_clusterApiBaseUri, "api/jobs/statuses");
-            var responseMessage = await _httpClient.PostAsync(url, new StringContent(payloadJson, Encoding.UTF8, "application/json"));
+            var payloadJson = JsonConvert.SerializeObject(jobIdentifiers.Select(kvp =>
+                new 
+                {
+                    connectionId = kvp.Key,
+                    localJobIdentifiers = kvp.Value
+                }));
+
+            var responseMessage = await _httpClient.PostAsync(url, 
+                new StringContent(payloadJson, Encoding.UTF8, "application/json"),
+                cancellationToken);
+
+            responseMessage.EnsureSuccessStatusCode();
+            var responseJson = await responseMessage.Content.ReadAsStringAsync();
+            var response = JArray.Parse(responseJson);
+            var jobStatusEntities = new List<JobStatusEntity>();
+            foreach (var item in response)
+            {
+                jobStatusEntities.Add(new JobStatusEntity
+                {
+                    ConnectionId = Guid.Parse(item["connectionId"].Value<string>()),
+                    LocalJobId = item["localJobId"].Value<string>(),
+                    State = (JobState)item["state"].Value<int>(),
+                    Logs = item["logs"].ToObject<List<string>>(),
+                    Succeeded = item["succeeded"].Value<bool>()
+                });
+            }
+
+            return jobStatusEntities;
         }
     }
 }

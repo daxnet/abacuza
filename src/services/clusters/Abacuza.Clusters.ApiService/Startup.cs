@@ -7,11 +7,13 @@ using System.Threading.Tasks;
 using Abacuza.Clusters.ApiService.Models;
 using Abacuza.Clusters.Common;
 using Abacuza.Common.DataAccess;
+using Abacuza.DataAccess.DistributedCached;
 using Abacuza.DataAccess.Mongo;
 using McMaster.NETCore.Plugins;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -44,25 +46,32 @@ namespace Abacuza.Clusters.ApiService
                 }
             });
 
+            services.AddStackExchangeRedisCache(options =>
+            {
+                options.Configuration = "40.121.39.71:443";
+            });
+
             var clusterImplementations = DiscoverClusterImplementations();
             services.AddSingleton(clusterImplementations);
 
             var mongoHost = Configuration["mongo:host"];
             var mongoPort = int.Parse(Configuration["mongo:port"]);
             var mongoDatabase = Configuration["mongo:database"];
-            services.AddTransient<IDataAccessObject>(sp => new MongoDataAccessObject(mongoDatabase, mongoHost, mongoPort));
+            var wrapperDao = new MongoDataAccessObject(mongoDatabase, mongoHost, mongoPort);
+
+            services.AddTransient<IDataAccessObject>(sp => new DistributedCachedDataAccessObject(sp.GetService<IDistributedCache>(), wrapperDao));
 
             services.AddControllers(options =>
             {
                 options.SuppressAsyncSuffixInActionNames = false;
             })
-            .AddNewtonsoftJson(/*options =>
+            .AddNewtonsoftJson(options =>
             {
                 options.SerializerSettings.ContractResolver = new DefaultContractResolver
                 {
                     NamingStrategy = new CamelCaseNamingStrategy()
                 };
-            }*/);
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

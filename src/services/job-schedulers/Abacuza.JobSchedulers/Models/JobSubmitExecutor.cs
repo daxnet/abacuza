@@ -21,7 +21,7 @@ using System.Threading.Tasks;
 
 namespace Abacuza.JobSchedulers.Models
 {
-    public class JobSubmitExecutor : IJob
+    public sealed class JobSubmitExecutor : IJob
     {
         private readonly ClusterApiService _clusterService;
         private readonly IDataAccessObject _dao;
@@ -65,7 +65,7 @@ namespace Abacuza.JobSchedulers.Models
 
                 _logger.LogInformation($"Job {jobName} has been successfully submitted to the cluster whose type is {clusterType}");
 
-                jobEntity.Traceability = JobTraceability.Tracked;
+                jobEntity.SubmissionName = jobName;
                 await _dao.AddAsync(jobEntity);
 
                 _logger.LogInformation($"Job {jobName} has been saved successfully, Tracking ID: {jobEntity.Id}");

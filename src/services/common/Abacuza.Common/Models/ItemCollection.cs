@@ -10,6 +10,11 @@ namespace Abacuza.Common.Models
     {
         protected readonly List<T> _items = new List<T>();
 
+        public void AddRange(IEnumerable<T> items)
+        {
+            _items.AddRange(items);
+        }
+
         public int Count => _items.Count;
 
         public bool IsReadOnly => false;

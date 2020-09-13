@@ -100,7 +100,7 @@ namespace Abacuza.Clusters.Spark
                 responseMessage.EnsureSuccessStatusCode();
                 var logResponseJson = await responseMessage.Content.ReadAsStringAsync();
                 var logResponseObj = JObject.Parse(logResponseJson);
-                var jobLogs = logResponseObj["log"]?.Value<string[]>();
+                var jobLogs = logResponseObj["log"]?.ToObject<string[]>();
 
                 return new ClusterJob(connection.Id, localJobId)
                 {

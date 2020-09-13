@@ -34,5 +34,11 @@ namespace Abacuza.Clusters.ApiService.Models
         /// this doesn't reflect the job status itself.
         /// </summary>
         public bool Succeeded { get; set; }
+
+        /// <summary>
+        /// Gets or sets the error message whether indicates the error
+        /// when retrieving the job status.
+        /// </summary>
+        public string ErrorMessage { get; set; }
     }
 }

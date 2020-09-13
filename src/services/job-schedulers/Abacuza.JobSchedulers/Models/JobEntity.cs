@@ -27,8 +27,19 @@ namespace Abacuza.JobSchedulers.Models
 
         public DateTime? Created { get; set; }
 
+        /// <summary>
+        /// Gets or sets the name of the job submission, this is usually
+        /// the name of the job executor that submits the job.
+        /// </summary>
+        public string SubmissionName { get; set; }
+
         public JobState State { get; set; }
 
         public JobTraceability? Traceability { get; set; }
+
+
+        public int? TracingFailures { get; set; }
+
+        public List<string> Logs { get; set; } = new List<string>();
     }
 }

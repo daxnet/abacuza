@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 namespace Abacuza.JobSchedulers.Models
 {
     [DisallowConcurrentExecution]
-    public class JobUpdateExecutor : IJob
+    public sealed class JobUpdateExecutor : IJob
     {
         private readonly IDataAccessObject _dao;
         private readonly ILogger<JobUpdateExecutor> _logger;
@@ -26,17 +26,55 @@ namespace Abacuza.JobSchedulers.Models
 
         public async Task Execute(IJobExecutionContext context)
         {
-            var jobEntities = await _dao.FindBySpecificationAsync<JobEntity>(je => je.State < JobState.Completed);
-            var getStatusRequest = from je in jobEntities
-                                   group je by je.ConnectionId into getStatusGroup
-                                   select new
-                                   {
-                                       connectionId = getStatusGroup.Key,
-                                       localJobIdentifiers = getStatusGroup.Select(je => je.LocalJobId)
-                                   };
+            try
+            {
+                var jobEntities = await _dao.FindBySpecificationAsync<JobEntity>(je =>
+                    je.State < JobState.Completed &&
+                    je.Traceability == JobTraceability.Tracked);
 
-            var json = JsonConvert.SerializeObject(getStatusRequest);
-            await _clusterService.GetJobStatusesAsync(json);
+                if (jobEntities.Count() == 0)
+                {
+                    return;
+                }
+
+                var getStatusRequest = from je in jobEntities
+                                       group je by je.ConnectionId into getStatusGroup
+                                       select new KeyValuePair<Guid?, IEnumerable<string>>
+                                       (
+                                           getStatusGroup.Key,
+                                           getStatusGroup.Select(je => je.LocalJobId)
+                                       );
+
+                var jobStatusEntities = await _clusterService.GetJobStatusesAsync(getStatusRequest, context.CancellationToken);
+                foreach (var jobStatusEntity in jobStatusEntities)
+                {
+                    var jobEntity = jobEntities.FirstOrDefault(x => x.ConnectionId == jobStatusEntity.ConnectionId &&
+                        x.LocalJobId == jobStatusEntity.LocalJobId);
+                    if (jobEntity != null)
+                    {
+                        if (jobStatusEntity.Succeeded)
+                        {
+                            jobEntity.State = jobStatusEntity.State;
+                            jobEntity.Logs = jobStatusEntity.Logs;
+                        }
+                        else
+                        {
+                            jobEntity.TracingFailures = jobEntity.TracingFailures.HasValue ? jobEntity.TracingFailures++ : 1;
+
+                            if (jobEntity.TracingFailures > 5) // TODO: Need a better strategy of handling the tracing failures
+                            {
+                                jobEntity.Traceability = JobTraceability.Untracked;
+                            }
+                        }
+
+                        await _dao.UpdateByIdAsync(jobEntity.Id, jobEntity);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.Message, ex);
+            }
         }
     }
 }
