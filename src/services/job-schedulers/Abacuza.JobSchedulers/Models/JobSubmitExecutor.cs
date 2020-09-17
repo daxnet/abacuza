@@ -68,7 +68,7 @@ namespace Abacuza.JobSchedulers.Models
                 jobEntity.SubmissionName = jobName;
                 await _dao.AddAsync(jobEntity);
 
-                _logger.LogInformation($"Job {jobName} has been saved successfully, Tracking ID: {jobEntity.Id}");
+                _logger.LogInformation($"Job {jobName} has been saved successfully, Job ID: {jobEntity.Id}");
             }
             catch (Exception ex)
             {

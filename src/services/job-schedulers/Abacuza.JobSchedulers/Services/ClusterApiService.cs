@@ -12,6 +12,10 @@ using System.Threading.Tasks;
 
 namespace Abacuza.JobSchedulers.Services
 {
+    /// <summary>
+    /// Represents the service client that communicates with the cluster service and
+    /// performs clusters, jobs and cluster connections tasks.
+    /// </summary>
     public sealed class ClusterApiService
     {
         private const string ClusterServiceUrlConfigurationKey = "CLUSTER_SERVICE_URL";
@@ -19,6 +23,11 @@ namespace Abacuza.JobSchedulers.Services
         private readonly IConfiguration _configuration;
         private readonly Uri _clusterApiBaseUri;
 
+        /// <summary>
+        /// Initializes a new instance of the <c>ClusterApiService</c> class.
+        /// </summary>
+        /// <param name="httpClient">The http client instance for communicating with the cluster service.</param>
+        /// <param name="configuration">The instance that holds the configuration information.</param>
         public ClusterApiService(HttpClient httpClient, IConfiguration configuration)
         {
             _httpClient = httpClient;
@@ -44,8 +53,8 @@ namespace Abacuza.JobSchedulers.Services
                 ConnectionId = Guid.Parse(jsonObj["connectionId"]?.Value<string>()),
                 LocalJobId = jsonObj["localJobId"]?.Value<string>(),
                 Name = jsonObj["name"]?.Value<string>(),
-                Created = DateTime.UtcNow,
                 State = JobState.Created,
+                CreatedDate = DateTime.UtcNow,
                 Traceability = JobTraceability.Tracked,
                 TracingFailures = 0
             };

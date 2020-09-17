@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System;
 using Abacuza.Common;
 using Abacuza.Common.DataAccess;
+using Newtonsoft.Json;
 
 namespace Abacuza.JobSchedulers.Models
 {
@@ -25,7 +26,13 @@ namespace Abacuza.JobSchedulers.Models
 
         public string Name { get; set; }
 
-        public DateTime? Created { get; set; }
+        public DateTime? CreatedDate { get; set; }
+
+        public DateTime? CompletedDate { get; set; }
+
+        public DateTime? FailedDate { get; set; }
+
+        public DateTime? CancelledDate { get; set; }
 
         /// <summary>
         /// Gets or sets the name of the job submission, this is usually

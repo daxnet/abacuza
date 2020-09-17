@@ -13,6 +13,7 @@ namespace Abacuza.DataAccess.Mongo
 {
     public sealed class MongoDataAccessObject : IDataAccessObject
     {
+        private static readonly Dictionary<Type, string> _normalizedCollectionNames = new Dictionary<Type, string>();
         private readonly IMongoClient _client;
         private readonly IMongoDatabase _database;
 
@@ -75,19 +76,31 @@ namespace Abacuza.DataAccess.Mongo
 
         private string NormalizedCollectionName<TObject>() where TObject : IEntity
         {
-            if (typeof(TObject).IsDefined(typeof(StorageModelAttribute), false))
+            if (_normalizedCollectionNames.ContainsKey(typeof(TObject)))
             {
-                var storageModelAttribute = typeof(TObject).GetCustomAttribute<StorageModelAttribute>();
-                return storageModelAttribute.TableName;
+                return _normalizedCollectionNames[typeof(TObject)];
             }
             else
             {
-                if (typeof(TObject).IsInterface && typeof(TObject).Name.StartsWith("I"))
+                string name;
+                if (typeof(TObject).IsDefined(typeof(StorageModelAttribute), false))
                 {
-                    return typeof(TObject).Name.Substring(1).Pluralize();
+                    var storageModelAttribute = typeof(TObject).GetCustomAttribute<StorageModelAttribute>();
+                    name = storageModelAttribute.TableName;
+                }
+                else
+                {
+                    if (typeof(TObject).IsInterface && typeof(TObject).Name.StartsWith("I"))
+                    {
+                        return typeof(TObject).Name.Substring(1).Pluralize();
+                    }
+
+                    name = typeof(TObject).Name.Pluralize();
                 }
 
-                return typeof(TObject).Name.Pluralize();
+                _normalizedCollectionNames[typeof(TObject)] = name;
+
+                return name;
             }
         }
     }

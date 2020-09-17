@@ -56,6 +56,18 @@ namespace Abacuza.JobSchedulers.Models
                         {
                             jobEntity.State = jobStatusEntity.State;
                             jobEntity.Logs = jobStatusEntity.Logs;
+                            switch (jobStatusEntity.State)
+                            {
+                                case JobState.Cancelled:
+                                    jobEntity.CancelledDate = DateTime.UtcNow;
+                                    break;
+                                case JobState.Completed:
+                                    jobEntity.CompletedDate = DateTime.UtcNow;
+                                    break;
+                                case JobState.Failed:
+                                    jobEntity.FailedDate = DateTime.UtcNow;
+                                    break;
+                            }
                         }
                         else
                         {

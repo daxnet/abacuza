@@ -23,6 +23,7 @@ using Microsoft.Extensions.Logging;
 using Newtonsoft.Json.Serialization;
 using Quartz.Impl;
 using Quartz.Spi;
+using Polly;
 
 namespace Abacuza.JobSchedulers
 {
@@ -77,7 +78,7 @@ namespace Abacuza.JobSchedulers
             {
                 config.BaseAddress = new Uri(Configuration["CLUSTER_SERVICE_URL"]);
                 config.Timeout = TimeSpan.FromMinutes(5);
-            });
+            }).AddTransientHttpErrorPolicy(builder => builder.RetryAsync(5));
 
             // Initializes the job scheduler
             var quartzSchedulerSettings = new NameValueCollection
