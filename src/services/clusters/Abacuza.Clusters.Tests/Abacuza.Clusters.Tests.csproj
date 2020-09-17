@@ -1,0 +1,22 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+
+    <IsPackable>false</IsPackable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Moq" Version="4.14.5" />
+    <PackageReference Include="nunit" Version="3.12.0" />
+    <PackageReference Include="NUnit3TestAdapter" Version="3.17.0" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.7.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\common\Abacuza.DataAccess.InMemory\Abacuza.DataAccess.InMemory.csproj" />
+    <ProjectReference Include="..\Abacuza.Clusters.ApiService\Abacuza.Clusters.ApiService.csproj" />
+    <ProjectReference Include="..\Abacuza.Clusters.Common\Abacuza.Clusters.Common.csproj" />
+  </ItemGroup>
+
+</Project>
