@@ -18,7 +18,7 @@ namespace Abacuza.JobSchedulers.Services
     /// </summary>
     public sealed class ClusterApiService
     {
-        private const string ClusterServiceUrlConfigurationKey = "CLUSTER_SERVICE_URL";
+        private const string ClusterServiceUrlConfigurationKey = "services:clusterService:url";
         private readonly HttpClient _httpClient;
         private readonly IConfiguration _configuration;
         private readonly Uri _clusterApiBaseUri;

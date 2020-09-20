@@ -13,6 +13,8 @@
   <PropertyGroup>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <NoWarn>$(NoWarn);1591</NoWarn>
+    <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
+    <DockerfileContext>..\..</DockerfileContext>
   </PropertyGroup>
 
   <ItemGroup>
@@ -20,6 +22,8 @@
     <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="3.1.8" />
     <PackageReference Include="Microsoft.Extensions.Caching.StackExchangeRedis" Version="3.1.8" />
     <PackageReference Include="Microsoft.Extensions.Http.Polly" Version="3.1.8" />
+    <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.10.9" />
+    <PackageReference Include="Npgsql" Version="4.1.4" />
     <PackageReference Include="Quartz" Version="3.1.0" />
     <PackageReference Include="Quartz.Serialization.Json" Version="3.1.0" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="5.6.1" />

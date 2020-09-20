@@ -4,6 +4,7 @@ using Abacuza.JobSchedulers.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
 using Quartz;
 using System;
 using System.Collections;
@@ -22,11 +23,13 @@ namespace Abacuza.JobSchedulers.Controllers
         private const string JobGroupName = "job-execution";
         private readonly IScheduler _quartzScheduler;
         private readonly IDataAccessObject _dao;
+        private readonly ILogger<JobsController> _logger;
 
-        public JobsController(IScheduler quartzScheduler, IDataAccessObject dao)
+        public JobsController(IScheduler quartzScheduler, IDataAccessObject dao, ILogger<JobsController> logger)
         {
             _quartzScheduler = quartzScheduler;
             _dao = dao;
+            _logger = logger;
         }
         
         [HttpPost("submit")]
@@ -59,7 +62,9 @@ namespace Abacuza.JobSchedulers.Controllers
                 .Build();
 
             await _quartzScheduler.ScheduleJob(jobDetail, jobTrigger);
-            return Ok($"The job has been submitted successfully, scheduled job submission ID: {jobName}");
+            var message = $"The job has been submitted successfully, scheduled job submission ID: {jobName}";
+            _logger.LogInformation(message);
+            return Ok(message);
         }
 
         [HttpGet]

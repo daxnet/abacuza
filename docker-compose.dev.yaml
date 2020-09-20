@@ -1,0 +1,28 @@
+version: '3.8'
+volumes:
+    postgres_data:
+    redis_data:
+    mongo_data:
+services:
+    abacuza-postgres:
+        image: daxnet/abacuza-postgres
+        environment:
+            - POSTGRES_USER=postgres
+            - POSTGRES_PASSWORD=postgres
+            - POSTGRES_DB=abacuza
+        volumes:
+            - postgres_data:/data:Z
+        ports:
+            - "5432:5432"
+    abacuza-redis:
+        image: daxnet/abacuza-redis
+        volumes:
+            - redis_data:/data:Z
+        ports:
+            - "6379:6379"
+    abacuza-mongo:
+        image: daxnet/abacuza-mongo
+        volumes:
+            - mongo_data:/data/db:Z
+        ports:
+            - "27017:27017"

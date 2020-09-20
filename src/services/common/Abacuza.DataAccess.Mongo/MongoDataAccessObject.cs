@@ -25,6 +25,12 @@ namespace Abacuza.DataAccess.Mongo
             _database = _client.GetDatabase(databaseName);
         }
 
+        public MongoDataAccessObject(MongoUrl url, string databaseName)
+        {
+            _client = new MongoClient(url);
+            _database = _client.GetDatabase(databaseName);
+        }
+
         public async Task AddAsync<TObject>(TObject entity) where TObject : IEntity
         {
             var collection = GetCollection<TObject>();

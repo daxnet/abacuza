@@ -37,8 +37,8 @@ namespace Abacuza.Clusters.Spark
         public void DeserializeConfiguration(string serializedConfiguration)
         {
             var configurationJObject = JObject.Parse(serializedConfiguration);
-            this.BaseUrl = configurationJObject["baseUrl"].Value<string>();
-            var props = configurationJObject["properties"].ToObject<Dictionary<string, object>>();
+            this.BaseUrl = configurationJObject["baseUrl"]?.Value<string>();
+            var props = configurationJObject["properties"]?.ToObject<Dictionary<string, object>>();
             _properties.Clear();
             if (props != null)
             {

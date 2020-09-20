@@ -1,9 +1,16 @@
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Reflection;
-using System.Threading.Tasks;
+// ==============================================================
+//           _
+//     /\   | |
+//    /  \  | |__ __ _ ___ _ _ ______ _
+//   / /\ \ | '_ \ / _` |/ __| | | |_  / _` |
+//  / ____ \| |_) | (_| | (__| |_| |/ / (_| |
+// /_/    \_\_.__/ \__,_|\___|\__,_/___\__,_|
+//
+// Data Processing Platform
+// Copyright 2020 by daxnet. All rights reserved.
+// Licensed under LGPL-v3
+// ==============================================================
+
 using Abacuza.Clusters.ApiService.Models;
 using Abacuza.Clusters.Common;
 using Abacuza.Common.DataAccess;
@@ -12,14 +19,18 @@ using Abacuza.DataAccess.Mongo;
 using McMaster.NETCore.Plugins;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
+using MongoDB.Driver;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Reflection;
 
 namespace Abacuza.Clusters.ApiService
 {
@@ -48,16 +59,15 @@ namespace Abacuza.Clusters.ApiService
 
             services.AddStackExchangeRedisCache(options =>
             {
-                options.Configuration = "40.121.39.71:443";
+                options.Configuration = Configuration["redis:connectionString"];
             });
 
             var clusterImplementations = DiscoverClusterImplementations();
             services.AddSingleton(clusterImplementations);
 
-            var mongoHost = Configuration["mongo:host"];
-            var mongoPort = int.Parse(Configuration["mongo:port"]);
+            var mongoConnectionString = Configuration["mongo:connectionString"];
             var mongoDatabase = Configuration["mongo:database"];
-            var wrapperDao = new MongoDataAccessObject(mongoDatabase, mongoHost, mongoPort);
+            var wrapperDao = new MongoDataAccessObject(new MongoUrl(mongoConnectionString), mongoDatabase);
 
             services.AddTransient<IDataAccessObject>(sp => new DistributedCachedDataAccessObject(sp.GetService<IDistributedCache>(), wrapperDao));
 
@@ -116,7 +126,7 @@ namespace Abacuza.Clusters.ApiService
             {
                 if (File.Exists(file))
                 {
-                    var loader = PluginLoader.CreateFromAssemblyFile(file, 
+                    var loader = PluginLoader.CreateFromAssemblyFile(file,
                         sharedTypes: new[] { typeof(ICluster) },
                         configure: (pc) =>
                         {
