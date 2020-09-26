@@ -11,10 +11,10 @@ const routes: Routes = [
         children: [
             {
                 path: 'types',
-                component: ClusterTypesComponent
-            }
-        ]
-    }
+                component: ClusterTypesComponent,
+            },
+        ],
+    },
 ];
 
 @NgModule({

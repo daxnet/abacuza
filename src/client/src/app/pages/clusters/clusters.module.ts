@@ -11,7 +11,7 @@ import { ClustersRoutingModule } from './clusters-routing.module';
     CommonModule,
     NbCardModule,
     NbIconModule,
-    ClustersRoutingModule
-  ]
+    ClustersRoutingModule,
+  ],
 })
 export class ClustersModule { }

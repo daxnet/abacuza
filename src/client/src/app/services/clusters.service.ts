@@ -6,7 +6,7 @@ import { Cluster } from '../models/cluster';
 import { environment } from 'environments/environment';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class ClustersService {
 
@@ -17,7 +17,7 @@ export class ClustersService {
    */
    public getAllClusters(): Observable<HttpResponse<Cluster[]>> {
     return this.http.get<Cluster[]>(`${environment.clusterServiceBaseUrl}api/clusters`, {
-      observe: 'response'
+      observe: 'response',
     });
   }
 }

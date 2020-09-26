@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 
 @Component({
-  selector: 'abacuza-clusters',
+  selector: 'ngx-clusters',
   template: `
     <router-outlet></router-outlet>
   `,

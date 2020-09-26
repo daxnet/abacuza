@@ -19,8 +19,8 @@ import { ClustersService } from '../services/clusters.service';
     PagesComponent,
   ],
   providers: [
-    ClustersService
-  ]
+    ClustersService,
+  ],
 })
 export class PagesModule {
 }

@@ -5,7 +5,7 @@ import { ClustersService } from 'app/services/clusters.service';
 @Component({
   selector: 'ngx-cluster-types',
   templateUrl: './cluster-types.component.html',
-  styleUrls: ['./cluster-types.component.scss']
+  styleUrls: ['./cluster-types.component.scss'],
 })
 export class ClusterTypesComponent implements OnInit {
 

@@ -12,9 +12,9 @@ export const MENU_ITEMS: NbMenuItem[] = [
       {
         title: 'Types',
         icon: 'grid-outline',
-        link: '/pages/clusters/types'
-      }
-    ]
+        link: '/pages/clusters/types',
+      },
+    ],
   },
   {
     title: 'Miscellaneous',
