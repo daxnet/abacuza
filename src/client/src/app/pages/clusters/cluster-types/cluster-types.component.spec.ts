@@ -8,7 +8,7 @@ describe('ClusterTypesComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ ClusterTypesComponent ]
+      declarations: [ ClusterTypesComponent ],
     })
     .compileComponents();
   }));
