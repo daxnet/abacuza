@@ -14,7 +14,7 @@ using System.Threading.Tasks;
 
 namespace Abacuza.Clusters.Spark
 {
-    [Cluster("B22A9E13-CE6E-4927-868D-DBD215B456E4", "spark", "Apache Spark", typeof(SparkClusterConnection))]
+    [Cluster("B22A9E13-CE6E-4927-868D-DBD215B456E4", "spark", "Apache Spark", typeof(SparkClusterConnection), Description = "Apache Spark is a unified analytics engine for large-scale data processing.")]
     public sealed class SparkCluster : Cluster
     {
         private bool disposed;

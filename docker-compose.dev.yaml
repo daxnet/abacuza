@@ -3,6 +3,7 @@ volumes:
     postgres_data:
     redis_data:
     mongo_data:
+    s3_data:
 services:
     abacuza-postgres:
         image: daxnet/abacuza-postgres
@@ -26,3 +27,47 @@ services:
             - mongo_data:/data/db:Z
         ports:
             - "27017:27017"
+    abacuza-minio:
+        image: minio/minio
+        volumes:
+            - s3_data:/data
+        ports:
+            - 9000:9000
+        environment:
+            - MINIO_ACCESS_KEY=AKIAIOSFODNN7EXAMPLE
+            - MINIO_SECRET_KEY=wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY
+        command: server /data
+        restart: always
+    abacuza-createbucket:
+        image: minio/mc
+        depends_on:
+            - abacuza-minio
+        entrypoint: |
+            /bin/sh -c ' 
+            for i in $$( seq 1 10 );do
+            /usr/bin/mc config host add abacuza http://abacuza-minio:9000 AKIAIOSFODNN7EXAMPLE wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY;
+            test=$$(/usr/bin/mc ls | grep data);
+            if [[ -z $$test ]]; then
+                /usr/bin/mc mb abacuza/data;
+                echo "Waiting for bucket to be created";
+                sleep 5;
+            else 
+                break;
+            fi; 
+            done;
+            if [[ -z $$test ]]; then exit -1; else exit 0; fi 
+            '
+    abacuza-livy-spark:
+        image: daxnet/abacuza-livy-spark
+        depends_on: 
+            - abacuza-minio
+        links: 
+            - abacuza-minio
+        ports:
+            - 8998:8998
+            - 4040:4040
+        environment: 
+            - ABACUZA_SPARK_MASTER=local[*]
+            - ABACUZA_AWS_ENDPOINT=http://abacuza-minio:9000
+            - ABACUZA_AWS_ACCESS_KEY=AKIAIOSFODNN7EXAMPLE
+            - ABACUZA_AWS_SECRET_KEY=wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY

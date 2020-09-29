@@ -25,3 +25,9 @@ services:
         build:
             context: src/services
             dockerfile: clusters/Abacuza.Clusters.ApiService/Dockerfile
+    abacuza-livy-spark:
+        image: daxnet/abacuza-livy-spark
+        build:
+            context: docker/livy-spark
+            dockerfile: Dockerfile
+        
