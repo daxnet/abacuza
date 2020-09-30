@@ -1,4 +1,5 @@
 ﻿using System;
+using Microsoft.Spark.Sql;
 
 namespace Abacuza.JobRunners.Spark
 {
@@ -6,7 +7,9 @@ namespace Abacuza.JobRunners.Spark
     {
         static void Main(string[] args)
         {
-            Console.WriteLine("Hello World!");
+            var spark = SparkSession.Builder().GetOrCreate();
+            var df = spark.Read().Json("s3a://data/input/sample.json");
+            df.Show();
         }
     }
 }

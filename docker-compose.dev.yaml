@@ -44,7 +44,7 @@ services:
             - abacuza-minio
         entrypoint: |
             /bin/sh -c ' 
-            for i in $$( seq 1 10 );do
+            for i in $$( seq 1 5 );do
             /usr/bin/mc config host add abacuza http://abacuza-minio:9000 AKIAIOSFODNN7EXAMPLE wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY;
             test=$$(/usr/bin/mc ls | grep data);
             if [[ -z $$test ]]; then
