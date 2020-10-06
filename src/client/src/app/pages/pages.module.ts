@@ -7,6 +7,7 @@ import { PagesRoutingModule } from './pages-routing.module';
 import { MiscellaneousModule } from './miscellaneous/miscellaneous.module';
 
 import { ClustersService } from '../services/clusters.service';
+import { ClusterConnectionsService } from 'app/services/cluster-connections.service';
 
 @NgModule({
   imports: [
@@ -20,6 +21,7 @@ import { ClustersService } from '../services/clusters.service';
   ],
   providers: [
     ClustersService,
+    ClusterConnectionsService,
   ],
 })
 export class PagesModule {

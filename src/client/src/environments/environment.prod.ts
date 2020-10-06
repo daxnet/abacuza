@@ -5,4 +5,6 @@
  */
 export const environment = {
   production: true,
+  clusterServiceBaseUrl: '/cluster-service/',
+  jobSchedulerServiceBaseUrl: '/job-scheduler-service/',
 };

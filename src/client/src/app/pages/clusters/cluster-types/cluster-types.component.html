@@ -1,10 +1,21 @@
-<div *ngIf='clusters'>
-    <nb-card *ngFor='let c of clusters'>
-        <nb-card-header>{{c.name}} </nb-card-header>
-        <nb-card-body>
-            {{c.id}}
-        </nb-card-body>
-        <nb-card-footer><div class="text-right"><nb-icon icon="bookmark-outline"></nb-icon>{{c.type}}</div></nb-card-footer>
-    </nb-card>
-</div>
+<nb-card>
+    <nb-card-header>
+        Cluster Types
+    </nb-card-header>
 
+    <nb-card-body>
+        <div *ngIf='clusters'>
+            <nb-card status="success" *ngFor='let c of clusters'>
+                <nb-card-header>{{c.name}}</nb-card-header>
+                <nb-card-body>
+                    {{c.description}}
+                </nb-card-body>
+                <nb-card-footer>
+                    <div class="text-right">
+                        <nb-icon icon="bookmark-outline"></nb-icon>{{c.type}}
+                    </div>
+                </nb-card-footer>
+            </nb-card>
+        </div>
+    </nb-card-body>
+</nb-card>

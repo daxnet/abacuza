@@ -1,0 +1,11 @@
+<nb-card>
+    <nb-card-header>
+        Cluster Connections
+    </nb-card-header>
+
+    <nb-card-body>
+        <ng2-smart-table [settings]="settings" [source]="source" (create)="onCreate($event)"
+            (deleteConfirm)="onDeleteConfirm($event)">
+        </ng2-smart-table>
+    </nb-card-body>
+</nb-card>

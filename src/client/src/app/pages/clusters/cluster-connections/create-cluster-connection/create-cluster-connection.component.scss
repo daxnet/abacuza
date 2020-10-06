@@ -1,0 +1,26 @@
+@import '../../../../@theme/styles/themes';
+
+@include nb-install-component() {
+  nb-card {
+    min-width: 500px;
+    max-width: 600px;
+    max-height: 500px;
+  }
+}
+
+input {
+    margin-top: 8px;
+}
+
+nb-select {
+    min-width: 200px;
+    margin-top: 8px;
+}
+
+textarea {
+  margin-top: 8px;
+}
+
+button {
+  margin-left: 8px;
+}

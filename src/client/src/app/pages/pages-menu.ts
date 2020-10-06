@@ -10,6 +10,11 @@ export const MENU_ITEMS: NbMenuItem[] = [
     icon: 'layers-outline',
     children: [
       {
+        title: 'Connections',
+        icon: 'grid-outline',
+        link: '/pages/clusters/connections'
+      },
+      {
         title: 'Types',
         icon: 'grid-outline',
         link: '/pages/clusters/types',

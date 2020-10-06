@@ -3,6 +3,7 @@ import { RouterModule, Routes } from '@angular/router';
 
 import { ClustersComponent } from './clusters.component';
 import { ClusterTypesComponent } from './cluster-types/cluster-types.component';
+import { ClusterConnectionsComponent } from './cluster-connections/cluster-connections.component';
 
 const routes: Routes = [
     {
@@ -12,6 +13,10 @@ const routes: Routes = [
             {
                 path: 'types',
                 component: ClusterTypesComponent,
+            },
+            {
+                path: 'connections',
+                component: ClusterConnectionsComponent,
             },
         ],
     },

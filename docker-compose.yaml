@@ -107,3 +107,24 @@ services:
             - ABACUZA_AWS_ENDPOINT=http://abacuza-minio:9000
             - ABACUZA_AWS_ACCESS_KEY=AKIAIOSFODNN7EXAMPLE
             - ABACUZA_AWS_SECRET_KEY=wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY
+    abacuza-client:
+        image: daxnet/abacuza-client
+        depends_on:
+            - abacuza-cluster-service
+            - abacuza-job-scheduler-service
+        links:
+            - abacuza-cluster-service
+            - abacuza-job-scheduler-service
+    abacuza-nginx:
+        image: daxnet/abacuza-nginx
+        depends_on:
+            - abacuza-client
+            - abacuza-cluster-service
+            - abacuza-job-scheduler-service
+        links:
+            - abacuza-client
+            - abacuza-cluster-service
+            - abacuza-job-scheduler-service
+        ports:
+            - 9320:80
+        

@@ -30,4 +30,14 @@ services:
         build:
             context: .
             dockerfile: docker/livy-spark/Dockerfile
+    abacuza-client:
+        image: daxnet/abacuza-client
+        build:
+            context: src/client
+            dockerfile: Dockerfile
+    abacuza-nginx:
+        image: daxnet/abacuza-nginx
+        build:
+            context: docker/nginx
+            dockerfile: Dockerfile
         
