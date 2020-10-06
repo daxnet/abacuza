@@ -7,7 +7,7 @@ import { CreateClusterConnectionComponent } from './create-cluster-connection/cr
 @Component({
   selector: 'ngx-cluster-connections',
   templateUrl: './cluster-connections.component.html',
-  styleUrls: ['./cluster-connections.component.scss']
+  styleUrls: ['./cluster-connections.component.scss'],
 })
 export class ClusterConnectionsComponent implements OnInit {
 

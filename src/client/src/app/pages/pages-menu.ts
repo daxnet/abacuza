@@ -12,7 +12,7 @@ export const MENU_ITEMS: NbMenuItem[] = [
       {
         title: 'Connections',
         icon: 'grid-outline',
-        link: '/pages/clusters/connections'
+        link: '/pages/clusters/connections',
       },
       {
         title: 'Types',

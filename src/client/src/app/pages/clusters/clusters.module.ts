@@ -1,9 +1,9 @@
 import { NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { 
-  NbCardModule, 
-  NbIconModule, 
-  NbDialogModule, 
+import {
+  NbCardModule,
+  NbIconModule,
+  NbDialogModule,
   NbButtonModule,
   NbSelectModule,
   NbInputModule } from '@nebular/theme';
@@ -19,9 +19,9 @@ import { ThemeModule } from '../../@theme/theme.module';
 
 @NgModule({
   declarations: [
-    ClustersComponent, 
-    ClusterTypesComponent, 
-    ClusterConnectionsComponent, 
+    ClustersComponent,
+    ClusterTypesComponent,
+    ClusterConnectionsComponent,
     CreateClusterConnectionComponent,
   ],
   imports: [

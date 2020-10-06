@@ -8,7 +8,7 @@ describe('ClusterConnectionsComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ ClusterConnectionsComponent ]
+      declarations: [ ClusterConnectionsComponent ],
     })
     .compileComponents();
   }));
