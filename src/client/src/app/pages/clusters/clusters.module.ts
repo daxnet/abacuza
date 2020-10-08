@@ -6,14 +6,14 @@ import {
   NbDialogModule,
   NbButtonModule,
   NbSelectModule,
-  NbInputModule } from '@nebular/theme';
+  NbInputModule, NbToastrModule } from '@nebular/theme';
 import { Ng2SmartTableModule } from 'ng2-smart-table';
 import { CommonModule } from '@angular/common';
 import { ClustersComponent } from './clusters.component';
 import { ClusterTypesComponent } from './cluster-types/cluster-types.component';
 import { ClustersRoutingModule } from './clusters-routing.module';
 import { ClusterConnectionsComponent } from './cluster-connections/cluster-connections.component';
-import { CreateClusterConnectionComponent } from './cluster-connections/create-cluster-connection/create-cluster-connection.component';
+import { EditClusterConnectionComponent } from './cluster-connections/edit-cluster-connection/edit-cluster-connection.component';
 
 import { ThemeModule } from '../../@theme/theme.module';
 
@@ -22,7 +22,7 @@ import { ThemeModule } from '../../@theme/theme.module';
     ClustersComponent,
     ClusterTypesComponent,
     ClusterConnectionsComponent,
-    CreateClusterConnectionComponent,
+    EditClusterConnectionComponent,
   ],
   imports: [
     CommonModule,
@@ -33,12 +33,13 @@ import { ThemeModule } from '../../@theme/theme.module';
     NbCardModule,
     NbIconModule,
     NbInputModule,
+    NbToastrModule.forRoot(),
     NbDialogModule.forRoot(),
     ClustersRoutingModule,
     Ng2SmartTableModule,
   ],
   entryComponents: [
-    CreateClusterConnectionComponent,
+    EditClusterConnectionComponent,
   ],
 })
 export class ClustersModule { }

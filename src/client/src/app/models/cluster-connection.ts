@@ -1,4 +1,4 @@
-export interface ClusterConnection {
+export class ClusterConnection {
     clusterType: string;
     description: string;
     id: string;

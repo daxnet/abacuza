@@ -29,6 +29,7 @@ namespace Abacuza.Clusters.ApiService.Controllers
         }
 
         [HttpGet]
+        [ProducesResponseType(StatusCodes.Status200OK)]
         public IActionResult GetAllClusters()
             => Ok(_clusterImplementations.Select(ci => new
             {
@@ -37,6 +38,11 @@ namespace Abacuza.Clusters.ApiService.Controllers
                 description = ci.Description,
                 type = ci.Type
             }));
+
+        [HttpGet("types")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public IActionResult GetAllClusterTypes()
+            => Ok(_clusterImplementations.Select(ci => ci.Type));
 
 
         [HttpGet("state/{connectionName}")]

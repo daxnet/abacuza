@@ -1,8 +1,14 @@
 import { Component, OnInit } from '@angular/core';
-import { NbDialogService } from '@nebular/theme';
+import { NbDialogService, NbToastrService } from '@nebular/theme';
+import { ClusterConnection } from 'app/models/cluster-connection';
+import { CommonDialogResult } from 'app/models/common-dialog-result';
 import { ClusterConnectionsService } from 'app/services/cluster-connections.service';
+import { ClustersService } from 'app/services/clusters.service';
+import { CommonDialogService } from 'app/services/common-dialog.service';
 import { LocalDataSource } from 'ng2-smart-table';
-import { CreateClusterConnectionComponent } from './create-cluster-connection/create-cluster-connection.component';
+import { throwError } from 'rxjs';
+import { catchError } from 'rxjs/operators';
+import { EditClusterConnectionComponent } from './edit-cluster-connection/edit-cluster-connection.component';
 
 @Component({
   selector: 'ngx-cluster-connections',
@@ -48,38 +54,107 @@ export class ClusterConnectionsComponent implements OnInit {
   };
 
   source: LocalDataSource = new LocalDataSource();
+  clusterTypes: string[] = [];
 
   constructor(private clusterConnectionsService: ClusterConnectionsService,
-    private dialogService: NbDialogService) {
+    private clustersService: ClustersService,
+    private dialogService: NbDialogService,
+    private toastrService: NbToastrService,
+    private commonDialogService: CommonDialogService) {
     this.clusterConnectionsService.getAllClusterConnections()
-      .subscribe(response => this.source.load(response.body));
+      .pipe(catchError(err => {
+        this.toastrService.danger(`Server responded with the error message: ${err.message}`,
+          'Failed to load cluster connections', {
+          duration: 6000,
+        });
+        return throwError(err.message);
+      }))
+      .subscribe(response => {
+        this.source.load(response.body);
+      });
+    this.clustersService.getAllClusterTypes()
+      .subscribe(response => this.clusterTypes = response.body);
   }
 
   ngOnInit(): void {
   }
 
-  open() {
-    this.dialogService.open(CreateClusterConnectionComponent, {
+  onEdit(event): void {
+    this.dialogService.open(EditClusterConnectionComponent, {
       context: {
-        title: 'This is a title passed to the dialog component',
+        title: 'Edit Cluster Connection',
+        clusterTypes: this.clusterTypes,
+        clusterConnectionEntity: event.data,
+        mode: 'edit',
       },
+      closeOnBackdropClick: false,
+    })
+    .onClose
+    .subscribe(res => {
+      if (res) {
+        this.clusterConnectionsService.updateClusterConnection(event.data.id,
+            event.data.description,
+            event.data.settings)
+          .pipe(catchError(err => {
+            this.toastrService.danger(`Error message: ${err.message}`, 'Failed to update cluster connection', {
+              duration: 6000,
+            });
+            return throwError(err.message);
+          }))
+          .subscribe(response => {
+            this.toastrService.success('Update cluster connection successfully.', 'Success');
+            this.source.update(event.data, response);
+            this.source.refresh();
+          });
+      }
     });
   }
 
-  onDeleteConfirm(event): void {
-    if (window.confirm('Are you sure you want to delete?')) {
-      event.confirm.resolve();
-    } else {
-      event.confirm.reject();
-    }
+  onDelete(event): void {
+    this.commonDialogService.confirm('Delete Cluster Connection', 'Are you sure to delete the current cluster connection?')
+      .subscribe(dr => {
+        if (dr === CommonDialogResult.Yes) {
+          this.clusterConnectionsService.deleteClusterConnection(event.data.id)
+            .pipe(catchError(err => {
+              this.toastrService.danger(`Error message: ${err.message}`, 'Failed to delete cluster connection', {
+                duration: 6000,
+              });
+              return throwError(err.message);
+            }))
+            .subscribe(_ => {
+              this.toastrService.success('Cluster connection deleted successfully.', 'Success');
+              this.source.remove(event.data);
+              this.source.refresh();
+            });
+        }
+      });
   }
 
-  onCreate(event): void {
-    this.dialogService.open(CreateClusterConnectionComponent, {
+  onCreate(): void {
+    this.dialogService.open(EditClusterConnectionComponent, {
       context: {
         title: 'Create New Cluster Connection',
-        clusterTypes: ['spark', '.net'],
+        clusterTypes: this.clusterTypes,
+        clusterConnectionEntity: new ClusterConnection(),
       },
-    });
+      closeOnBackdropClick: false,
+    })
+      .onClose.subscribe(res => {
+        if (res) {
+          this.clusterConnectionsService.createClusterConnection(res)
+            .pipe(catchError(err => {
+              this.toastrService.danger(`Server responded with the error message: ${err.message}`,
+                'Failed to create cluster connection', {
+                duration: 6000,
+              });
+              return throwError(err.message);
+            }))
+            .subscribe(responseId => {
+              res.id = responseId;
+              this.toastrService.success('Cluster connection created successfully.', 'Success');
+              this.source.add(res).then(_ => this.source.refresh());
+            });
+        }
+      });
   }
 }

@@ -19,10 +19,13 @@ using Abacuza.DataAccess.Mongo;
 using McMaster.NETCore.Plugins;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Formatters;
 using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Options;
 using MongoDB.Driver;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
@@ -74,6 +77,7 @@ namespace Abacuza.Clusters.ApiService
             services.AddControllers(options =>
             {
                 options.SuppressAsyncSuffixInActionNames = false;
+                options.InputFormatters.Insert(0, GetJsonPatchInputFormatter());
             })
             .AddNewtonsoftJson(options =>
             {
@@ -82,6 +86,22 @@ namespace Abacuza.Clusters.ApiService
                     NamingStrategy = new CamelCaseNamingStrategy()
                 };
             });
+        }
+
+        private static NewtonsoftJsonPatchInputFormatter GetJsonPatchInputFormatter()
+        {
+            var builder = new ServiceCollection()
+                .AddLogging()
+                .AddMvc()
+                .AddNewtonsoftJson()
+                .Services.BuildServiceProvider();
+
+            return builder
+                .GetRequiredService<IOptions<MvcOptions>>()
+                .Value
+                .InputFormatters
+                .OfType<NewtonsoftJsonPatchInputFormatter>()
+                .First();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

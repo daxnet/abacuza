@@ -21,7 +21,7 @@ export class ClusterTypesComponent implements OnInit {
   ngOnInit(): void {
     this.clustersService.getAllClusters()
       .pipe(catchError(err => {
-        this.toastrService.danger(`Server responded with the error message: ${err.error}`,
+        this.toastrService.danger(`Server responded with the error message: ${err.message}`,
           'Failed to get cluster types', {
             duration: 6000,
           });

@@ -19,4 +19,10 @@ export class ClustersService {
       observe: 'response',
     });
   }
+
+  public getAllClusterTypes(): Observable<HttpResponse<string[]>> {
+    return this.http.get<string[]>(`${environment.clusterServiceBaseUrl}api/clusters/types`, {
+      observe: 'response',
+    });
+  }
 }
