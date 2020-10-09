@@ -1,0 +1,8 @@
+{
+    "file": "local:/abacuza/microsoft-spark-2.4.x-0.12.1.jar",
+    "className": "org.apache.spark.deploy.dotnet.DotnetRunner",
+    "args": [
+        "dotnet",
+        "/abacuza/Abacuza.JobRunners.Spark.dll"
+    ]
+}
