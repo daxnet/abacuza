@@ -3,13 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.30204.135
 MinimumVisualStudioVersion = 15.0.26124.0
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "job-schedulers", "job-schedulers", "{BB8DE1AB-1AFE-4B02-892F-13B3EDC49329}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "jobs", "jobs", "{BB8DE1AB-1AFE-4B02-892F-13B3EDC49329}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "common", "common", "{2E95125B-BC7C-47DB-842B-AFDA6D2DF7F9}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Abacuza.Common", "common\Abacuza.Common\Abacuza.Common.csproj", "{8C81629C-3854-409B-AE1F-74BACB3660EA}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Abacuza.JobSchedulers", "job-schedulers\Abacuza.JobSchedulers\Abacuza.JobSchedulers.csproj", "{B7F18221-A0C5-4D12-B397-EC887B9438A5}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Abacuza.DataAccess.Mongo", "common\Abacuza.DataAccess.Mongo\Abacuza.DataAccess.Mongo.csproj", "{C8B49E6E-2A26-4EA9-91B2-7A9567E8DDD5}"
 EndProject
@@ -32,7 +30,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Abacuza.Clusters.Tests", "c
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "job-runners", "job-runners", "{757F3BA8-A0EB-454C-8C04-37CE22C1D30F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Abacuza.JobRunners.Spark", "job-runners\Abacuza.JobRunners.Spark\Abacuza.JobRunners.Spark.csproj", "{9658B51C-4DD0-47DA-98E3-6D055C414CC8}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Abacuza.JobRunners.Spark", "job-runners\Abacuza.JobRunners.Spark\Abacuza.JobRunners.Spark.csproj", "{9658B51C-4DD0-47DA-98E3-6D055C414CC8}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Abacuza.Jobs.ApiService", "jobs\Abacuza.Jobs.ApiService\Abacuza.Jobs.ApiService.csproj", "{5AFBDCB6-2CC5-4DF0-A714-27B13DCCEF9A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -56,18 +56,6 @@ Global
 		{8C81629C-3854-409B-AE1F-74BACB3660EA}.Release|x64.Build.0 = Release|Any CPU
 		{8C81629C-3854-409B-AE1F-74BACB3660EA}.Release|x86.ActiveCfg = Release|Any CPU
 		{8C81629C-3854-409B-AE1F-74BACB3660EA}.Release|x86.Build.0 = Release|Any CPU
-		{B7F18221-A0C5-4D12-B397-EC887B9438A5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{B7F18221-A0C5-4D12-B397-EC887B9438A5}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{B7F18221-A0C5-4D12-B397-EC887B9438A5}.Debug|x64.ActiveCfg = Debug|Any CPU
-		{B7F18221-A0C5-4D12-B397-EC887B9438A5}.Debug|x64.Build.0 = Debug|Any CPU
-		{B7F18221-A0C5-4D12-B397-EC887B9438A5}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{B7F18221-A0C5-4D12-B397-EC887B9438A5}.Debug|x86.Build.0 = Debug|Any CPU
-		{B7F18221-A0C5-4D12-B397-EC887B9438A5}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{B7F18221-A0C5-4D12-B397-EC887B9438A5}.Release|Any CPU.Build.0 = Release|Any CPU
-		{B7F18221-A0C5-4D12-B397-EC887B9438A5}.Release|x64.ActiveCfg = Release|Any CPU
-		{B7F18221-A0C5-4D12-B397-EC887B9438A5}.Release|x64.Build.0 = Release|Any CPU
-		{B7F18221-A0C5-4D12-B397-EC887B9438A5}.Release|x86.ActiveCfg = Release|Any CPU
-		{B7F18221-A0C5-4D12-B397-EC887B9438A5}.Release|x86.Build.0 = Release|Any CPU
 		{C8B49E6E-2A26-4EA9-91B2-7A9567E8DDD5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{C8B49E6E-2A26-4EA9-91B2-7A9567E8DDD5}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C8B49E6E-2A26-4EA9-91B2-7A9567E8DDD5}.Debug|x64.ActiveCfg = Debug|Any CPU
@@ -164,13 +152,24 @@ Global
 		{9658B51C-4DD0-47DA-98E3-6D055C414CC8}.Release|x64.Build.0 = Release|Any CPU
 		{9658B51C-4DD0-47DA-98E3-6D055C414CC8}.Release|x86.ActiveCfg = Release|Any CPU
 		{9658B51C-4DD0-47DA-98E3-6D055C414CC8}.Release|x86.Build.0 = Release|Any CPU
+		{5AFBDCB6-2CC5-4DF0-A714-27B13DCCEF9A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5AFBDCB6-2CC5-4DF0-A714-27B13DCCEF9A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5AFBDCB6-2CC5-4DF0-A714-27B13DCCEF9A}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{5AFBDCB6-2CC5-4DF0-A714-27B13DCCEF9A}.Debug|x64.Build.0 = Debug|Any CPU
+		{5AFBDCB6-2CC5-4DF0-A714-27B13DCCEF9A}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{5AFBDCB6-2CC5-4DF0-A714-27B13DCCEF9A}.Debug|x86.Build.0 = Debug|Any CPU
+		{5AFBDCB6-2CC5-4DF0-A714-27B13DCCEF9A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5AFBDCB6-2CC5-4DF0-A714-27B13DCCEF9A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5AFBDCB6-2CC5-4DF0-A714-27B13DCCEF9A}.Release|x64.ActiveCfg = Release|Any CPU
+		{5AFBDCB6-2CC5-4DF0-A714-27B13DCCEF9A}.Release|x64.Build.0 = Release|Any CPU
+		{5AFBDCB6-2CC5-4DF0-A714-27B13DCCEF9A}.Release|x86.ActiveCfg = Release|Any CPU
+		{5AFBDCB6-2CC5-4DF0-A714-27B13DCCEF9A}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{8C81629C-3854-409B-AE1F-74BACB3660EA} = {2E95125B-BC7C-47DB-842B-AFDA6D2DF7F9}
-		{B7F18221-A0C5-4D12-B397-EC887B9438A5} = {BB8DE1AB-1AFE-4B02-892F-13B3EDC49329}
 		{C8B49E6E-2A26-4EA9-91B2-7A9567E8DDD5} = {2E95125B-BC7C-47DB-842B-AFDA6D2DF7F9}
 		{B29A4DF2-4E54-4998-BE95-122F9B5BD0B1} = {EA420F0C-57E0-430C-ABF5-6F9548203A37}
 		{96429D03-95A9-4219-9921-0C419AA1316B} = {EA420F0C-57E0-430C-ABF5-6F9548203A37}
@@ -179,6 +178,7 @@ Global
 		{3CA2F742-3018-4FC8-B410-D0320AC04A07} = {2E95125B-BC7C-47DB-842B-AFDA6D2DF7F9}
 		{BAE4C7FF-FB76-4B90-ACF1-83B591EB2CD0} = {EA420F0C-57E0-430C-ABF5-6F9548203A37}
 		{9658B51C-4DD0-47DA-98E3-6D055C414CC8} = {757F3BA8-A0EB-454C-8C04-37CE22C1D30F}
+		{5AFBDCB6-2CC5-4DF0-A714-27B13DCCEF9A} = {BB8DE1AB-1AFE-4B02-892F-13B3EDC49329}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {37762C87-D4E9-4C03-9476-E519F44ED3D1}

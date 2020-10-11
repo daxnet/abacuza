@@ -15,11 +15,11 @@ services:
         build:
             context: docker/mongo
             dockerfile: Dockerfile
-    abacuza-job-scheduler-service:
-        image: daxnet/abacuza-job-scheduler-service
+    abacuza-job-service:
+        image: daxnet/abacuza-job-service
         build:
             context: src/services
-            dockerfile: job-schedulers/Abacuza.JobSchedulers/Dockerfile
+            dockerfile: jobs/Abacuza.Jobs.ApiService/Dockerfile
     abacuza-cluster-service:
         image: daxnet/abacuza-cluster-service
         build:

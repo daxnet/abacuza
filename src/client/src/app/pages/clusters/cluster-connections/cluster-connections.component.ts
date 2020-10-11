@@ -61,6 +61,9 @@ export class ClusterConnectionsComponent implements OnInit {
     private dialogService: NbDialogService,
     private toastrService: NbToastrService,
     private commonDialogService: CommonDialogService) {
+  }
+
+  ngOnInit(): void {
     this.clusterConnectionsService.getAllClusterConnections()
       .pipe(catchError(err => {
         this.toastrService.danger(`Server responded with the error message: ${err.message}`,
@@ -74,9 +77,6 @@ export class ClusterConnectionsComponent implements OnInit {
       });
     this.clustersService.getAllClusterTypes()
       .subscribe(response => this.clusterTypes = response.body);
-  }
-
-  ngOnInit(): void {
   }
 
   onEdit(event): void {

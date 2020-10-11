@@ -41,8 +41,8 @@ services:
             - mongo__connectionString=mongodb://abacuza-mongo:27017
             - mongo__database=abacuza-clusters
             - redis__connectionString=abacuza-redis:6379
-    abacuza-job-scheduler-service:
-        image: daxnet/abacuza-job-scheduler-service
+    abacuza-job-service:
+        image: daxnet/abacuza-job-service
         ports:
             - "9024:9024"
         depends_on: 
@@ -111,20 +111,20 @@ services:
         image: daxnet/abacuza-client
         depends_on:
             - abacuza-cluster-service
-            - abacuza-job-scheduler-service
+            - abacuza-job-service
         links:
             - abacuza-cluster-service
-            - abacuza-job-scheduler-service
+            - abacuza-job-service
     abacuza-nginx:
         image: daxnet/abacuza-nginx
         depends_on:
             - abacuza-client
             - abacuza-cluster-service
-            - abacuza-job-scheduler-service
+            - abacuza-job-service
         links:
             - abacuza-client
             - abacuza-cluster-service
-            - abacuza-job-scheduler-service
+            - abacuza-job-service
         ports:
             - 9320:80
         

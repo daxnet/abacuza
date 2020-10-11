@@ -22,6 +22,17 @@ export const MENU_ITEMS: NbMenuItem[] = [
     ],
   },
   {
+    title: 'Jobs',
+    icon: 'cube-outline',
+    children: [
+      {
+        title: 'Job Runners',
+        icon: 'settings-2-outline',
+        link: '/pages/jobs/job-runners',
+      },
+    ],
+  },
+  {
     title: 'Miscellaneous',
     icon: 'shuffle-2-outline',
     children: [

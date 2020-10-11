@@ -14,6 +14,11 @@ const routes: Routes = [{
         .then(m => m.ClustersModule),
     },
     {
+      path: 'jobs',
+      loadChildren: () => import('./jobs/jobs.module')
+        .then(m => m.JobsModule),
+    },
+    {
       path: '',
       redirectTo: 'clusters',
       pathMatch: 'full',

@@ -1,0 +1,14 @@
+<nb-card>
+    <nb-card-header>
+        Job Runners
+    </nb-card-header>
+
+    <nb-card-body>
+        <ng2-smart-table [settings]="settings" [source]="source" 
+            (create)="onCreate()"
+            (edit)="onEdit($event)"
+            (delete)="onDelete($event)"
+            (custom)="onCustomAction($event)">
+        </ng2-smart-table>
+    </nb-card-body>
+</nb-card>

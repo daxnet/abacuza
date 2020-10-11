@@ -8,6 +8,7 @@ import { MiscellaneousModule } from './miscellaneous/miscellaneous.module';
 
 import { ClustersService } from '../services/clusters.service';
 import { ClusterConnectionsService } from 'app/services/cluster-connections.service';
+import { JobRunnersService } from 'app/services/job-runners.service';
 
 @NgModule({
   imports: [
@@ -22,6 +23,7 @@ import { ClusterConnectionsService } from 'app/services/cluster-connections.serv
   providers: [
     ClustersService,
     ClusterConnectionsService,
+    JobRunnersService,
   ],
 })
 export class PagesModule {

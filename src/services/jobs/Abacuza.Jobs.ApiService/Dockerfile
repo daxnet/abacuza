@@ -7,19 +7,19 @@ EXPOSE 9024
 
 FROM mcr.microsoft.com/dotnet/core/sdk:3.1-buster AS build
 WORKDIR /src
-COPY ["job-schedulers/Abacuza.JobSchedulers/Abacuza.JobSchedulers.csproj", "job-schedulers/Abacuza.JobSchedulers/"]
+COPY ["jobs/Abacuza.Jobs.ApiService/Abacuza.Jobs.ApiService.csproj", "jobs/Abacuza.Jobs.ApiService/"]
 COPY ["common/Abacuza.Common/Abacuza.Common.csproj", "common/Abacuza.Common/"]
 COPY ["common/Abacuza.DataAccess.Mongo/Abacuza.DataAccess.Mongo.csproj", "common/Abacuza.DataAccess.Mongo/"]
 COPY ["common/Abacuza.DataAccess.DistributedCached/Abacuza.DataAccess.DistributedCached.csproj", "common/Abacuza.DataAccess.DistributedCached/"]
-RUN dotnet restore "job-schedulers/Abacuza.JobSchedulers/Abacuza.JobSchedulers.csproj"
+RUN dotnet restore "jobs/Abacuza.Jobs.ApiService/Abacuza.Jobs.ApiService.csproj"
 COPY . .
-WORKDIR "/src/job-schedulers/Abacuza.JobSchedulers"
-RUN dotnet build "Abacuza.JobSchedulers.csproj" -c Release -o /app/build
+WORKDIR "/src/jobs/Abacuza.Jobs.ApiService"
+RUN dotnet build "Abacuza.Jobs.ApiService.csproj" -c Release -o /app/build
 
 FROM build AS publish
-RUN dotnet publish "Abacuza.JobSchedulers.csproj" -c Release -o /app/publish
+RUN dotnet publish "Abacuza.Jobs.ApiService.csproj" -c Release -o /app/publish
 
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
-CMD ["dotnet", "Abacuza.JobSchedulers.dll"]
+CMD ["dotnet", "Abacuza.Jobs.ApiService.dll"]
