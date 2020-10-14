@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import { NbToastrService } from '@nebular/theme';
+import { NbDialogService, NbToastrService } from '@nebular/theme';
+import { ClustersService } from 'app/services/clusters.service';
 import { JobRunnersService } from 'app/services/job-runners.service';
 import { LocalDataSource } from 'ng2-smart-table';
 import { throwError } from 'rxjs';
@@ -42,22 +43,17 @@ export class JobRunnersComponent implements OnInit {
       },
     },
     actions: {
-      edit: false,
-      delete: false,
-      custom: [
-        {
-          name: 'modify',
-          title: '<i class="nb-edit" ng2-smart-actions></i>',
-        },
-      ],
       position: 'right',
     },
     mode: 'external',
   };
 
   source: LocalDataSource = new LocalDataSource();
+  clusterTypes: string[] = [];
 
   constructor(private jobRunnersService: JobRunnersService,
+    private clustersService: ClustersService,
+    private dialogService: NbDialogService,
     private toastrService: NbToastrService) { }
 
   ngOnInit(): void {
@@ -70,6 +66,8 @@ export class JobRunnersComponent implements OnInit {
         return throwError(err.message);
       }))
       .subscribe(response => this.source.load(response.body));
+    this.clustersService.getAllClusterTypes()
+      .subscribe(response => this.clusterTypes = response.body);
   }
 
   onCreate(): void {
@@ -83,12 +81,4 @@ export class JobRunnersComponent implements OnInit {
   onDelete(event): void {
 
   }
-
-  onCustomAction(event): void {
-    switch ( event.action) {
-      case 'modify':
-        break;
-    }
-  }
-
 }

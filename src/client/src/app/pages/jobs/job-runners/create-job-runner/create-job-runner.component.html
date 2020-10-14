@@ -1,0 +1,16 @@
+<nb-card>
+    <nb-card-header>Create Job Runner</nb-card-header>
+    <nb-card-body>
+        <input type="text" #name [(ngModel)]="jobRunnerEntity.name" nbInput fullWidth autofocus required
+            placeholder="Name">
+        <input type="text" #description [(ngModel)]="jobRunnerEntity.description" nbInput fullWidth
+            placeholder="Description">
+        <nb-select [(selected)]="jobRunnerEntity.clusterType" fullWidth placeholder="Choose cluster type">
+            <nb-option *ngFor='let ct of clusterTypes' [value]="ct">{{ct}}</nb-option>
+        </nb-select>
+    </nb-card-body>
+    <nb-card-footer class="text-right">
+        <button nbButton hero status="primary" (click)="submit()">Save</button>
+        <button nbButton hero status="basic" (click)="close()">Close</button>
+    </nb-card-footer>
+</nb-card>

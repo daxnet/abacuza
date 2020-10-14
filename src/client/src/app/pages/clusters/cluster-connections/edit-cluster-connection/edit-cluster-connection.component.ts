@@ -14,8 +14,6 @@ export class EditClusterConnectionComponent implements OnInit {
   @Input() clusterConnectionEntity: ClusterConnection;
   @Input() mode: string;
 
-  selectedClusterType: string;
-
   constructor(protected ref: NbDialogRef<EditClusterConnectionComponent>) { }
 
   ngOnInit(): void {
