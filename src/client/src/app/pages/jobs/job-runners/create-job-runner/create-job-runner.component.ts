@@ -5,13 +5,13 @@ import { JobRunner } from 'app/models/job-runner';
 @Component({
   selector: 'ngx-create-job-runner',
   templateUrl: './create-job-runner.component.html',
-  styleUrls: ['./create-job-runner.component.scss']
+  styleUrls: ['./create-job-runner.component.scss'],
 })
 export class CreateJobRunnerComponent implements OnInit {
 
   @Input() clusterTypes: string[];
   jobRunnerEntity: JobRunner;
-  
+
   constructor(protected ref: NbDialogRef<CreateJobRunnerComponent>) { }
 
   ngOnInit(): void {
