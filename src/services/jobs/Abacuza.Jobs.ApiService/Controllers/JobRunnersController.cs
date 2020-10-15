@@ -68,7 +68,7 @@ namespace Abacuza.Jobs.ApiService.Controllers
         }
 
         [HttpPost]
-        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(JobRunnerEntity))]
+        [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status409Conflict)]
         public async Task<IActionResult> CreateJobRunnerAsync([FromBody] JobRunnerEntity model)
         {
@@ -80,7 +80,7 @@ namespace Abacuza.Jobs.ApiService.Controllers
 
             await _dao.AddAsync(model);
 
-            return Ok(model);
+            return CreatedAtAction(nameof(GetJobRunnerByIdAsync), new { id = model.Id }, model.Id);
         }
 
     }

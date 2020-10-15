@@ -16,4 +16,18 @@ export class JobRunnersService {
       observe: 'response',
     });
   }
+
+  public createJobRunner(jr: JobRunner): Observable<string> {
+    return this.httpClient.post<string>(`${environment.jobServiceBaseUrl}api/job-runners`, {
+      name: jr.name,
+      description: jr.description,
+      clusterType: jr.clusterType,
+    });
+  }
+
+  public getJobRunnerById(id: string): Observable<HttpResponse<JobRunner>> {
+    return this.httpClient.get<JobRunner>(`${environment.jobServiceBaseUrl}api/job-runners/${id}`, {
+      observe: 'response',
+    });
+  }
 }

@@ -10,7 +10,7 @@ import { JobRunner } from 'app/models/job-runner';
 export class CreateJobRunnerComponent implements OnInit {
 
   @Input() clusterTypes: string[];
-  jobRunnerEntity: JobRunner;
+  @Input() jobRunnerEntity: JobRunner;
 
   constructor(protected ref: NbDialogRef<CreateJobRunnerComponent>) { }
 
