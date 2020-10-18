@@ -102,6 +102,7 @@ namespace Abacuza.Clusters.ApiService.Controllers
         [ProducesResponseType(typeof(ClusterConnectionEntity[]), StatusCodes.Status200OK)]
         public async Task<IActionResult> GetClusterConnectionsAsync()
             => Ok(await _dao.GetAllAsync<ClusterConnectionEntity>());
+
         [HttpPatch("{id}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]

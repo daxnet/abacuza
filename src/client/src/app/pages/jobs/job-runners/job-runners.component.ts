@@ -97,6 +97,7 @@ export class JobRunnersComponent implements OnInit {
             return throwError(err);
           }))
           .subscribe(responseId => {
+            this.toastrService.success('Job runner created successfully.', 'Success');
             this.router.navigate(['/pages/jobs/job-runner-details', responseId]);
           });
       }
@@ -111,7 +112,16 @@ export class JobRunnersComponent implements OnInit {
     this.commonDialogService.confirm('Delete Job Runner', 'Are you sure to delete the current job runner?')
     .subscribe(dr => {
       if (dr === CommonDialogResult.Yes) {
-
+        this.jobRunnersService.deleteJobRunner(event.data.id)
+          .pipe(catchError(err => {
+            this.toastrService.danger(`Error message: ${err.message}`, 'Failed to delete the job runner');
+            return throwError(err.message);
+          }))
+          .subscribe(_ => {
+            this.toastrService.success('Job runner deleted successfully.', 'Success');
+              this.source.remove(event.data);
+              this.source.refresh();
+          });
       }
     });
   }

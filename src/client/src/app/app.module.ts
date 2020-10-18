@@ -21,6 +21,7 @@ import {
   NbIconModule,
   NbInputModule,
   NbMenuModule,
+  NbProgressBarModule,
   NbSelectModule,
   NbSidebarModule,
   NbToastrModule,
@@ -28,12 +29,11 @@ import {
 } from '@nebular/theme';
 import { CommonDialogComponent } from './services/common-dialog/common-dialog.component';
 import { CommonDialogService } from './services/common-dialog.service';
-import { Ng2SmartTableModule } from 'ng2-smart-table';
-import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
+import { FileUploadComponent } from './services/file-upload/file-upload.component';
+import { FileUploadService } from './services/file-upload.service';
 
 @NgModule({
-  declarations: [AppComponent, CommonDialogComponent],
+  declarations: [AppComponent, CommonDialogComponent, FileUploadComponent],
   imports: [
     BrowserModule,
     BrowserAnimationsModule,
@@ -41,8 +41,10 @@ import { FormsModule } from '@angular/forms';
     AppRoutingModule,
     NbEvaIconsModule,
     NbIconModule,
+    NbInputModule,
     NbCardModule,
     NbButtonModule,
+    NbProgressBarModule,
     NbSidebarModule.forRoot(),
     NbMenuModule.forRoot(),
     NbDialogModule.forRoot(),
@@ -50,9 +52,10 @@ import { FormsModule } from '@angular/forms';
     ThemeModule.forRoot(),
   ],
   bootstrap: [AppComponent],
-  providers: [CommonDialogService],
+  providers: [CommonDialogService, FileUploadService],
   entryComponents: [
     CommonDialogComponent,
+    FileUploadComponent,
   ],
 })
 export class AppModule {

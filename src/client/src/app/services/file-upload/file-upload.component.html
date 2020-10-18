@@ -1,0 +1,24 @@
+<nb-card>
+    <nb-card-header>Upload files</nb-card-header>
+    <nb-card-body>
+        <div *ngFor="let progressInfo of progressInfos" class="mb-2">
+            <span>{{ progressInfo.fileName }}</span>
+            <div *ngIf='progressInfo.value < 100 && !progressInfo.message'>
+              <nb-progress-bar [value]='progressInfo.value' status="primary">{{ progressInfo.value }}%</nb-progress-bar>
+            </div>
+            <div *ngIf='progressInfo.value === 100'>
+                <span [class]='progressInfo.mstyle'>{{ progressInfo.message }}</span>
+            </div>
+          </div>
+
+        <label class="btn btn-default">
+            <input type="file" nbInput [multiple]='allowMultiple' [accept]='allowedExts' (change)="selectFiles($event)" />
+        </label>
+
+        <button nbButton hero status="success" size="small" [disabled]="!selectedFiles" (click)="uploadFiles()">Upload</button>
+    </nb-card-body>
+    <nb-card-footer class="text-right">
+        <button nbButton hero status="primary" (click)="ok()">OK</button>
+        <button nbButton hero status="basic" (click)="cancel()">Cancel</button>
+    </nb-card-footer>
+</nb-card>

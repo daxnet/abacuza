@@ -1,13 +1,17 @@
 ﻿using Abacuza.Common.DataAccess;
+using Abacuza.Common.Models;
 using Abacuza.Jobs.ApiService.Models;
+using Abacuza.Jobs.ApiService.Services;
 using DnsClient.Internal;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Web;
 
 namespace Abacuza.Jobs.ApiService.Controllers
 {
@@ -17,10 +21,12 @@ namespace Abacuza.Jobs.ApiService.Controllers
     {
         private readonly IDataAccessObject _dao;
         private readonly ILogger<JobRunnersController> _logger;
+        private readonly CommonApiService _commonService;
 
-        public JobRunnersController(IDataAccessObject dao, ILogger<JobRunnersController> logger)
+        public JobRunnersController(IDataAccessObject dao, CommonApiService commonService, ILogger<JobRunnersController> logger)
         {
             _dao = dao;
+            _commonService = commonService;
             _logger = logger;
         }
 
@@ -83,5 +89,101 @@ namespace Abacuza.Jobs.ApiService.Controllers
             return CreatedAtAction(nameof(GetJobRunnerByIdAsync), new { id = model.Id }, model.Id);
         }
 
+        [HttpPatch("{id}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<IActionResult> PatchJobRunnerAsync(Guid id, [FromBody] JsonPatchDocument<JobRunnerEntity> patchDoc)
+        {
+            var updatingEntity = await _dao.GetByIdAsync<JobRunnerEntity>(id);
+            if (updatingEntity == null)
+            {
+                return NotFound($"Job runner {id} doesn't exist.");
+            }
+
+            if (patchDoc != null)
+            {
+                patchDoc.ApplyTo(updatingEntity, ModelState);
+                if (!ModelState.IsValid)
+                {
+                    return BadRequest(ModelState);
+                }
+
+                await _dao.UpdateByIdAsync(id, updatingEntity);
+
+                return Ok(updatingEntity);
+            }
+            else
+            {
+                return BadRequest(ModelState);
+            }
+        }
+
+        [HttpPost("{id}/files")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<IActionResult> AddFilesToJobRunnerAsync(Guid id, [FromBody] IEnumerable<S3File> files)
+        {
+            var updatingEntity = await _dao.GetByIdAsync<JobRunnerEntity>(id);
+            if (updatingEntity == null)
+            {
+                return NotFound($"Job runner {id} doesn't exist.");
+            }
+
+            if (updatingEntity.BinaryFiles == null)
+            {
+                updatingEntity.BinaryFiles = new List<S3File>(files);
+            }
+            else
+            {
+                foreach (var file in files)
+                {
+                    if (!updatingEntity.BinaryFiles.Any(bf => bf.Equals(file)))
+                    {
+                        updatingEntity.BinaryFiles.Add(file);
+                    }
+                }
+            }
+
+            await _dao.UpdateByIdAsync(id, updatingEntity);
+            return Ok(updatingEntity);
+        }
+
+        [HttpDelete("{id}/files/{bucket}/{key}/{file}")]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task<IActionResult> DeleteBinaryFileAsync(Guid id, string bucket, string key, string file)
+        {
+            var updatingEntity = await _dao.GetByIdAsync<JobRunnerEntity>(id);
+            if (updatingEntity == null)
+            {
+                return NotFound($"Job runner {id} doesn't exist.");
+            }
+
+            var denormalizedBucket = HttpUtility.UrlDecode(bucket);
+            var denormalizedKey = HttpUtility.UrlDecode(key);
+            var denormalizedFile = HttpUtility.UrlDecode(file);
+
+            var s3File = new S3File(denormalizedBucket, denormalizedKey, denormalizedFile);
+            var existingFile = updatingEntity.BinaryFiles?.FirstOrDefault(f => f.Equals(s3File));
+            if (existingFile == null)
+            {
+                return BadRequest($"The specified file doesn't exist in the binary files list of the given job runner.");
+            }
+
+            var (ok, statusCode, message) = await _commonService.DeleteS3FileAsync(s3File);
+
+            if (ok)
+            {
+                updatingEntity.BinaryFiles.Remove(existingFile);
+                await _dao.UpdateByIdAsync(id, updatingEntity);
+
+                return Ok(updatingEntity);
+            }
+            else
+            {
+                return BadRequest($"Failed to delete the file from S3 storage. Server responded status code: {statusCode}. Error message: {message}.");
+            }
+        }
     }
 }

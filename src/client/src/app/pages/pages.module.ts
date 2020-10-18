@@ -9,6 +9,7 @@ import { MiscellaneousModule } from './miscellaneous/miscellaneous.module';
 import { ClustersService } from '../services/clusters.service';
 import { ClusterConnectionsService } from 'app/services/cluster-connections.service';
 import { JobRunnersService } from 'app/services/job-runners.service';
+import { CommonService } from 'app/services/common.service';
 
 @NgModule({
   imports: [
@@ -24,6 +25,7 @@ import { JobRunnersService } from 'app/services/job-runners.service';
     ClustersService,
     ClusterConnectionsService,
     JobRunnersService,
+    CommonService,
   ],
 })
 export class PagesModule {

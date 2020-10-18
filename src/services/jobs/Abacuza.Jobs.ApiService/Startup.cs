@@ -15,15 +15,19 @@ using Abacuza.Common.DataAccess;
 using Abacuza.Common.Utilities;
 using Abacuza.DataAccess.DistributedCached;
 using Abacuza.DataAccess.Mongo;
+using Abacuza.Jobs.ApiService.Services;
 using Abacuza.JobSchedulers.Models;
 using Abacuza.JobSchedulers.Services;
 using McMaster.NETCore.Plugins;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Formatters;
 using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Options;
 using MongoDB.Driver;
 using Newtonsoft.Json.Serialization;
 using Polly;
@@ -33,6 +37,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 
 namespace Abacuza.JobSchedulers
@@ -52,6 +57,7 @@ namespace Abacuza.JobSchedulers
             services.AddControllers(options =>
             {
                 options.SuppressAsyncSuffixInActionNames = false;
+                options.InputFormatters.Insert(0, GetJsonPatchInputFormatter());
             })
             .AddNewtonsoftJson(options =>
             {
@@ -89,6 +95,12 @@ namespace Abacuza.JobSchedulers
                 config.Timeout = Utils.ParseTimeSpanExpression(Configuration["services:clusterService:timeout"], TimeSpan.FromMinutes(2));
             }).AddTransientHttpErrorPolicy(builder => builder.RetryAsync(Convert.ToInt32(Configuration["services:clusterService:retries"])));
 
+            services.AddHttpClient<CommonApiService>(config =>
+            {
+                config.BaseAddress = new Uri(Configuration["services:commonService:url"]);
+                config.Timeout = Utils.ParseTimeSpanExpression(Configuration["services:commonService:timeout"], TimeSpan.FromSeconds(2));
+            }).AddTransientHttpErrorPolicy(builder => builder.RetryAsync(Convert.ToInt32(Configuration["services:commonService:retries"])));
+
             // Initializes the job scheduler
             var quartzSchedulerSettings = new NameValueCollection
             {
@@ -110,6 +122,22 @@ namespace Abacuza.JobSchedulers
             services.AddSingleton<JobSubmitExecutor>();
             services.AddSingleton<JobUpdateExecutor>();
             services.AddHostedService<JobSchedulingHostedService>();
+        }
+
+        private static NewtonsoftJsonPatchInputFormatter GetJsonPatchInputFormatter()
+        {
+            var builder = new ServiceCollection()
+                .AddLogging()
+                .AddMvc()
+                .AddNewtonsoftJson()
+                .Services.BuildServiceProvider();
+
+            return builder
+                .GetRequiredService<IOptions<MvcOptions>>()
+                .Value
+                .InputFormatters
+                .OfType<NewtonsoftJsonPatchInputFormatter>()
+                .First();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

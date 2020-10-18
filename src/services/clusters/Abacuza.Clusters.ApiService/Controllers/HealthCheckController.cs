@@ -12,9 +12,10 @@ namespace Abacuza.Clusters.ApiService.Controllers
     /// </summary>
     /// <seealso cref="Microsoft.AspNetCore.Mvc.ControllerBase" />
     [ApiController]
+    [Route("api/healthcheck")]
     public class HealthCheckController : ControllerBase
     {
-        [HttpGet("api/healthcheck")]
+        [HttpGet]
         public IActionResult Get()
             => Ok(new
             {

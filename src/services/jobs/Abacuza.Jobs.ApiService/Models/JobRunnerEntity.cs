@@ -13,6 +13,7 @@
 
 using Abacuza.Common;
 using Abacuza.Common.DataAccess;
+using Abacuza.Common.Models;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -27,7 +28,7 @@ namespace Abacuza.Jobs.ApiService.Models
     {
         #region Public Properties
 
-        public List<string> BinaryFiles { get; set; }
+        public List<S3File> BinaryFiles { get; set; }
 
         [Required]
         public string ClusterType { get; set; }

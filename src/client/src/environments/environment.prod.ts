@@ -7,4 +7,5 @@ export const environment = {
   production: true,
   clusterServiceBaseUrl: '/cluster-service/',
   jobServiceBaseUrl: '/job-service/',
+  commonServiceBaseUrl: '/common-service/',
 };

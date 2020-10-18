@@ -16,7 +16,7 @@ const routes: Routes = [
             {
                 path: 'job-runner-details/:id',
                 component: JobRunnerDetailsComponent,
-            }
+            },
         ],
     },
 ];

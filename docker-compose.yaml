@@ -27,6 +27,18 @@ services:
             - mongo_data:/data/db:Z
         ports:
             - "27017:27017"
+    abacuza-common-service:
+        image: daxnet/abacuza-common-service
+        ports:
+            - "9025:9025"
+        links:
+            - abacuza-minio
+        depends_on: 
+            - abacuza-minio
+        environment: 
+            - s3__endpoint=http://abacuza-minio:9000
+            - s3__accessKey=AKIAIOSFODNN7EXAMPLE
+            - s3__secretKey=wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY
     abacuza-cluster-service:
         image: daxnet/abacuza-cluster-service
         ports:
@@ -63,6 +75,9 @@ services:
             - services__clusterService__url=http://abacuza-cluster-service:9023
             - services__clusterService__timeout=3m
             - services__clusterService__retries=5
+            - services__commonService__url=http://abacuza-common-service:9025
+            - services__commonService__timeout=1m
+            - services__commonService__retries=3
     abacuza-minio:
         image: minio/minio
         volumes:

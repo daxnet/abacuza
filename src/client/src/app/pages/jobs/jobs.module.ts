@@ -21,7 +21,9 @@ import { FormsModule } from '@angular/forms';
     NbSelectModule,
     NbInputModule,
     JobsRoutingModule,
-    NbToastrModule.forRoot(),
+    NbToastrModule.forRoot({
+      duration: 6000,
+    }),
     Ng2SmartTableModule,
   ],
 })

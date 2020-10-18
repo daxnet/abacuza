@@ -15,6 +15,11 @@ services:
         build:
             context: docker/mongo
             dockerfile: Dockerfile
+    abacuza-common-service:
+        image: daxnet/abacuza-common-service
+        build:
+            context: src/services
+            dockerfile: common/Abacuza.Common.ApiService/Dockerfile
     abacuza-job-service:
         image: daxnet/abacuza-job-service
         build:

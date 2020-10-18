@@ -12,4 +12,5 @@ export const environment = {
   production: false,
   clusterServiceBaseUrl: 'http://localhost:9023/',
   jobServiceBaseUrl: 'http://localhost:9024/',
+  commonServiceBaseUrl: 'http://localhost:9025/',
 };

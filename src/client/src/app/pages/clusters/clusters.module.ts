@@ -33,7 +33,9 @@ import { ThemeModule } from '../../@theme/theme.module';
     NbCardModule,
     NbIconModule,
     NbInputModule,
-    NbToastrModule.forRoot(),
+    NbToastrModule.forRoot({
+      duration: 6000,
+    }),
     NbDialogModule.forRoot(),
     ClustersRoutingModule,
     Ng2SmartTableModule,
