@@ -1,8 +1,9 @@
 # Abacuza
 Simplified Data Processing Platform
 
-## Build Status
 [![Build Status](https://dev.azure.com/sunnycoding/Abacuza/_apis/build/status/Abacuza-Build-Pipeline?branchName=master)](https://dev.azure.com/sunnycoding/Abacuza/_build/latest?definitionId=8&branchName=master)
+![Azure DevOps tests](https://img.shields.io/azure-devops/tests/sunnycoding/Abacuza/8)
+![Docker Image Version (latest semver)](https://img.shields.io/docker/v/daxnet/abacuza-nginx?label=docker%20build%20version)
 
 ## Prerequisites
 - docker engine: v19.03 or above
