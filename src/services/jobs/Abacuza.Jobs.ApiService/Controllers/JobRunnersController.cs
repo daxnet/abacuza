@@ -19,9 +19,15 @@ namespace Abacuza.Jobs.ApiService.Controllers
     [ApiController]
     public class JobRunnersController : ControllerBase
     {
+        #region Private Fields
+
+        private readonly CommonApiService _commonService;
         private readonly IDataAccessObject _dao;
         private readonly ILogger<JobRunnersController> _logger;
-        private readonly CommonApiService _commonService;
+
+        #endregion Private Fields
+
+        #region Public Constructors
 
         public JobRunnersController(IDataAccessObject dao, CommonApiService commonService, ILogger<JobRunnersController> logger)
         {
@@ -30,93 +36,9 @@ namespace Abacuza.Jobs.ApiService.Controllers
             _logger = logger;
         }
 
-        [HttpGet]
-        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IEnumerable<JobRunnerEntity>))]
-        public async Task<IActionResult> GetAllJobRunnersAsync()
-            => Ok(await _dao.GetAllAsync<JobRunnerEntity>());
+        #endregion Public Constructors
 
-        [HttpGet("{id}")]
-        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(JobRunnerEntity))]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<IActionResult> GetJobRunnerByIdAsync(Guid id)
-        {
-            var entity = await _dao.GetByIdAsync<JobRunnerEntity>(id);
-            if (entity == null)
-            {
-                return NotFound($"The job runner {id} doesn't exist.");
-            }
-
-            return Ok(entity);
-        }
-
-        [HttpDelete("{id}")]
-        [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<IActionResult> DeleteJobRunnerByIdAsync(Guid id)
-        {
-            var entity = await _dao.GetByIdAsync<JobRunnerEntity>(id);
-            if (entity == null)
-            {
-                return NotFound($"The job runner {id} doesn't exist.");
-            }
-
-            if (entity.BinaryFiles?.Count > 0)
-            {
-                // TODO: Delete all binary files in the entity.
-                foreach (var file in entity.BinaryFiles)
-                {
-
-                }
-            }
-
-            await _dao.DeleteByIdAsync<JobRunnerEntity>(id);
-            return Ok();
-        }
-
-        [HttpPost]
-        [ProducesResponseType(StatusCodes.Status201Created)]
-        [ProducesResponseType(StatusCodes.Status409Conflict)]
-        public async Task<IActionResult> CreateJobRunnerAsync([FromBody] JobRunnerEntity model)
-        {
-            var existingModel = await _dao.FindBySpecificationAsync<JobRunnerEntity>(x => x.Name == model.Name);
-            if (existingModel.FirstOrDefault() != null)
-            {
-                return Conflict($"The name {model.Name} already exists.");
-            }
-
-            await _dao.AddAsync(model);
-
-            return CreatedAtAction(nameof(GetJobRunnerByIdAsync), new { id = model.Id }, model.Id);
-        }
-
-        [HttpPatch("{id}")]
-        [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<IActionResult> PatchJobRunnerAsync(Guid id, [FromBody] JsonPatchDocument<JobRunnerEntity> patchDoc)
-        {
-            var updatingEntity = await _dao.GetByIdAsync<JobRunnerEntity>(id);
-            if (updatingEntity == null)
-            {
-                return NotFound($"Job runner {id} doesn't exist.");
-            }
-
-            if (patchDoc != null)
-            {
-                patchDoc.ApplyTo(updatingEntity, ModelState);
-                if (!ModelState.IsValid)
-                {
-                    return BadRequest(ModelState);
-                }
-
-                await _dao.UpdateByIdAsync(id, updatingEntity);
-
-                return Ok(updatingEntity);
-            }
-            else
-            {
-                return BadRequest(ModelState);
-            }
-        }
+        #region Public Methods
 
         [HttpPost("{id}/files")]
         [ProducesResponseType(StatusCodes.Status200OK)]
@@ -146,6 +68,22 @@ namespace Abacuza.Jobs.ApiService.Controllers
 
             await _dao.UpdateByIdAsync(id, updatingEntity);
             return Ok(updatingEntity);
+        }
+
+        [HttpPost]
+        [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status409Conflict)]
+        public async Task<IActionResult> CreateJobRunnerAsync([FromBody] JobRunnerEntity model)
+        {
+            var existingModel = await _dao.FindBySpecificationAsync<JobRunnerEntity>(x => x.Name == model.Name);
+            if (existingModel.FirstOrDefault() != null)
+            {
+                return Conflict($"The name {model.Name} already exists.");
+            }
+
+            await _dao.AddAsync(model);
+
+            return CreatedAtAction(nameof(GetJobRunnerByIdAsync), new { id = model.Id }, model.Id);
         }
 
         [HttpDelete("{id}/files/{bucket}/{key}/{file}")]
@@ -185,5 +123,81 @@ namespace Abacuza.Jobs.ApiService.Controllers
                 return BadRequest($"Failed to delete the file from S3 storage. Server responded status code: {statusCode}. Error message: {message}.");
             }
         }
+
+        [HttpDelete("{id}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<IActionResult> DeleteJobRunnerByIdAsync(Guid id)
+        {
+            var entity = await _dao.GetByIdAsync<JobRunnerEntity>(id);
+            if (entity == null)
+            {
+                return NotFound($"The job runner {id} doesn't exist.");
+            }
+
+            if (entity.BinaryFiles?.Count > 0)
+            {
+                foreach (var file in entity.BinaryFiles)
+                {
+                    var (ok, statusCode, message) = await _commonService.DeleteS3FileAsync(file);
+                    if (!ok)
+                    {
+                        _logger.LogWarning($"Delete file {file} failed with status code {statusCode}. Error message: {message}");
+                    }
+                }
+            }
+
+            await _dao.DeleteByIdAsync<JobRunnerEntity>(id);
+            return Ok();
+        }
+
+        [HttpGet]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IEnumerable<JobRunnerEntity>))]
+        public async Task<IActionResult> GetAllJobRunnersAsync()
+            => Ok(await _dao.GetAllAsync<JobRunnerEntity>());
+
+        [HttpGet("{id}")]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(JobRunnerEntity))]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<IActionResult> GetJobRunnerByIdAsync(Guid id)
+        {
+            var entity = await _dao.GetByIdAsync<JobRunnerEntity>(id);
+            if (entity == null)
+            {
+                return NotFound($"The job runner {id} doesn't exist.");
+            }
+
+            return Ok(entity);
+        }
+        [HttpPatch("{id}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<IActionResult> PatchJobRunnerAsync(Guid id, [FromBody] JsonPatchDocument<JobRunnerEntity> patchDoc)
+        {
+            var updatingEntity = await _dao.GetByIdAsync<JobRunnerEntity>(id);
+            if (updatingEntity == null)
+            {
+                return NotFound($"Job runner {id} doesn't exist.");
+            }
+
+            if (patchDoc != null)
+            {
+                patchDoc.ApplyTo(updatingEntity, ModelState);
+                if (!ModelState.IsValid)
+                {
+                    return BadRequest(ModelState);
+                }
+
+                await _dao.UpdateByIdAsync(id, updatingEntity);
+
+                return Ok(updatingEntity);
+            }
+            else
+            {
+                return BadRequest(ModelState);
+            }
+        }
+
+        #endregion Public Methods
     }
 }

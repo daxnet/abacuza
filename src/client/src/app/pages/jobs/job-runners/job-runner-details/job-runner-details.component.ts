@@ -101,7 +101,8 @@ export class JobRunnerDetailsComponent implements OnInit {
             }))
             .subscribe(res => {
               this.jobRunnerEntity.binaryFiles = res.binaryFiles;
-              res.binaryFiles.forEach(bf => this.source.add(bf));
+              // res.binaryFiles.forEach(bf => this.source.add(bf));
+              this.source.load(res.binaryFiles);
               this.source.refresh();
               this.toastrService.success('Files added successfully.', 'Success');
             });
