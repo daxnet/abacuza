@@ -1,5 +1,5 @@
 {
-    "file": "s3://data/jar/microsoft-spark-2.4.x-0.12.1.jar",
+    "file": "s3://data/jar/microsoft-spark-3-0_2.12-1.0.0.jar",
     "className": "org.apache.spark.deploy.dotnet.DotnetRunner",
     "args": [
         "s3://data/jar/abacuza.jobrunners.spark.zip",

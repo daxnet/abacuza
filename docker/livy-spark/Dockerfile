@@ -2,8 +2,9 @@ FROM openjdk:8
 
 # Setting version and environment variables
 ENV SPARK_HOME=/spark
-ENV SPARK_VERSION=2.4.5
+ENV SPARK_VERSION=3.0.1
 ENV HADOOP_VERSION=3.1.4
+ENV DOTNET_SPARK_WROKER_VERSION=1.0.0
 ENV AWS_JAVA_SDK_VERSION=1.11.871
 ENV LIVY_VERSION=0.7.0
 ENV SPARK_DIST_CLASSPATH=/hadoop-conf/:/hadoop/share/hadoop/common/lib/*:/hadoop/share/hadoop/common/*:/hadoop/share/hadoop/hdfs:/hadoop/share/hadoop/hdfs/lib/*:/hadoop/share/hadoop/hdfs/*:/hadoop/share/hadoop/yarn:/hadoop/share/hadoop/yarn/lib/*:/hadoop/share/hadoop/yarn/*:/hadoop/share/hadoop/mapreduce/lib/*:/hadoop/share/hadoop/mapreduce/*
@@ -18,22 +19,22 @@ RUN wget https://packages.microsoft.com/config/debian/10/packages-microsoft-prod
     rm -f packages-microsoft-prod.deb
 
 # Getting Microsoft.Spark.Worker
-RUN wget https://github.com/dotnet/spark/releases/download/v0.12.1/Microsoft.Spark.Worker.netcoreapp3.1.linux-x64-0.12.1.tar.gz && \
-    tar -zxf Microsoft.Spark.Worker.netcoreapp3.1.linux-x64-0.12.1.tar.gz && \
-    mv Microsoft.Spark.Worker-0.12.1 Microsoft.Spark.Worker && \
-    rm -f Microsoft.Spark.Worker.netcoreapp3.1.linux-x64-0.12.1.tar.gz
+RUN wget https://github.com/dotnet/spark/releases/download/v$DOTNET_SPARK_WROKER_VERSION/Microsoft.Spark.Worker.netcoreapp3.1.linux-x64-$DOTNET_SPARK_WROKER_VERSION.tar.gz && \
+    tar -zxf Microsoft.Spark.Worker.netcoreapp3.1.linux-x64-$DOTNET_SPARK_WROKER_VERSION.tar.gz && \
+    mv Microsoft.Spark.Worker-$DOTNET_SPARK_WROKER_VERSION Microsoft.Spark.Worker && \
+    rm -f Microsoft.Spark.Worker.netcoreapp3.1.linux-x64-$DOTNET_SPARK_WROKER_VERSION.tar.gz
 
 ENV DOTNET_WORKER_DIR=/Microsoft.Spark.Worker
 
 # Building .NET for Spark Runner
-RUN mkdir /runners
-WORKDIR /runners
-COPY ["src/services/job-runners/Abacuza.JobRunners.Spark/Abacuza.JobRunners.Spark.csproj", "Abacuza.JobRunners.Spark/Abacuza.JobRunners.Spark.csproj"]
-RUN dotnet restore "Abacuza.JobRunners.Spark/Abacuza.JobRunners.Spark.csproj"
-COPY ["src/services/job-runners/Abacuza.JobRunners.Spark/", "Abacuza.JobRunners.Spark/"]
-WORKDIR /runners/Abacuza.JobRunners.Spark
-RUN dotnet build "Abacuza.JobRunners.Spark.csproj" -c Release -o /abacuza
-WORKDIR /
+# RUN mkdir /runners
+# WORKDIR /runners
+# COPY ["src/services/job-runners/Abacuza.JobRunners.Spark/Abacuza.JobRunners.Spark.csproj", "Abacuza.JobRunners.Spark/Abacuza.JobRunners.Spark.csproj"]
+# RUN dotnet restore "Abacuza.JobRunners.Spark/Abacuza.JobRunners.Spark.csproj"
+# COPY ["src/services/job-runners/Abacuza.JobRunners.Spark/", "Abacuza.JobRunners.Spark/"]
+# WORKDIR /runners/Abacuza.JobRunners.Spark
+# RUN dotnet build "Abacuza.JobRunners.Spark.csproj" -c Release -o /abacuza
+# WORKDIR /
 
 # Getting Spark
 RUN wget https://archive.apache.org/dist/spark/spark-$SPARK_VERSION/spark-$SPARK_VERSION-bin-without-hadoop.tgz && \
@@ -65,9 +66,9 @@ RUN mkdir -p /livy/logs/ && cp /livy/conf/log4j.properties.template /livy/conf/l
 WORKDIR /livy
 ENV SPARK_CONF_DIR=/spark/conf
 ENV HADOOP_CONF_DIR=/hadoop/etc/hadoop
-COPY docker/livy-spark/hdfs-site.tmpl /hadoop/etc/hadoop/
-COPY docker/livy-spark/livy.conf.tmpl /livy/conf/
-COPY docker/livy-spark/log4j.properties /spark/conf/log4j.properties
+COPY hdfs-site.tmpl /hadoop/etc/hadoop/
+COPY livy.conf.tmpl /livy/conf/
+COPY log4j.properties /spark/conf/log4j.properties
 
 # Dockerize the parameters from env variables
 ENV DOCKERIZE_VERSION v0.6.1

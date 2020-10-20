@@ -33,8 +33,8 @@ services:
     abacuza-livy-spark:
         image: daxnet/abacuza-livy-spark
         build:
-            context: .
-            dockerfile: docker/livy-spark/Dockerfile
+            context: docker/livy-spark
+            dockerfile: Dockerfile
     abacuza-client:
         image: daxnet/abacuza-client
         build:
