@@ -4,9 +4,9 @@ using System.Text;
 
 namespace Abacuza.Common.UIComponents
 {
-    public sealed class TextAttribute : UIComponent
+    public sealed class TextBoxAttribute : UIComponent
     {
-        public TextAttribute(string label)
+        public TextBoxAttribute(string label)
             : base(label)
         {
         }

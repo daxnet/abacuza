@@ -4,9 +4,9 @@ using System.Text;
 
 namespace Abacuza.Common.UIComponents
 {
-    public sealed class SelectAttribute : UIComponent
+    public sealed class DropDownBoxAttribute : UIComponent
     {
-        public SelectAttribute(string label, string options)
+        public DropDownBoxAttribute(string label, string options)
             : base(label)
             => Options = options;
 

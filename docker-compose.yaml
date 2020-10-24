@@ -35,6 +35,12 @@ services:
             - abacuza-minio
         depends_on: 
             - abacuza-minio
+        healthcheck:
+            test: ["CMD", "curl", "-f", "http://localhost:9025/api/healthcheck"]
+            interval: 20s
+            timeout: 10s
+            retries: 5
+            start_period: 40s
         environment: 
             - s3__endpoint=http://abacuza-minio:9000
             - s3__accessKey=AKIAIOSFODNN7EXAMPLE
@@ -49,10 +55,36 @@ services:
         links: 
             - abacuza-mongo
             - abacuza-redis
+        healthcheck:
+            test: ["CMD", "curl", "-f", "http://localhost:9023/api/healthcheck"]
+            interval: 20s
+            timeout: 10s
+            retries: 5
+            start_period: 40s
         environment: 
             - mongo__connectionString=mongodb://abacuza-mongo:27017
             - mongo__database=abacuza-clusters
             - redis__connectionString=abacuza-redis:6379
+    abacuza-endpoint-service:
+        image: daxnet/abacuza-endpoint-service
+        ports:
+            - "9026:9026"
+        healthcheck:
+            test: ["CMD", "curl", "-f", "http://localhost:9026/api/healthcheck"]
+            interval: 20s
+            timeout: 10s
+            retries: 5
+            start_period: 40s
+    abacuza-project-service:
+        image: daxnet/abacuza-project-service
+        ports:
+            - "9027:9027"
+        healthcheck:
+            test: ["CMD", "curl", "-f", "http://localhost:9027/api/healthcheck"]
+            interval: 20s
+            timeout: 10s
+            retries: 5
+            start_period: 40s
     abacuza-job-service:
         image: daxnet/abacuza-job-service
         ports:
@@ -65,6 +97,12 @@ services:
             - abacuza-mongo
             - abacuza-postgres
             - abacuza-redis
+        healthcheck:
+            test: ["CMD", "curl", "-f", "http://localhost:9024/api/healthcheck"]
+            interval: 20s
+            timeout: 10s
+            retries: 5
+            start_period: 40s
         environment: 
             - mongo__connectionString=mongodb://abacuza-mongo:27017
             - mongo__database=abacuza-job-schedulers
@@ -127,19 +165,27 @@ services:
         depends_on:
             - abacuza-cluster-service
             - abacuza-job-service
+            - abacuza-common-service
+            - abacuza-endpoint-service
         links:
             - abacuza-cluster-service
             - abacuza-job-service
+            - abacuza-common-service
+            - abacuza-endpoint-service
     abacuza-nginx:
         image: daxnet/abacuza-nginx
         depends_on:
             - abacuza-client
             - abacuza-cluster-service
             - abacuza-job-service
+            - abacuza-common-service
+            - abacuza-endpoint-service
         links:
             - abacuza-client
             - abacuza-cluster-service
             - abacuza-job-service
+            - abacuza-common-service
+            - abacuza-endpoint-service
         ports:
             - 9320:80
         

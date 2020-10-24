@@ -77,7 +77,10 @@ namespace Abacuza.JobSchedulers
                 // Set the comments path for the Swagger JSON and UI.
                 var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
                 var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
-                c.IncludeXmlComments(xmlPath);
+                if (File.Exists(xmlPath))
+                {
+                    c.IncludeXmlComments(xmlPath);
+                }
             });
 
             var pluginsDirectory = Path.Combine(AppContext.BaseDirectory, "plugins");
@@ -151,7 +154,7 @@ namespace Abacuza.JobSchedulers
             app.UseSwagger();
             app.UseSwaggerUI(c =>
             {
-                c.SwaggerEndpoint("/swagger/v1/swagger.json", "Abacuza Job Scheduler API");
+                c.SwaggerEndpoint("/swagger/v1/swagger.json", "Abacuza Jobs API");
             });
 
             app.UseRouting();

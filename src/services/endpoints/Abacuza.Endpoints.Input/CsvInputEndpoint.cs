@@ -9,13 +9,13 @@ namespace Abacuza.Endpoints.Input
     [Endpoint("endpoints.input.csv", "CSV/TSV Files", EndpointType.Input)]
     public sealed class CsvInputEndpoint : Endpoint
     {
-        [Files("Files", AllowedExtensions = ".csv,.tsv", AllowMultipleSelection = true)]
+        [FilePicker("Files", AllowedExtensions = ".csv,.tsv", AllowMultipleSelection = true)]
         public List<S3File> Files { get; set; }
 
-        [Select("Separator", "comma,tab")]
+        [DropDownBox("Separator", "comma,tab")]
         public string SeparatorCharacter { get; set; }
 
-        [Checkbox("Has header")]
+        [CheckBox("Has header")]
         public bool HasHeader { get; set; }
     }
 }

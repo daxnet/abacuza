@@ -4,9 +4,9 @@ using System.Text;
 
 namespace Abacuza.Common.UIComponents
 {
-    public sealed class CheckboxAttribute : UIComponent
+    public sealed class CheckBoxAttribute : UIComponent
     {
-        public CheckboxAttribute(string label)
+        public CheckBoxAttribute(string label)
             : base(label)
         { }
     }

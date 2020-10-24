@@ -30,6 +30,16 @@ services:
         build:
             context: src/services
             dockerfile: clusters/Abacuza.Clusters.ApiService/Dockerfile
+    abacuza-endpoint-service:
+        image: daxnet/abacuza-endpoint-service
+        build:
+            context: src/services
+            dockerfile: endpoints/Abacuza.Endpoints.ApiService/Dockerfile
+    abacuza-project-service:
+        image: daxnet/abacuza-project-service
+        build:
+            context: src/services
+            dockerfile: projects/Abacuza.Projects.ApiService/Dockerfile
     abacuza-livy-spark:
         image: daxnet/abacuza-livy-spark
         build:
