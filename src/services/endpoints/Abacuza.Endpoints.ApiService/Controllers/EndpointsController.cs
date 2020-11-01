@@ -46,5 +46,19 @@ namespace Abacuza.Endpoints.ApiService.Controllers
                     e.ConfigurationUIElements
                 }));
         }
+
+        [HttpGet("{name}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public IActionResult GetEndpointByName(string name)
+        {
+            var endpoint = _endpoints.FirstOrDefault(e => e.Name == name);
+            if (endpoint == null)
+            {
+                return NotFound($"The endpoint {name} doesn't exist.");
+            }
+
+            return Ok(endpoint);
+        }
     }
 }

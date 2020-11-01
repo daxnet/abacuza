@@ -1,0 +1,42 @@
+<div>
+    <nb-card>
+        <nb-card-header>
+            <span *ngIf='projectEntity'>
+                Project Details - {{projectEntity.name}}
+            </span>
+        </nb-card-header>
+
+        <nb-card-body>
+            <div>
+                <div class="form-group" fullWidth>
+                    <label for="idProjectDescription">Description</label>
+                    <input type="text" id="idProjectDescription" #name [(ngModel)]="updatingProject.description" nbInput
+                        fullWidth autofocus required placeholder="Description of the project">
+                </div>
+                <div *ngIf='inputEndpointEntity' class="form-group" fullWidth>
+                    <label for="idProjectInputEndpoint">Input Endpoint</label>
+                    <input type="text" id="idProjectInputEndpoint" #name [(ngModel)]="inputEndpointEntity.displayName"
+                        nbInput fullWidth autofocus required placeholder="Input Endpoint" disabled>
+                </div>
+                <div *ngIf='jobRunnerEntity' class="form-group" fullWidth>
+                    <label for="idJobRunnerName">Job Runner</label>
+                    <input type="text" id="idJobRunnerName" #name [(ngModel)]="jobRunnerEntity.name" nbInput fullWidth
+                        autofocus required placeholder="Job Runner" disabled>
+                </div>
+            </div>
+
+            <nb-tabset>
+                <nb-tab tabTitle="Input">
+                    <ng-template ngxUIComponentsHost></ng-template>
+                </nb-tab>
+                <nb-tab tabTitle="Revisions">
+
+                </nb-tab>
+            </nb-tabset>
+        </nb-card-body>
+        <nb-card-footer class="text-right">
+            <button nbButton hero status="basic" (click)="back()">Back</button>
+            <button nbButton hero status="primary" (click)="save()">Save</button>
+        </nb-card-footer>
+    </nb-card>
+</div>

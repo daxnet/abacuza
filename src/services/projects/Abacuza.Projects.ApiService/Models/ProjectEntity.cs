@@ -20,7 +20,7 @@ namespace Abacuza.Projects.ApiService.Models
 
         public Guid? JobRunnerId { get; set; }
 
-        public string InputEndpointId { get; set; }
+        public string InputEndpointName { get; set; }
 
         public string InputEndpointSettings { get; set; }
 

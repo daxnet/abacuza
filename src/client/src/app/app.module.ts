@@ -16,6 +16,7 @@ import {
   NbButtonModule,
   NbCardModule,
   NbChatModule,
+  NbCheckboxModule,
   NbDatepickerModule,
   NbDialogModule,
   NbIconModule,
@@ -31,9 +32,15 @@ import { CommonDialogComponent } from './services/common-dialog/common-dialog.co
 import { CommonDialogService } from './services/common-dialog.service';
 import { FileUploadComponent } from './services/file-upload/file-upload.component';
 import { FileUploadService } from './services/file-upload.service';
+import { CheckBoxComponent } from './ui-components/check-box.component';
+import { TextAreaComponent } from './ui-components/text-area.component';
 
 @NgModule({
-  declarations: [AppComponent, CommonDialogComponent, FileUploadComponent],
+  declarations: [
+    AppComponent, 
+    CommonDialogComponent, 
+    FileUploadComponent, 
+    CheckBoxComponent, TextAreaComponent],
   imports: [
     BrowserModule,
     BrowserAnimationsModule,
@@ -44,6 +51,7 @@ import { FileUploadService } from './services/file-upload.service';
     NbInputModule,
     NbCardModule,
     NbButtonModule,
+    NbCheckboxModule,
     NbProgressBarModule,
     NbSidebarModule.forRoot(),
     NbMenuModule.forRoot(),
@@ -56,6 +64,7 @@ import { FileUploadService } from './services/file-upload.service';
   entryComponents: [
     CommonDialogComponent,
     FileUploadComponent,
+    CheckBoxComponent,
   ],
 })
 export class AppModule {

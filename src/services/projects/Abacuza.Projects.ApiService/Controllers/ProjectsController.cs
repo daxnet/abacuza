@@ -41,5 +41,23 @@ namespace Abacuza.Projects.ApiService.Controllers
 
             return Ok(project);
         }
+
+        [HttpPost]
+        [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status409Conflict)]
+        public async Task<IActionResult> CreateProjectAsync([FromBody] ProjectEntity projectEntity)
+        {
+            var existingModel = await _dao.FindBySpecificationAsync<ProjectEntity>(p => p.Name == projectEntity.Name);
+            if (existingModel.FirstOrDefault() != null)
+            {
+                return Conflict($"Project '{projectEntity.Name}' already exists.");
+            }
+
+            projectEntity.DateCreated = DateTime.UtcNow;
+
+            await _dao.AddAsync(projectEntity);
+
+            return CreatedAtAction(nameof(GetProjectByIdAsync), new { id = projectEntity.Id }, projectEntity.Id);
+        }
     }
 }

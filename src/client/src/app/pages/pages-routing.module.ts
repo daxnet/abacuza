@@ -9,6 +9,11 @@ const routes: Routes = [{
   component: PagesComponent,
   children: [
     {
+      path: 'projects',
+      loadChildren: () => import('./projects/projects.module')
+        .then(m => m.ProjectsModule),
+    },
+    {
       path: 'clusters',
       loadChildren: () => import('./clusters/clusters.module')
         .then(m => m.ClustersModule),

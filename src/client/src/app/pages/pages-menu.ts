@@ -6,6 +6,28 @@ export const MENU_ITEMS: NbMenuItem[] = [
     group: true,
   },
   {
+    title: 'Projects',
+    icon: 'cube-outline',
+    children: [
+      {
+        title: 'Projects',
+        icon: 'settings-2-outline',
+        link: '/pages/projects/project-list',
+      }
+    ],
+  },
+  {
+    title: 'Jobs',
+    icon: 'cube-outline',
+    children: [
+      {
+        title: 'Job Runners',
+        icon: 'settings-2-outline',
+        link: '/pages/jobs/job-runners',
+      },
+    ],
+  },
+  {
     title: 'Clusters',
     icon: 'layers-outline',
     children: [
@@ -18,17 +40,6 @@ export const MENU_ITEMS: NbMenuItem[] = [
         title: 'Types',
         icon: 'grid-outline',
         link: '/pages/clusters/types',
-      },
-    ],
-  },
-  {
-    title: 'Jobs',
-    icon: 'cube-outline',
-    children: [
-      {
-        title: 'Job Runners',
-        icon: 'settings-2-outline',
-        link: '/pages/jobs/job-runners',
       },
     ],
   },
