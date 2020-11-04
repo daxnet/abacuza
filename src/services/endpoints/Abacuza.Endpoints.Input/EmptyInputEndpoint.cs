@@ -15,7 +15,7 @@ namespace Abacuza.Endpoints.Input
 {
     [Endpoint("endpoints.none.empty", 
         "Empty", 
-        EndpointType.None, 
+        EndpointType.Input, 
         Description = "The endpoint that doesn't read from any data source.")]
     public sealed class EmptyInputEndpoint : Endpoint
     {

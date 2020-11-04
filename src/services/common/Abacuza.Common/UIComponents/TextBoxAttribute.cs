@@ -6,8 +6,8 @@ namespace Abacuza.Common.UIComponents
 {
     public sealed class TextBoxAttribute : UIComponent
     {
-        public TextBoxAttribute(string label)
-            : base(label)
+        public TextBoxAttribute(string name, string label)
+            : base(name, label)
         {
         }
 

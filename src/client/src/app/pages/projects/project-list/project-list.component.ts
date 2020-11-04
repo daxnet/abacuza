@@ -1,9 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { NbDialogService, NbToastrService } from '@nebular/theme';
+import { CommonDialogResult } from 'app/models/common-dialog-result';
 import { Endpoint } from 'app/models/endpoint';
 import { JobRunner } from 'app/models/job-runner';
 import { Project } from 'app/models/project';
+import { CommonDialogService } from 'app/services/common-dialog.service';
 import { EndpointsService } from 'app/services/endpoints.service';
 import { JobRunnersService } from 'app/services/job-runners.service';
 import { ProjectsService } from 'app/services/projects.service';
@@ -62,6 +64,7 @@ export class ProjectListComponent implements OnInit {
     private endpointsService: EndpointsService,
     private jobRunnersService: JobRunnersService,
     private dialogService: NbDialogService,
+    private commonDialogService: CommonDialogService,
     private toastrService: NbToastrService,
     private router: Router) { }
 
@@ -117,6 +120,20 @@ export class ProjectListComponent implements OnInit {
   }
 
   onDelete(event): void {
-
+    this.commonDialogService.confirm('Delete Project', 'Are you sure you want to delete the selected project?')
+      .subscribe(dr => {
+        if (dr === CommonDialogResult.Yes) {
+          this.projectsService.deleteProject(event.data.id)
+            .pipe(catchError(err => {
+              this.toastrService.danger(`Server responded with error message: ${err.message}`, 'Failed to delete project');
+              return throwError(err.message);
+            }))
+            .subscribe(res => {
+              this.source.remove(event.data);
+              this.source.refresh();
+              this.toastrService.success('Project deleted successfully.', 'Success');
+            });
+        }
+      });
   }
 }

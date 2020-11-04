@@ -3,15 +3,15 @@ import { ComponentEvent } from './component-event';
 import { UIComponentBase } from './uicomponent-base';
 
 @Component({
-  selector: 'ngx-text-area',
-  templateUrl: './text-area.component.html',
-  styleUrls: ['./text-area.component.scss']
+  selector: 'ngx-text-box',
+  templateUrl: './text-box.component.html',
+  styleUrls: ['./text-box.component.scss']
 })
-export class TextAreaComponent implements UIComponentBase, OnInit {
+export class TextBoxComponent implements UIComponentBase, OnInit {
 
   @Input() attributes: any;
   @Output() modelChange: EventEmitter<ComponentEvent> = new EventEmitter<ComponentEvent>();
-  
+
   constructor() { }
 
   ngOnInit(): void {

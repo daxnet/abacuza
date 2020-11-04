@@ -1,0 +1,5 @@
+<div class="form-group">
+    <label [for]="attributes.name">{{attributes.label}}</label>
+    <input *ngIf='attributes.tooltip' [nbTooltip]='attributes.tooltip' nbTooltipPlacement="bottom" type="text" [id]="attributes.name" nbInput fullWidth (blur)='onBlur($event)'>
+    <input *ngIf='!attributes.tooltip' type="text" [id]="attributes.name" nbInput fullWidth (blur)='onBlur($event)'>
+</div>

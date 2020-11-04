@@ -6,4 +6,5 @@ export class Project {
     jobRunnerId: string;
     inputEndpointName: string;
     inputEndpointSettings: string;
+    uiComponentData: any;
 }

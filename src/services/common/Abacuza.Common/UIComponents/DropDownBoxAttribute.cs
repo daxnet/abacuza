@@ -6,8 +6,8 @@ namespace Abacuza.Common.UIComponents
 {
     public sealed class DropDownBoxAttribute : UIComponent
     {
-        public DropDownBoxAttribute(string label, string options)
-            : base(label)
+        public DropDownBoxAttribute(string name, string label, string options)
+            : base(name, label)
             => Options = options;
 
         public string Options { get; }

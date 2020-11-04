@@ -26,6 +26,7 @@ import {
   NbSelectModule,
   NbSidebarModule,
   NbToastrModule,
+  NbTooltipModule,
   NbWindowModule,
 } from '@nebular/theme';
 import { CommonDialogComponent } from './services/common-dialog/common-dialog.component';
@@ -34,13 +35,15 @@ import { FileUploadComponent } from './services/file-upload/file-upload.componen
 import { FileUploadService } from './services/file-upload.service';
 import { CheckBoxComponent } from './ui-components/check-box.component';
 import { TextAreaComponent } from './ui-components/text-area.component';
+import { DropDownBoxComponent } from './ui-components/drop-down-box.component';
+import { TextBoxComponent } from './ui-components/text-box.component';
 
 @NgModule({
   declarations: [
     AppComponent, 
     CommonDialogComponent, 
     FileUploadComponent, 
-    CheckBoxComponent, TextAreaComponent],
+    CheckBoxComponent, TextAreaComponent, DropDownBoxComponent, TextBoxComponent],
   imports: [
     BrowserModule,
     BrowserAnimationsModule,
@@ -52,6 +55,8 @@ import { TextAreaComponent } from './ui-components/text-area.component';
     NbCardModule,
     NbButtonModule,
     NbCheckboxModule,
+    NbSelectModule,
+    NbTooltipModule,
     NbProgressBarModule,
     NbSidebarModule.forRoot(),
     NbMenuModule.forRoot(),

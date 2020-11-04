@@ -23,7 +23,7 @@ namespace Abacuza.Endpoints
     {
         #region Public Properties
 
-        [TextArea("Additional options")]
+        [TextArea("additionalOptions", "Additional options", Ordinal = -1)]
         public Dictionary<string, string> AdditionalOptions { get; set; }
             = new Dictionary<string, string>();
 
@@ -34,22 +34,28 @@ namespace Abacuza.Endpoints
                 var result = new List<Dictionary<string, object>>();
                 var uiComponentAttributes = from p in GetType().GetProperties(BindingFlags.Public | BindingFlags.Instance)
                                             where p.CanRead && p.CanWrite && p.GetCustomAttributes().Any(p => p.GetType().IsSubclassOf(typeof(UIComponent)))
-                                            select p.GetCustomAttributes().FirstOrDefault(attr => attr.GetType().IsSubclassOf(typeof(UIComponent)));
+                                            let uiComponentAttribute = p.GetCustomAttributes().FirstOrDefault(attr => attr.GetType().IsSubclassOf(typeof(UIComponent)))
+                                            let ordinal = uiComponentAttribute.GetType().GetProperty(nameof(UIComponent.Ordinal)).GetValue(uiComponentAttribute)
+                                            let label = uiComponentAttribute.GetType().GetProperty(nameof(UIComponent.Label)).GetValue(uiComponentAttribute)
+                                            orderby ordinal descending, label ascending
+                                            select new { EndpointPropertyName = p.Name, UIComponentAttribute = uiComponentAttribute };
+
 
                 foreach(var attr in uiComponentAttributes)
                 {
                     var properties = new Dictionary<string, object>
                     {
-                        { "_type", GetNormalizedAttributeName(attr.GetType()) }
+                        { "_type", GetNormalizedAttributeName(attr.UIComponentAttribute.GetType()) },
+                        { "_property", attr.EndpointPropertyName }
                     };
 
-                    var options = from p in attr.GetType().GetProperties(BindingFlags.Public | BindingFlags.Instance)
+                    var options = from p in attr.UIComponentAttribute.GetType().GetProperties(BindingFlags.Public | BindingFlags.Instance)
                                   where p.Name != "TypeId"
                                   select p;
 
                     foreach (var option in options)
                     {
-                        var optionValue = option.GetValue(attr);
+                        var optionValue = option.GetValue(attr.UIComponentAttribute);
                         properties.Add(option.Name, optionValue);
                     }
 

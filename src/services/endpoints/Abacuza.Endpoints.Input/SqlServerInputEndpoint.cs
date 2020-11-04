@@ -8,16 +8,16 @@ namespace Abacuza.Endpoints.Input
     [Endpoint("endpoints.input.sqlserver", "Microsoft SQL Server Data Table", EndpointType.Input)]
     public sealed class SqlServerInputEndpoint : Endpoint
     {
-        [TextBox("Connection URL", Required = true)]
+        [TextBox("txtConnectionURL", "Connection URL", Required = true, Ordinal = 100)]
         public string ConnectionUrl { get; set; }
 
-        [TextBox("Data table", Required = true)]
+        [TextBox("txtDataTable", "Data table", Required = true, Ordinal = 90)]
         public string DataTable { get; set; }
 
-        [TextBox("User name", Required = true)]
+        [TextBox("txtUserName", "User name", Required = true, Ordinal = 80, Tooltip = "User name of the database.")]
         public string UserName { get; set; }
 
-        [TextBox("Password", Required = true)]
+        [TextBox("txtPassword", "Password", Required = true, Ordinal = 70, Tooltip = "Password for the user.")]
         public string Password { get; set; }
     }
 }

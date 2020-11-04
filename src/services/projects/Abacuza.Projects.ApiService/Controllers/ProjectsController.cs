@@ -14,13 +14,41 @@ namespace Abacuza.Projects.ApiService.Controllers
     [ApiController]
     public class ProjectsController : ControllerBase
     {
-        private readonly ILogger<ProjectsController> _logger;
+        #region Private Fields
+
         private readonly IDataAccessObject _dao;
+        private readonly ILogger<ProjectsController> _logger;
+
+        #endregion Private Fields
+
+        #region Public Constructors
 
         public ProjectsController(IDataAccessObject dao, ILogger<ProjectsController> logger)
         {
             _dao = dao;
             _logger = logger;
+        }
+
+        #endregion Public Constructors
+
+        #region Public Methods
+
+        [HttpPost]
+        [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status409Conflict)]
+        public async Task<IActionResult> CreateProjectAsync([FromBody] ProjectEntity projectEntity)
+        {
+            var existingModel = await _dao.FindBySpecificationAsync<ProjectEntity>(p => p.Name == projectEntity.Name);
+            if (existingModel.FirstOrDefault() != null)
+            {
+                return Conflict($"Project '{projectEntity.Name}' already exists.");
+            }
+
+            projectEntity.DateCreated = DateTime.UtcNow;
+
+            await _dao.AddAsync(projectEntity);
+
+            return CreatedAtAction(nameof(GetProjectByIdAsync), new { id = projectEntity.Id }, projectEntity.Id);
         }
 
         [HttpGet]
@@ -42,22 +70,21 @@ namespace Abacuza.Projects.ApiService.Controllers
             return Ok(project);
         }
 
-        [HttpPost]
-        [ProducesResponseType(StatusCodes.Status201Created)]
-        [ProducesResponseType(StatusCodes.Status409Conflict)]
-        public async Task<IActionResult> CreateProjectAsync([FromBody] ProjectEntity projectEntity)
+        [HttpDelete("{id}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<IActionResult> DeleteProjectByIdAsync(Guid id)
         {
-            var existingModel = await _dao.FindBySpecificationAsync<ProjectEntity>(p => p.Name == projectEntity.Name);
-            if (existingModel.FirstOrDefault() != null)
+            var project = await _dao.GetByIdAsync<ProjectEntity>(id);
+            if (project == null)
             {
-                return Conflict($"Project '{projectEntity.Name}' already exists.");
+                return NotFound($"The project {id} doesn't exist.");
             }
 
-            projectEntity.DateCreated = DateTime.UtcNow;
-
-            await _dao.AddAsync(projectEntity);
-
-            return CreatedAtAction(nameof(GetProjectByIdAsync), new { id = projectEntity.Id }, projectEntity.Id);
+            await _dao.DeleteByIdAsync<ProjectEntity>(id);
+            return Ok();
         }
+
+        #endregion Public Methods
     }
 }

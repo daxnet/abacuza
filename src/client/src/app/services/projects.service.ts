@@ -31,4 +31,8 @@ export class ProjectsService {
       jobRunnerId: project.jobRunnerId,
     });
   }
+
+  public deleteProject(id: string): Observable<any> {
+    return this.httpClient.delete(`${environment.projectServiceBaseUrl}api/projects/${id}`);
+  }
 }

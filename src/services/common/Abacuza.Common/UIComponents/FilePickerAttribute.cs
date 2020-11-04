@@ -6,8 +6,8 @@ namespace Abacuza.Common.UIComponents
 {
     public sealed class FilePickerAttribute : UIComponent
     {
-        public FilePickerAttribute(string label)
-            : base(label)
+        public FilePickerAttribute(string name, string label)
+            : base(name, label)
         { }
 
         public bool AllowMultipleSelection { get; set; }
