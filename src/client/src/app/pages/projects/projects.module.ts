@@ -13,11 +13,11 @@ import { UIComponentsHostDirective } from 'app/ui-components/uicomponents-host.d
 
 @NgModule({
   declarations: [
-    ProjectsComponent, 
-    ProjectListComponent, 
-    CreateProjectComponent, 
+    ProjectsComponent,
+    ProjectListComponent,
+    CreateProjectComponent,
     ProjectDetailsComponent,
-    UIComponentsHostDirective,],
+    UIComponentsHostDirective],
   imports: [
     FormsModule,
     CommonModule,
@@ -32,6 +32,6 @@ import { UIComponentsHostDirective } from 'app/ui-components/uicomponents-host.d
       duration: 6000,
     }),
     Ng2SmartTableModule,
-  ]
+  ],
 })
 export class ProjectsModule { }

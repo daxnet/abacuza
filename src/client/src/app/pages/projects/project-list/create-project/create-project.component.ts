@@ -7,14 +7,14 @@ import { Project } from 'app/models/project';
 @Component({
   selector: 'ngx-create-project',
   templateUrl: './create-project.component.html',
-  styleUrls: ['./create-project.component.scss']
+  styleUrls: ['./create-project.component.scss'],
 })
 export class CreateProjectComponent implements OnInit {
 
   @Input() inputEndpoints: Endpoint[];
   @Input() jobRunners: JobRunner[];
   @Input() projectEntity: Project;
-  
+
   constructor(protected ref: NbDialogRef<CreateProjectComponent>) { }
 
   ngOnInit(): void {

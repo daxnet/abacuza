@@ -5,11 +5,12 @@ import { UIComponentBase } from './uicomponent-base';
 @Component({
   selector: 'ngx-text-box',
   templateUrl: './text-box.component.html',
-  styleUrls: ['./text-box.component.scss']
+  styleUrls: ['./text-box.component.scss'],
 })
 export class TextBoxComponent implements UIComponentBase, OnInit {
 
   @Input() attributes: any;
+  @Input() value: any;
   @Output() modelChange: EventEmitter<ComponentEvent> = new EventEmitter<ComponentEvent>();
 
   constructor() { }

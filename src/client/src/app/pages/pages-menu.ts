@@ -13,7 +13,7 @@ export const MENU_ITEMS: NbMenuItem[] = [
         title: 'Projects',
         icon: 'settings-2-outline',
         link: '/pages/projects/project-list',
-      }
+      },
     ],
   },
   {

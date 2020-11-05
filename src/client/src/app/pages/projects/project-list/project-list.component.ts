@@ -17,7 +17,7 @@ import { CreateProjectComponent } from './create-project/create-project.componen
 @Component({
   selector: 'ngx-project-list',
   templateUrl: './project-list.component.html',
-  styleUrls: ['./project-list.component.scss']
+  styleUrls: ['./project-list.component.scss'],
 })
 export class ProjectListComponent implements OnInit {
 
@@ -78,7 +78,7 @@ export class ProjectListComponent implements OnInit {
       .subscribe(res => {
         this.source.load(res.body);
       });
-    
+
     this.endpointsService.getAvailableEndpoints('input')
       .subscribe(res => {
         this.inputEndpoints = res.body;
@@ -95,8 +95,8 @@ export class ProjectListComponent implements OnInit {
       context: {
         inputEndpoints: this.inputEndpoints,
         jobRunners: this.jobRunners,
-        projectEntity: new Project()
-      }
+        projectEntity: new Project(),
+      },
     })
     .onClose
     .subscribe(model => {
@@ -110,7 +110,7 @@ export class ProjectListComponent implements OnInit {
           .subscribe(id => {
             this.toastrService.success('Project created successfully.', 'Success');
             this.router.navigate(['/pages/projects/project-details', id]);
-          })
+          });
       }
     });
   }

@@ -1,7 +1,7 @@
 import { Directive, ViewContainerRef } from '@angular/core';
 
 @Directive({
-  selector: '[ngxUIComponentsHost]'
+  selector: '[ngxUIComponentsHost]',
 })
 export class UIComponentsHostDirective {
 

@@ -35,4 +35,37 @@ export class ProjectsService {
   public deleteProject(id: string): Observable<any> {
     return this.httpClient.delete(`${environment.projectServiceBaseUrl}api/projects/${id}`);
   }
+
+  public updateProject(id: string, entity: Project): Observable<Project> {
+    return this.httpClient.patch<Project>(`${environment.projectServiceBaseUrl}api/projects/${id}`,
+    [
+      {
+        op: 'replace',
+        path: '/name',
+        value: entity.name,
+      },
+      {
+        op: 'replace',
+        path: '/description',
+        value: entity.description,
+      },
+      {
+        op: 'replace',
+        path: '/jobRunnerId',
+        value: entity.jobRunnerId,
+      },
+      {
+        op: 'replace',
+        path: '/inputEndpointName',
+        value: entity.inputEndpointName,
+      },
+      {
+        op: 'replace',
+        path: '/inputEndpointSettings',
+        value: entity.inputEndpointSettings,
+      },
+    ], {
+      observe: 'body',
+    });
+  }
 }

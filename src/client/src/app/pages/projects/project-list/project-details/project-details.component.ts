@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, ComponentFactoryResolver, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { Component, ComponentFactoryResolver, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { NbToastrService } from '@nebular/theme';
 import { Endpoint } from 'app/models/endpoint';
@@ -7,7 +7,6 @@ import { Project } from 'app/models/project';
 import { EndpointsService } from 'app/services/endpoints.service';
 import { JobRunnersService } from 'app/services/job-runners.service';
 import { ProjectsService } from 'app/services/projects.service';
-import { ComponentEvent } from 'app/ui-components/component-event';
 import { UIComponentBase } from 'app/ui-components/uicomponent-base';
 import { UIComponentsHostDirective } from 'app/ui-components/uicomponents-host.directive';
 import { UIComponentsProviderService } from 'app/ui-components/uicomponents-provider.service';
@@ -17,16 +16,16 @@ import { catchError } from 'rxjs/operators';
 @Component({
   selector: 'ngx-project-details',
   templateUrl: './project-details.component.html',
-  styleUrls: ['./project-details.component.scss']
+  styleUrls: ['./project-details.component.scss'],
 })
 export class ProjectDetailsComponent implements OnInit, OnDestroy {
 
-  @ViewChild(UIComponentsHostDirective, {static: true}) ngxUIComponentsHost: UIComponentsHostDirective;
+  @ViewChild(UIComponentsHostDirective, { static: true }) ngxUIComponentsHost: UIComponentsHostDirective;
 
   projectEntity: Project;
   inputEndpointEntity: Endpoint;
   jobRunnerEntity: JobRunner;
-  updatingProject: {description: string} = <any>{};
+  updatingProject: { description: string } = <any>{};
   private componentEventSubscriptions: Subscription[] = [];
 
   constructor(private activatedRoute: ActivatedRoute,
@@ -37,7 +36,7 @@ export class ProjectDetailsComponent implements OnInit, OnDestroy {
     private toastrService: NbToastrService,
     private componentsProvider: UIComponentsProviderService,
     private componentFactoryResolver: ComponentFactoryResolver,
-    ) { }
+  ) { }
 
   ngOnInit(): void {
     this.activatedRoute.params.subscribe(params => {
@@ -48,7 +47,11 @@ export class ProjectDetailsComponent implements OnInit, OnDestroy {
         }))
         .subscribe(res => {
           this.projectEntity = res.body;
-          this.projectEntity.uiComponentData = [];
+          this.projectEntity.uiComponentData = this.projectEntity.inputEndpointSettings
+            ?
+            JSON.parse(this.projectEntity.inputEndpointSettings)
+            :
+            [];
           this.updatingProject.description = this.projectEntity.description;
           this.endpointsService.getEndpointByName(this.projectEntity.inputEndpointName)
             .pipe(catchError(err => {
@@ -67,7 +70,7 @@ export class ProjectDetailsComponent implements OnInit, OnDestroy {
             .subscribe(jr => {
               this.jobRunnerEntity = jr.body;
             });
-        })
+        });
     });
   }
 
@@ -76,20 +79,29 @@ export class ProjectDetailsComponent implements OnInit, OnDestroy {
     viewContainerRef.clear();
     inputEndpoint.configurationUIElements.forEach(e => {
       const name = e['_type'];
-      const item = this.componentsProvider.getRegisteredUIComponents().find(x => x.name == name);
+      const item = this.componentsProvider.getRegisteredUIComponents().find(x => x.name === name);
       if (item) {
         const componentFactory = this.componentFactoryResolver.resolveComponentFactory(item.component);
         const componentRef = viewContainerRef.createComponent<UIComponentBase>(componentFactory);
         componentRef.instance.attributes = e;
+        const data = this.projectEntity.uiComponentData.find(d => d.name === e.name);
+        if (data) {
+          componentRef.instance.value = data.value;
+        }
+
         this.componentEventSubscriptions.push(componentRef.instance.modelChange.subscribe(event => {
-          this.projectEntity.uiComponentData.push({
-            name: event.component,
-            value: event.data
-          });
-          console.log(JSON.stringify(this.projectEntity));
+          const uiComponentData = this.projectEntity.uiComponentData.find(d => d.name === event.component);
+          if (!uiComponentData) {
+            this.projectEntity.uiComponentData.push({
+              name: event.component,
+              value: event.data,
+            });
+          } else {
+            uiComponentData.value = event.data;
+          }
         }));
       }
-    })
+    });
   }
 
   back(): void {
@@ -97,7 +109,18 @@ export class ProjectDetailsComponent implements OnInit, OnDestroy {
   }
 
   save(): void {
-    console.log(this.inputEndpointEntity);
+    if (this.projectEntity.uiComponentData) {
+      this.projectEntity.inputEndpointSettings = JSON.stringify(this.projectEntity.uiComponentData);
+    }
+
+    this.projectsService.updateProject(this.projectEntity.id, this.projectEntity)
+      .pipe(catchError(err => {
+        this.toastrService.danger(`Server responded error message: ${err.message}`, 'Failed to update project');
+        return throwError(err.message);
+      }))
+      .subscribe(res => {
+        this.toastrService.success('Project updated successfully.', 'Success');
+      });
   }
 
   ngOnDestroy(): void {

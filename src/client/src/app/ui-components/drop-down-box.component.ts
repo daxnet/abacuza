@@ -5,11 +5,12 @@ import { UIComponentBase } from './uicomponent-base';
 @Component({
   selector: 'ngx-drop-down-box',
   templateUrl: './drop-down-box.component.html',
-  styleUrls: ['./drop-down-box.component.scss']
+  styleUrls: ['./drop-down-box.component.scss'],
 })
 export class DropDownBoxComponent implements UIComponentBase, OnInit {
 
   @Input() attributes: any;
+  @Input() value: any;
   @Output() modelChange: EventEmitter<ComponentEvent> = new EventEmitter<ComponentEvent>();
 
   constructor() { }

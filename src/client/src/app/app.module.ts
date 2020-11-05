@@ -37,14 +37,16 @@ import { CheckBoxComponent } from './ui-components/check-box.component';
 import { TextAreaComponent } from './ui-components/text-area.component';
 import { DropDownBoxComponent } from './ui-components/drop-down-box.component';
 import { TextBoxComponent } from './ui-components/text-box.component';
+import { FormsModule } from '@angular/forms';
 
 @NgModule({
   declarations: [
-    AppComponent, 
-    CommonDialogComponent, 
-    FileUploadComponent, 
+    AppComponent,
+    CommonDialogComponent,
+    FileUploadComponent,
     CheckBoxComponent, TextAreaComponent, DropDownBoxComponent, TextBoxComponent],
   imports: [
+    FormsModule,
     BrowserModule,
     BrowserAnimationsModule,
     HttpClientModule,

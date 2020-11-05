@@ -9,5 +9,5 @@ export const environment = {
   jobServiceBaseUrl: '/job-service/',
   commonServiceBaseUrl: '/common-service/',
   endpointServiceBaseUrl: '/endpoint-service/',
-  projectServiceBaseUrl: '/project-service/'
+  projectServiceBaseUrl: '/project-service/',
 };

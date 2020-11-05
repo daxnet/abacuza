@@ -1,9 +1,9 @@
 <div class="form-group">
     <label [for]="attributes.name">{{attributes.label}}</label>
-    <nb-select *ngIf='attributes.tooltip' [nbTooltip]='attributes.tooltip' nbTooltipPlacement="bottom" fullWidth [id]='attributes.name' (selectedChange)='onSelectionChanged($event)'>
+    <nb-select *ngIf='attributes.tooltip' [(selected)]='value' [nbTooltip]='attributes.tooltip' nbTooltipPlacement="bottom" fullWidth [id]='attributes.name' (selectedChange)='onSelectionChanged($event)'>
         <nb-option *ngFor='let option of attributes.options' [value]="option">{{option}}</nb-option>
     </nb-select>
-    <nb-select *ngIf='!attributes.tooltip' fullWidth [id]='attributes.name' (selectedChange)='onSelectionChanged($event)'>
+    <nb-select *ngIf='!attributes.tooltip' [(selected)]='value' fullWidth [id]='attributes.name' (selectedChange)='onSelectionChanged($event)'>
         <nb-option *ngFor='let option of attributes.options' [value]="option">{{option}}</nb-option>
     </nb-select>
 </div>

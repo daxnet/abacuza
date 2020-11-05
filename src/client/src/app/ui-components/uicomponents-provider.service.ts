@@ -6,7 +6,7 @@ import { TextBoxComponent } from './text-box.component';
 import { UIComponentItem } from './uicomponent-item';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class UIComponentsProviderService {
 
@@ -16,6 +16,6 @@ export class UIComponentsProviderService {
       new UIComponentItem('TextArea', TextAreaComponent),
       new UIComponentItem('DropDownBox', DropDownBoxComponent),
       new UIComponentItem('TextBox', TextBoxComponent),
-    ]
+    ];
   }
 }

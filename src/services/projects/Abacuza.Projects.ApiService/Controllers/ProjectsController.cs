@@ -1,6 +1,7 @@
 ﻿using Abacuza.Common.DataAccess;
 using Abacuza.Projects.ApiService.Models;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System;
@@ -83,6 +84,35 @@ namespace Abacuza.Projects.ApiService.Controllers
 
             await _dao.DeleteByIdAsync<ProjectEntity>(id);
             return Ok();
+        }
+
+        [HttpPatch("{id}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<IActionResult> PatchProjectAsync(Guid id, [FromBody] JsonPatchDocument<ProjectEntity> patchDoc)
+        {
+            var updatingEntity = await _dao.GetByIdAsync<ProjectEntity>(id);
+            if (updatingEntity == null)
+            {
+                return NotFound($"Project {id} doesn't exist.");
+            }
+
+            if (patchDoc != null)
+            {
+                patchDoc.ApplyTo(updatingEntity, ModelState);
+                if (!ModelState.IsValid)
+                {
+                    return BadRequest(ModelState);
+                }
+
+                await _dao.UpdateByIdAsync(id, updatingEntity);
+
+                return Ok(updatingEntity);
+            }
+            else
+            {
+                return BadRequest(ModelState);
+            }
         }
 
         #endregion Public Methods

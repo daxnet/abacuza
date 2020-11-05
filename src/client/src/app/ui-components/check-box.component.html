@@ -1,6 +1,6 @@
 <nb-card>
     <nb-card-body>
-        <nb-checkbox *ngIf='attributes.tooltip' [nbTooltip]='attributes.tooltip' nbTooltipPlacement="bottom" [id]='attributes.name' (change)='checkChanged($event)'>{{attributes.label}}</nb-checkbox>
-        <nb-checkbox *ngIf='!attributes.tooltip' [id]='attributes.name' (change)='checkChanged($event)'>{{attributes.label}}</nb-checkbox>
+        <nb-checkbox *ngIf='attributes.tooltip' [(checked)]='value' [nbTooltip]='attributes.tooltip' nbTooltipPlacement="bottom" [id]='attributes.name' (change)='checkChanged($event)'>{{attributes.label}}</nb-checkbox>
+        <nb-checkbox *ngIf='!attributes.tooltip' [(checked)]='value' [id]='attributes.name' (change)='checkChanged($event)'>{{attributes.label}}</nb-checkbox>
     </nb-card-body>
 </nb-card>
