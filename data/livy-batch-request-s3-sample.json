@@ -3,6 +3,8 @@
     "className": "org.apache.spark.deploy.dotnet.DotnetRunner",
     "args": [
         "s3://data/jar/abacuza.jobrunners.spark.zip",
-        "Abacuza.JobRunners.Spark"
+        "Abacuza.JobRunners.Spark",
+        "a=1",
+        "b=2"
     ]
 }

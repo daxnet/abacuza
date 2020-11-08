@@ -7,7 +7,7 @@ using System.Text;
 namespace Abacuza.Endpoints.Input
 {
     [Endpoint("endpoints.input.csv", "CSV/TSV Files", EndpointType.Input)]
-    public sealed class CsvInputEndpoint : Endpoint
+    public sealed class CsvInputEndpoint : Endpoint, IInputEndpoint
     {
         [FilePicker("fpFiles", "Files", AllowedExtensions = ".csv,.tsv", AllowMultipleSelection = true, Ordinal = 5)]
         public List<S3File> Files { get; set; }
