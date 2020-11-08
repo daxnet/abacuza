@@ -85,6 +85,10 @@ services:
             timeout: 10s
             retries: 5
             start_period: 40s
+        environment:
+            - mongo__connectionString=mongodb://abacuza-mongo:27017
+            - mongo__database=abacuza-projects
+            - redis__connectionString=abacuza-redis:6379
     abacuza-job-service:
         image: daxnet/abacuza-job-service
         ports:
