@@ -45,6 +45,10 @@ export class ProjectListComponent implements OnInit {
         title: 'Description',
         type: 'text',
       },
+      inputEndpointName: {
+        title: 'Input Endpoint',
+        type: 'text',
+      },
       dateCreated: {
         title: 'Date Created',
         type: 'text',
@@ -76,7 +80,8 @@ export class ProjectListComponent implements OnInit {
         return throwError(err.message);
       }))
       .subscribe(res => {
-        this.source.load(res.body);
+        const projects: Project[] = res.body;
+        this.source.load(projects);
       });
 
     this.endpointsService.getAvailableEndpoints('input')

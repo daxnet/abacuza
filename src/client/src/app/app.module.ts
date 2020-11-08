@@ -38,31 +38,25 @@ import { TextAreaComponent } from './ui-components/text-area.component';
 import { DropDownBoxComponent } from './ui-components/drop-down-box.component';
 import { TextBoxComponent } from './ui-components/text-box.component';
 import { FormsModule } from '@angular/forms';
+import { FileListComponent } from './components/file-list/file-list.component';
+import { Ng2SmartTableModule } from 'ng2-smart-table';
+import { FilePickerComponent } from './ui-components/file-picker.component';
+import { SharedModule } from './shared/shared.module';
 
 @NgModule({
   declarations: [
     AppComponent,
-    CommonDialogComponent,
-    FileUploadComponent,
-    CheckBoxComponent, TextAreaComponent, DropDownBoxComponent, TextBoxComponent],
+    ],
   imports: [
     FormsModule,
     BrowserModule,
     BrowserAnimationsModule,
     HttpClientModule,
     AppRoutingModule,
-    NbEvaIconsModule,
-    NbIconModule,
-    NbInputModule,
-    NbCardModule,
-    NbButtonModule,
-    NbCheckboxModule,
-    NbSelectModule,
-    NbTooltipModule,
-    NbProgressBarModule,
-    NbSidebarModule.forRoot(),
-    NbMenuModule.forRoot(),
-    NbDialogModule.forRoot(),
+    SharedModule,
+    // NbSidebarModule.forRoot(),
+    // NbMenuModule.forRoot(),
+    // NbDialogModule.forRoot(),
     CoreModule.forRoot(),
     ThemeModule.forRoot(),
   ],
@@ -72,6 +66,11 @@ import { FormsModule } from '@angular/forms';
     CommonDialogComponent,
     FileUploadComponent,
     CheckBoxComponent,
+    TextAreaComponent,
+    DropDownBoxComponent,
+    TextBoxComponent,
+    FilePickerComponent,
+    FileListComponent,
   ],
 })
 export class AppModule {

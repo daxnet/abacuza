@@ -4,7 +4,9 @@ export class Project {
     description: string;
     dateCreated: Date;
     jobRunnerId: string;
+    jobRunnerName?: string;
     inputEndpointName: string;
+    inputEndpointDisplayName: string;
     inputEndpointSettings: string;
     uiComponentData: any;
 }

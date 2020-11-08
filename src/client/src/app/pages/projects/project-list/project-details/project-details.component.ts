@@ -84,6 +84,7 @@ export class ProjectDetailsComponent implements OnInit, OnDestroy {
         const componentFactory = this.componentFactoryResolver.resolveComponentFactory(item.component);
         const componentRef = viewContainerRef.createComponent<UIComponentBase>(componentFactory);
         componentRef.instance.attributes = e;
+        componentRef.instance.attributes.contextualEntityId = this.projectEntity.id;
         const data = this.projectEntity.uiComponentData.find(d => d.name === e.name);
         if (data) {
           componentRef.instance.value = data.value;

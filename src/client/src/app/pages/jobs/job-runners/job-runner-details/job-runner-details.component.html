@@ -26,11 +26,13 @@
                     placeholder="Input template in JSON format"></textarea>
             </div>
             <div class="form-group">
-                <label for="iBinaryFiles">Binaries</label>
-                <ng2-smart-table id="iBinaryFiles" [settings]="binaryFilesTableSettings" [source]="source"
-                    (create)="onAddFile()"
-                    (delete)="onDeleteFile($event)">
-                </ng2-smart-table>
+                <ngx-file-list id='jobRunnerBinaries' title="Binaries" [initFiles]='initFiles' 
+                    bucket='data' 
+                    [key]='key' 
+                    allowedExts='.zip,.jar' 
+                    allowMultipleSelection='false'
+                    (onFileAdded)='onFileAdded($event)'
+                    (onFileDeleted)='onFileDeleted($event)'></ngx-file-list> 
             </div>
         </div>
     </nb-card-body>

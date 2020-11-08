@@ -1,0 +1,5 @@
+<div class="form-group">
+    <ngx-file-list [id]='attributes.name' [title]='attributes.label' [initFiles]='value' bucket='data' [key]='s3Key'
+        [allowedExts]='attributes.allowedExtensions' [allowMultipleSelection]='attributes.allowMultipleSelection'
+        (onFilesChangedCompleted)='onFilesChangedCompleted($event)'></ngx-file-list>
+</div>
