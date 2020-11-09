@@ -8,19 +8,11 @@ namespace Abacuza.JobRunners.Spark
     {
         static void Main(string[] args)
         {
-            if (args?.Length > 0)
-            {
-                Console.WriteLine(" ******************************************** ");
-                foreach (var arg in args)
-                {
-                    Console.WriteLine($"    {arg}");
-                }
-                Console.WriteLine(" ******************************************** ");
-            }
+            //var spark = SparkSession.Builder().GetOrCreate();
+            //var df = spark.Read().Json("s3a://data/input/sample.json");
+            //df.Show();
 
-            var spark = SparkSession.Builder().GetOrCreate();
-            var df = spark.Read().Json("s3a://data/input/sample.json");
-            df.Show();
+            new SampleRunner(args).Run();
         }
     }
 }

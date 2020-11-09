@@ -1,8 +1,25 @@
-﻿using Microsoft.CSharp.RuntimeBinder;
+﻿// ==============================================================
+//           _
+//     /\   | |
+//    /  \  | |__ __ _ ___ _ _ ______ _
+//   / /\ \ | '_ \ / _` |/ __| | | |_  / _` |
+//  / ____ \| |_) | (_| | (__| |_| |/ / (_| |
+// /_/    \_\_.__/ \__,_|\___|\__,_/___\__,_|
+//
+// Data Processing Platform
+// Copyright 2020 by daxnet. All rights reserved.
+// Licensed under LGPL-v3
+// ==============================================================
+
+using Abacuza.Endpoints;
+using Abacuza.Endpoints.Input;
+using Abacuza.JobRunners.Spark.SDK.InputReaders;
 using Microsoft.Spark;
 using Microsoft.Spark.Sql;
 using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 
 namespace Abacuza.JobRunners.Spark.SDK
 {
@@ -24,10 +41,26 @@ namespace Abacuza.JobRunners.Spark.SDK
         private const string InputEndpointNameKey = "input_endpoint";
         private const string InputEndpointSettingsKey = "input_endpoint_settings";
 
+        private static readonly Lazy<IEnumerable<Type>> _inputEndpointTypes = new Lazy<IEnumerable<Type>>(() =>
+            from p in typeof(EmptyInputEndpoint).Assembly.GetExportedTypes()
+            where p.IsClass && !p.IsAbstract && typeof(IInputEndpoint).IsAssignableFrom(p) && p.IsDefined(typeof(EndpointAttribute), false)
+            select p
+        );
+
+        private static readonly Lazy<IEnumerable<Type>> _inputReaderTypes = new Lazy<IEnumerable<Type>>(() =>
+            from p in typeof(IInputReader).Assembly.GetExportedTypes()
+            where p.IsClass && !p.IsAbstract && typeof(IInputReader).IsAssignableFrom(p)
+            select p
+        );
+
         #endregion Private Fields
 
         #region Protected Constructors
 
+        /// <summary>
+        /// Initializes a new instance of the <c>SparkRunnerBase</c> class.
+        /// </summary>
+        /// <param name="args">The command line arguments.</param>
         protected SparkRunnerBase(string[] args)
         {
             _args = args;
@@ -37,20 +70,20 @@ namespace Abacuza.JobRunners.Spark.SDK
 
         #region Public Methods
 
+        /// <summary>
+        /// Runs the data transformation on the Spark cluster.
+        /// </summary>
         public void Run()
         {
-            string inputEndpointName, inputEndpointSettings;
-            if (!TryParseSingleValue(_args, InputEndpointNameKey, out inputEndpointName))
+            if (!TryParseSingleValue(_args, InputEndpointNameKey, out var inputEndpointName))
             {
                 throw new SparkRunnerException("Input endpoint name is not specified in the argument list.");
             }
 
-            if (!TryParseSingleValue(_args, InputEndpointSettingsKey, out inputEndpointSettings))
+            if (!TryParseSingleValue(_args, InputEndpointSettingsKey, out var inputEndpointSettings))
             {
                 throw new SparkRunnerException("Input endpoint settings is not specified in the argument list.");
             }
-
-            // TODO: Create the InputReader instance
 
             var builder = SparkSession.Builder();
             if (TryParseSingleValue(_args, AppNameKey, out var appName))
@@ -64,8 +97,11 @@ namespace Abacuza.JobRunners.Spark.SDK
             }
 
             var sparkSession = builder.GetOrCreate();
+            var inputEndpoint = CreateInputEndpoint(inputEndpointName, inputEndpointSettings);
+            var inputReader = CreateInputReader(inputEndpointName);
+            var dataFrame = inputReader.ReadFrom(sparkSession, inputEndpoint);
 
-            RunInternal(sparkSession, null);
+            RunInternal(sparkSession, dataFrame);
         }
 
         #endregion Public Methods
@@ -77,6 +113,42 @@ namespace Abacuza.JobRunners.Spark.SDK
         #endregion Protected Methods
 
         #region Private Methods
+
+        private static IInputEndpoint CreateInputEndpoint(string inputEndpointName, string inputEndpointSettings)
+        {
+            var inputEndpointType = _inputEndpointTypes.Value.FirstOrDefault(t => t.GetCustomAttribute<EndpointAttribute>().Name == inputEndpointName);
+            if (inputEndpointType == null)
+            {
+                throw new SparkRunnerException($"Can't find the input endpoint {inputEndpointName}.");
+            }
+
+            var inputEndpoint = (IInputEndpoint)Activator.CreateInstance(inputEndpointType);
+            inputEndpoint.ApplySettings(inputEndpointSettings);
+
+            return inputEndpoint;
+        }
+
+        private static IInputReader CreateInputReader(string inputEndpointName)
+        {
+            var inputEndpointType = _inputEndpointTypes.Value.FirstOrDefault(t => t.GetCustomAttribute<EndpointAttribute>().Name == inputEndpointName);
+            if (inputEndpointType == null)
+            {
+                throw new SparkRunnerException($"Can't find the input endpoint {inputEndpointName}.");
+            }
+
+            var inputReaderType = (from type in _inputReaderTypes.Value
+                                   where type.BaseType?.IsGenericType ?? false &&
+                                   type.BaseType?.GetGenericTypeDefinition() == typeof(InputReader<>)
+                                   let genericArguments = type.BaseType?.GetGenericArguments()
+                                   where genericArguments?.Length == 1 && genericArguments[0] == inputEndpointType
+                                   select type).FirstOrDefault();
+            if (inputReaderType == null)
+            {
+                throw new SparkRunnerException($"Can't find the input reader for input endpoint {inputEndpointName}.");
+            }
+
+            return (IInputReader)Activator.CreateInstance(inputReaderType);
+        }
 
         private static bool TryParseSingleValue(string[] args, string key, out string value)
         {
@@ -117,6 +189,5 @@ namespace Abacuza.JobRunners.Spark.SDK
         }
 
         #endregion Private Methods
-
     }
 }

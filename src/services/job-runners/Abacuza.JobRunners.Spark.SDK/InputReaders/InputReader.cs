@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace Abacuza.JobRunners.Spark.SDK.InputReaders
 {
-    internal abstract class InputReader<TEndpoint> : IInputReader
+    public abstract class InputReader<TEndpoint> : IInputReader
         where TEndpoint : IInputEndpoint
     {
         protected abstract DataFrame ReadFromInternal(SparkSession sparkSession, TEndpoint inputEndpoint);

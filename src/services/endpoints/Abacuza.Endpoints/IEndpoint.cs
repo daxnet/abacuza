@@ -15,5 +15,7 @@ namespace Abacuza.Endpoints
         EndpointType Type { get; }
 
         IEnumerable<IEnumerable<KeyValuePair<string, object>>> ConfigurationUIElements { get; }
+
+        void ApplySettings(string settings);
     }
 }

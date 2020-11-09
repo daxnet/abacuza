@@ -19,7 +19,7 @@ namespace Abacuza.Endpoints
     /// <remarks>This is only a type placeholder for describing
     /// that the implemented classes are input endpoints, no special
     /// members in this interface.</remarks>
-    public interface IInputEndpoint
+    public interface IInputEndpoint : IEndpoint
     {
     }
 }

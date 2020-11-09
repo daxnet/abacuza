@@ -5,14 +5,14 @@ using System.Text;
 namespace Abacuza.Common.UIComponents
 {
     [AttributeUsage(AttributeTargets.Property, AllowMultiple = false, Inherited = true)]
-    public abstract class UIComponent : Attribute
+    public abstract class UIComponentAttribute : Attribute
     {
         /// <summary>
         /// Initializes a new instance of the <c>UIAnnotation</c> class.
         /// </summary>
         /// <param name="name">The name of the UI component.</param>
         /// <param name="label">The label text of the UI component.</param>
-        protected UIComponent(string name, string label)
+        protected UIComponentAttribute(string name, string label)
         {
             Name = name;
             Label = label;

@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Abacuza.Common.UIComponents
 {
-    public sealed class FilePickerAttribute : UIComponent
+    public sealed class FilePickerAttribute : UIComponentAttribute
     {
         public FilePickerAttribute(string name, string label)
             : base(name, label)

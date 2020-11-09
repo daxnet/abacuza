@@ -20,7 +20,7 @@ namespace Abacuza.JobRunners.Spark.SDK.InputReaders
     /// <summary>
     /// Represents the input reader that reads data from JSON files.
     /// </summary>
-    internal sealed class JsonFileInputReader : InputReader<JsonInputEndpoint>
+    public sealed class JsonFileInputReader : InputReader<JsonInputEndpoint>
     {
         #region Protected Methods
 
