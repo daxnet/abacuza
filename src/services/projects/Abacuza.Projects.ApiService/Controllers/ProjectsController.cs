@@ -1,5 +1,6 @@
 ﻿using Abacuza.Common.DataAccess;
 using Abacuza.Projects.ApiService.Models;
+using Abacuza.Projects.ApiService.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
@@ -7,6 +8,7 @@ using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Permissions;
 using System.Threading.Tasks;
 
 namespace Abacuza.Projects.ApiService.Controllers
@@ -19,15 +21,19 @@ namespace Abacuza.Projects.ApiService.Controllers
 
         private readonly IDataAccessObject _dao;
         private readonly ILogger<ProjectsController> _logger;
+        private readonly JobsApiService _jobsApiService;
 
         #endregion Private Fields
 
         #region Public Constructors
 
-        public ProjectsController(IDataAccessObject dao, ILogger<ProjectsController> logger)
+        public ProjectsController(IDataAccessObject dao, 
+            ILogger<ProjectsController> logger,
+            JobsApiService jobsApiService)
         {
             _dao = dao;
             _logger = logger;
+            _jobsApiService = jobsApiService;
         }
 
         #endregion Public Constructors
@@ -128,6 +134,57 @@ namespace Abacuza.Projects.ApiService.Controllers
 
             var revisions = await _dao.FindBySpecificationAsync<RevisionEntity>(r => r.ProjectId == projectId);
             return Ok(revisions);
+        }
+
+        [HttpGet("{projectId}/revisions/{revisionNumber}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<IActionResult> GetProjectRevisionByRevisionNumberAsync(Guid projectId, int revisionNumber)
+        {
+            var project = await _dao.GetByIdAsync<ProjectEntity>(projectId);
+            if (project == null)
+            {
+                return NotFound($"Project {projectId} doesn't exist.");
+            }
+
+            var revision = await _dao.FindBySpecificationAsync<RevisionEntity>(rev => rev.ProjectId == projectId && rev.RevisionNumber == revisionNumber);
+            if (revision == null)
+            {
+                return NotFound($"No revision {{{revisionNumber}}} found in project {projectId}");
+            }
+
+            return Ok(revision);
+        }
+
+        [HttpPost("{projectId}/revisions")]
+        [ProducesResponseType(StatusCodes.Status201Created)]
+
+        public async Task<IActionResult> CreateProjectRevisionAsync(Guid projectId)
+        {
+            var project = await _dao.GetByIdAsync<ProjectEntity>(projectId);
+            if (project == null)
+            {
+                return NotFound($"Project {projectId} doesn't exist.");
+            }
+
+            var revision = new RevisionEntity
+            {
+                ProjectId = projectId,
+                CreatedDate = DateTime.UtcNow
+            };
+
+            
+
+            // TODO: revisionNumber
+
+            // TODO: JobId
+
+            await _dao.AddAsync(revision);
+            return CreatedAtAction(nameof(GetProjectRevisionByRevisionNumberAsync), new
+            {
+                projectId,
+                revisionNumber = revision.RevisionNumber
+            }, revision.RevisionNumber);
         }
 
         #endregion Public Methods

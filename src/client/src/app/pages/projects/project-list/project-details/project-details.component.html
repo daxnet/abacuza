@@ -30,7 +30,8 @@
                     <ng-template ngxUIComponentsHost></ng-template>
                 </nb-tab>
                 <nb-tab tabTitle="Revisions">
-
+                    <ng2-smart-table [settings]="revisionsTableSettings" [source]="revisionsSource">
+                    </ng2-smart-table>
                 </nb-tab>
             </nb-tabset>
         </nb-card-body>

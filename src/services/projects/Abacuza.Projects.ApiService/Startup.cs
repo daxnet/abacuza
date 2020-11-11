@@ -5,8 +5,10 @@ using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
 using Abacuza.Common.DataAccess;
+using Abacuza.Common.Utilities;
 using Abacuza.DataAccess.DistributedCached;
 using Abacuza.DataAccess.Mongo;
+using Abacuza.Projects.ApiService.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
@@ -19,6 +21,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using MongoDB.Driver;
 using Newtonsoft.Json.Serialization;
+using Polly;
 
 namespace Abacuza.Projects.ApiService
 {
@@ -62,6 +65,12 @@ namespace Abacuza.Projects.ApiService
             {
                 options.Configuration = Configuration["redis:connectionString"];
             });
+
+            services.AddHttpClient<JobsApiService>(config =>
+            {
+                config.BaseAddress = new Uri(Configuration["services:jobsService:url"]);
+                config.Timeout = Utils.ParseTimeSpanExpression(Configuration["services:jobsService:timeout"], TimeSpan.FromMinutes(2));
+            }).AddTransientHttpErrorPolicy(builder => builder.RetryAsync(Convert.ToInt32(Configuration["services:jobsService:retries"])));
 
             var mongoConnectionString = Configuration["mongo:connectionString"];
             var mongoDatabase = Configuration["mongo:database"];

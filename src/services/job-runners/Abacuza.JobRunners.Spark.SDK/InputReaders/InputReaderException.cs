@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Abacuza.JobRunners.Spark.SDK.InputReaders
 {
-    public class InputReaderException : AbacuzaException
+    public sealed class InputReaderException : AbacuzaException
     {
         public InputReaderException() { }
 

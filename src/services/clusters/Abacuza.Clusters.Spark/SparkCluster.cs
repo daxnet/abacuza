@@ -25,7 +25,7 @@ namespace Abacuza.Clusters.Spark
             try
             {
                 var connectionInformation = connection.As<SparkClusterConnection>();
-                var responseMessage = await _httpClient.GetAsync(connectionInformation.BaseUrl, cancellationToken);
+                using var responseMessage = await _httpClient.GetAsync(connectionInformation.BaseUrl, cancellationToken);
                 responseMessage.EnsureSuccessStatusCode();
 
                 return ClusterState.Online;
@@ -55,7 +55,7 @@ namespace Abacuza.Clusters.Spark
             var payloadJson = JsonConvert.SerializeObject(payload);
 
             var postBatchesUrl = BuildEndpointUrl(connectionInformation.BaseUrl, "batches");
-            var responseMessage = await _httpClient.PostAsync(postBatchesUrl,
+            using var responseMessage = await _httpClient.PostAsync(postBatchesUrl,
                 new StringContent(payloadJson, Encoding.UTF8, "application/json"),
                 cancellationToken);
 
@@ -83,39 +83,43 @@ namespace Abacuza.Clusters.Spark
 
         public override async Task<ClusterJob> GetJobAsync(IClusterConnection connection, string localJobId, CancellationToken cancellationToken = default)
         {
-            HttpResponseMessage responseMessage = null;
-            try
+            var connectionInformation = connection.As<SparkClusterConnection>();
+            var retrieveBatchUrl = BuildEndpointUrl(connectionInformation.BaseUrl, $"batches/{localJobId}");
+            HttpResponseMessage responseMessage;
+            using (responseMessage = await _httpClient.GetAsync(retrieveBatchUrl, cancellationToken))
             {
-                var connectionInformation = connection.As<SparkClusterConnection>();
-                var retrieveBatchUrl = BuildEndpointUrl(connectionInformation.BaseUrl, $"batches/{localJobId}");
-                responseMessage = await _httpClient.GetAsync(retrieveBatchUrl, cancellationToken);
-                responseMessage.EnsureSuccessStatusCode();
-                var responseJson = await responseMessage.Content.ReadAsStringAsync();
-                var responseObj = JObject.Parse(responseJson);
-                var jobName = responseObj["name"]?.Value<string>();
-                var jobState = ConvertToJobState(responseObj["state"]?.Value<string>());
-
-                var retrieveBatchLogUrl = BuildEndpointUrl(connectionInformation.BaseUrl, $"batches/{localJobId}/log");
-                responseMessage = await _httpClient.GetAsync(retrieveBatchLogUrl);
-                responseMessage.EnsureSuccessStatusCode();
-                var logResponseJson = await responseMessage.Content.ReadAsStringAsync();
-                var logResponseObj = JObject.Parse(logResponseJson);
-                var jobLogs = logResponseObj["log"]?.ToObject<string[]>();
-
-                return new ClusterJob(connection.Id, localJobId)
+                try
                 {
-                    Name = jobName,
-                    State = jobState,
-                    Logs = jobLogs.ToList()
-                };
-            }
-            catch (HttpRequestException ex) when (responseMessage?.StatusCode == HttpStatusCode.NotFound)
-            {
-                throw new ClusterJobException($"The job {localJobId} doesn't exist on cluster {connection.Id}.", ex);
-            }
-            catch (Exception ex)
-            {
-                throw new ClusterJobException(ex.Message, ex);
+
+                    responseMessage.EnsureSuccessStatusCode();
+                    var responseJson = await responseMessage.Content.ReadAsStringAsync();
+                    var responseObj = JObject.Parse(responseJson);
+                    var jobName = responseObj["name"]?.Value<string>();
+                    var jobState = ConvertToJobState(responseObj["state"]?.Value<string>());
+
+                    var retrieveBatchLogUrl = BuildEndpointUrl(connectionInformation.BaseUrl, $"batches/{localJobId}/log");
+                    responseMessage = await _httpClient.GetAsync(retrieveBatchLogUrl);
+                    responseMessage.EnsureSuccessStatusCode();
+                    var logResponseJson = await responseMessage.Content.ReadAsStringAsync();
+                    var logResponseObj = JObject.Parse(logResponseJson);
+                    var jobLogs = logResponseObj["log"]?.ToObject<string[]>();
+
+                    return new ClusterJob(connection.Id, localJobId)
+                    {
+                        Name = jobName,
+                        State = jobState,
+                        Logs = jobLogs.ToList()
+                    };
+
+                }
+                catch (HttpRequestException ex) when (responseMessage?.StatusCode == HttpStatusCode.NotFound)
+                {
+                    throw new ClusterJobException($"The job {localJobId} doesn't exist on cluster {connection.Id}.", ex);
+                }
+                catch (Exception ex)
+                {
+                    throw new ClusterJobException(ex.Message, ex);
+                }
             }
         }
 

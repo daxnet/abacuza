@@ -34,7 +34,7 @@ namespace Abacuza.JobSchedulers.Controllers
         
         [HttpPost("submit")]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> SubmitJobAsync([FromBody] SubmitJobRequest request)
         {
@@ -64,7 +64,7 @@ namespace Abacuza.JobSchedulers.Controllers
             await _quartzScheduler.ScheduleJob(jobDetail, jobTrigger);
             var message = $"The job has been submitted successfully, scheduled job submission ID: {jobName}";
             _logger.LogInformation(message);
-            return Ok(message);
+            return CreatedAtAction(nameof(GetJobBySubmissionNameAsync), new { submissionName = jobName }, jobName);
         }
 
         [HttpGet]

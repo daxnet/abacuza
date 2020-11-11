@@ -41,7 +41,7 @@ namespace Abacuza.Jobs.ApiService.Services
             var normalizedKey = HttpUtility.UrlEncode(file.Key);
             var normalizedFile = HttpUtility.UrlEncode(file.File);
             var uri = new Uri(_commonApiBaseUri, $"api/files/{normalizedBucket}/{normalizedKey}/{normalizedFile}");
-            var responseMessage = await _httpClient.DeleteAsync(uri, cancellationToken);
+            using var responseMessage = await _httpClient.DeleteAsync(uri, cancellationToken);
             if (responseMessage.StatusCode == HttpStatusCode.NoContent)
             {
                 return (true, HttpStatusCode.NoContent, string.Empty);

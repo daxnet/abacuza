@@ -1,6 +1,7 @@
 import { Component, ComponentFactoryResolver, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { NbToastrService } from '@nebular/theme';
+import { SmartTableDateCellRenderComponent } from 'app/components/smart-table-date-cell-render/smart-table-date-cell-render.component';
 import { Endpoint } from 'app/models/endpoint';
 import { JobRunner } from 'app/models/job-runner';
 import { Project } from 'app/models/project';
@@ -10,8 +11,15 @@ import { ProjectsService } from 'app/services/projects.service';
 import { UIComponentBase } from 'app/ui-components/uicomponent-base';
 import { UIComponentsHostDirective } from 'app/ui-components/uicomponents-host.directive';
 import { UIComponentsProviderService } from 'app/ui-components/uicomponents-provider.service';
+import { LocalDataSource } from 'ng2-smart-table';
 import { Subscription, throwError } from 'rxjs';
 import { catchError } from 'rxjs/operators';
+
+export const sortRevisionNumber = (direction: any, a: any, b: any) => {
+  const revisionA = Number(a);
+  const revisionB = Number(b);
+  return revisionA < revisionB ? direction * -1 : direction;
+};
 
 @Component({
   selector: 'ngx-project-details',
@@ -22,10 +30,39 @@ export class ProjectDetailsComponent implements OnInit, OnDestroy {
 
   @ViewChild(UIComponentsHostDirective, { static: true }) ngxUIComponentsHost: UIComponentsHostDirective;
 
+  revisionsTableSettings = {
+    columns: {
+      revisionNumber: {
+        title: 'Revision #',
+        type: 'text',
+        sort: true,
+        sortDirection: 'desc',
+        compareFunction: sortRevisionNumber,
+      },
+      createdDate: {
+        title: 'Date Created',
+        type: 'custom',
+        renderComponent: SmartTableDateCellRenderComponent,
+      },
+      jobSubmissionName: {
+        title: 'Job Ref',
+        type: 'text',
+      }
+    },
+    actions: {
+      add: false,
+      edit: false,
+      delete: false,
+    },
+    mode: 'external',
+  };
+
   projectEntity: Project;
   inputEndpointEntity: Endpoint;
   jobRunnerEntity: JobRunner;
   updatingProject: { description: string } = <any>{};
+  revisionsSource: LocalDataSource = new LocalDataSource();
+
   private componentEventSubscriptions: Subscription[] = [];
 
   constructor(private activatedRoute: ActivatedRoute,
