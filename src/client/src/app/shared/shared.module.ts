@@ -12,6 +12,7 @@ import { Ng2SmartTableModule } from 'ng2-smart-table';
 import { NbEvaIconsModule } from '@nebular/eva-icons';
 import { NbIconModule, NbInputModule, NbCardModule, NbButtonModule, NbCheckboxModule, NbSelectModule, NbToastrModule, NbTooltipModule, NbProgressBarModule, NbDialogModule, NbMenuModule, NbSidebarModule } from '@nebular/theme';
 import { FormsModule } from '@angular/forms';
+import { SmartTableDateCellRenderComponent } from 'app/components/smart-table-date-cell-render/smart-table-date-cell-render.component';
 
 
 
@@ -24,7 +25,8 @@ import { FormsModule } from '@angular/forms';
     TextAreaComponent,
     DropDownBoxComponent,
     TextBoxComponent,
-    FilePickerComponent,],
+    FilePickerComponent,
+    SmartTableDateCellRenderComponent,],
   imports: [
     CommonModule,
     FormsModule,
@@ -52,6 +54,7 @@ import { FormsModule } from '@angular/forms';
     DropDownBoxComponent,
     TextBoxComponent,
     FilePickerComponent,
+    SmartTableDateCellRenderComponent,
   ]
 })
 export class SharedModule { }

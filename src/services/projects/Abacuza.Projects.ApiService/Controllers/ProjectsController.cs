@@ -115,6 +115,21 @@ namespace Abacuza.Projects.ApiService.Controllers
             }
         }
 
+        [HttpGet("{projectId}/revisions")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<IActionResult> GetProjectRevisionsAsync(Guid projectId)
+        {
+            var project = await _dao.GetByIdAsync<ProjectEntity>(projectId);
+            if (project == null)
+            {
+                return NotFound($"Project {projectId} doesn't exist.");
+            }
+
+            var revisions = await _dao.FindBySpecificationAsync<RevisionEntity>(r => r.ProjectId == projectId);
+            return Ok(revisions);
+        }
+
         #endregion Public Methods
     }
 }

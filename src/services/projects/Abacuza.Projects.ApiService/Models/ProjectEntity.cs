@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 namespace Abacuza.Projects.ApiService.Models
 {
     [StorageModel("projects")]
-    public class ProjectEntity : IEntity
+    public sealed class ProjectEntity : IEntity
     {
         public Guid Id { get; set; }
 

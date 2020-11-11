@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { NbDialogService, NbToastrService } from '@nebular/theme';
+import { SmartTableDateCellRenderComponent } from 'app/components/smart-table-date-cell-render/smart-table-date-cell-render.component';
 import { CommonDialogResult } from 'app/models/common-dialog-result';
 import { Endpoint } from 'app/models/endpoint';
 import { JobRunner } from 'app/models/job-runner';
@@ -51,7 +52,8 @@ export class ProjectListComponent implements OnInit {
       },
       dateCreated: {
         title: 'Date Created',
-        type: 'text',
+        type: 'custom',
+        renderComponent: SmartTableDateCellRenderComponent,
       },
     },
     actions: {
