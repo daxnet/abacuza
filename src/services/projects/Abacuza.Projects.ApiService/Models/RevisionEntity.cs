@@ -43,11 +43,6 @@ namespace Abacuza.Projects.ApiService.Models
         /// </summary>
         public Guid ProjectId { get; set; }
 
-        /// <summary>
-        /// Gets or sets the revision number.
-        /// </summary>
-        public int RevisionNumber { get; set; }
-
         #endregion Public Properties
     }
 }

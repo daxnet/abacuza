@@ -68,4 +68,10 @@ export class ProjectsService {
       observe: 'body',
     });
   }
+
+  public createRevision(projectId: string): Observable<string> {
+    return this.httpClient.post<string>(`${environment.projectServiceBaseUrl}api/projects/${projectId}/revisions`, null, {
+      observe: 'body',
+    });
+  }
 }

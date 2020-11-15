@@ -1,9 +1,24 @@
-﻿using Abacuza.Common;
+﻿// ==============================================================
+//           _
+//     /\   | |
+//    /  \  | |__ __ _ ___ _ _ ______ _
+//   / /\ \ | '_ \ / _` |/ __| | | |_  / _` |
+//  / ____ \| |_) | (_| | (__| |_| |/ / (_| |
+// /_/    \_\_.__/ \__,_|\___|\__,_/___\__,_|
+//
+// Data Processing Platform
+// Copyright 2020 by daxnet. All rights reserved.
+// Licensed under LGPL-v3
+// ==============================================================
+
+using Abacuza.Common;
+using Abacuza.Common.Models;
+using Abacuza.Projects.ApiService.Models;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Text;
@@ -14,10 +29,16 @@ namespace Abacuza.Projects.ApiService.Services
 {
     public sealed class JobsApiService
     {
+        #region Private Fields
+
         private const string JobsServiceUrlConfigurationKey = "services:jobsService:url";
-        private readonly HttpClient _httpClient;
         private readonly IConfiguration _configuration;
+        private readonly HttpClient _httpClient;
         private readonly Uri _jobsApiBaseUri;
+
+        #endregion Private Fields
+
+        #region Public Constructors
 
         public JobsApiService(HttpClient httpClient, IConfiguration configuration)
         {
@@ -26,7 +47,43 @@ namespace Abacuza.Projects.ApiService.Services
             _jobsApiBaseUri = new Uri(_configuration[JobsServiceUrlConfigurationKey]);
         }
 
-        public async Task<string> SubmitJobAsync(string clusterType, IEnumerable<KeyValuePair<string, object>> properties, CancellationToken cancellationToken = default)
+        #endregion Public Constructors
+
+        #region Internal Methods
+
+        internal async Task<JobRunner> GetJobRunnerByIdAsync(Guid jobRunnerId, CancellationToken cancellationToken = default)
+        {
+            var getJobRunnerByIdUrl = new Uri(_jobsApiBaseUri, $"api/job-runners/{jobRunnerId}");
+            using var responseMessage = await _httpClient.GetAsync(getJobRunnerByIdUrl, cancellationToken);
+            responseMessage.EnsureSuccessStatusCode();
+            var jsonObj = JObject.Parse(await responseMessage.Content.ReadAsStringAsync());
+            var binaries = jsonObj["binaryFiles"]?.ToObject<List<S3File>>();
+            var jobRunner = new JobRunner
+            (
+                Guid.Parse(jsonObj["id"]?.Value<string>()),
+                jsonObj["name"]?.Value<string>(),
+                jsonObj["description"]?.Value<string>(),
+                jsonObj["clusterType"]?.Value<string>(),
+                jsonObj["payloadTemplate"]?.Value<string>(),
+                binaries
+            );
+
+            return jobRunner;
+        }
+
+        internal async Task<IEnumerable<Job>> GetJobsBySubmissionNames(IEnumerable<string> submissionNames, CancellationToken cancellationToken = default)
+        {
+            var url = new Uri(_jobsApiBaseUri, "api/jobs/submissions");
+            var payload = JsonConvert.SerializeObject(submissionNames);
+            using var responseMessage = await _httpClient.PostAsync(url,
+                new StringContent(payload, Encoding.UTF8, "application/json"),
+                cancellationToken);
+
+            responseMessage.EnsureSuccessStatusCode();
+            return JsonConvert.DeserializeObject<Job[]>(await responseMessage.Content.ReadAsStringAsync());
+        }
+
+        internal async Task<string> SubmitJobAsync(string clusterType, IEnumerable<KeyValuePair<string, object>> properties, CancellationToken cancellationToken = default)
         {
             var submitUrl = new Uri(_jobsApiBaseUri, "api/jobs/submit");
             var payloadJson = JsonConvert.SerializeObject(new
@@ -35,8 +92,8 @@ namespace Abacuza.Projects.ApiService.Services
                 properties
             });
 
-            using var responseMessage = await _httpClient.PostAsync(submitUrl, 
-                new StringContent(payloadJson, Encoding.UTF8, "application/json"), 
+            using var responseMessage = await _httpClient.PostAsync(submitUrl,
+                new StringContent(payloadJson, Encoding.UTF8, "application/json"),
                 cancellationToken);
 
             if (responseMessage.StatusCode == HttpStatusCode.Created)
@@ -46,5 +103,7 @@ namespace Abacuza.Projects.ApiService.Services
 
             throw new ServiceInvocationException(responseMessage.StatusCode);
         }
+
+        #endregion Internal Methods
     }
 }

@@ -6,12 +6,12 @@ namespace Abacuza.JobSchedulers.Models
     /// </summary>
     public enum JobState
     {
+        Unknown,
         Created,
         Initializing,
         Running,
         Completed,
         Cancelled,
-        Failed,
-        Unknown
+        Failed
     }
 }

@@ -25,11 +25,11 @@
                 </div>
             </div>
 
-            <nb-tabset>
-                <nb-tab tabTitle="Input">
+            <nb-tabset (changeTab)='onChangeTab($event)'>
+                <nb-tab tabTitle="Input" [active]='!isRevisionsTabActive'>
                     <ng-template ngxUIComponentsHost></ng-template>
                 </nb-tab>
-                <nb-tab tabTitle="Revisions">
+                <nb-tab tabTitle="Revisions" [active]='isRevisionsTabActive'>
                     <ng2-smart-table [settings]="revisionsTableSettings" [source]="revisionsSource">
                     </ng2-smart-table>
                 </nb-tab>
@@ -38,6 +38,7 @@
         <nb-card-footer class="text-right">
             <button nbButton hero status="basic" (click)="back()">Back</button>
             <button nbButton hero status="primary" (click)="save()">Save</button>
+            <button nbButton hero status="success" (click)="submit()">Submit</button>
         </nb-card-footer>
     </nb-card>
 </div>

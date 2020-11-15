@@ -31,7 +31,7 @@ export class JobRunnerDetailsComponent implements OnInit {
       this.jobRunnerService.getJobRunnerById(params.id)
         .subscribe(res => {
            this.jobRunnerEntity = res.body;
-           this.key = `job-runners/${this.jobRunnerEntity.name}`;
+           this.key = `job-runners/${this.jobRunnerEntity.id}`;
            if (this.jobRunnerEntity.binaryFiles) {
              this.initFiles = this.jobRunnerEntity.binaryFiles;
            }
@@ -54,11 +54,10 @@ export class JobRunnerDetailsComponent implements OnInit {
       }))
       .subscribe(() => {
         this.toastrService.success('Update job runner successfully.', 'Success');
-        this.back();
       });
   }
 
-  onFileAdded(event): void {
+  onFileAdded(event: S3File[]): void {
     if (event) {
       const files: S3File[] = event;
       if (files.length > 0) {
@@ -75,7 +74,7 @@ export class JobRunnerDetailsComponent implements OnInit {
     }
   }
 
-  onFileDeleted(event): void {
+  onFileDeleted(event: S3File): void {
     if (event) {
       const file: S3File = event;
       this.jobRunnerService.deleteBinaryFile(this.jobRunnerEntity.id, file)

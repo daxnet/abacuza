@@ -5,10 +5,12 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Permissions;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace Abacuza.Projects.ApiService.Controllers
@@ -124,41 +126,26 @@ namespace Abacuza.Projects.ApiService.Controllers
         [HttpGet("{projectId}/revisions")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<IActionResult> GetProjectRevisionsAsync(Guid projectId)
+        public async Task<IActionResult> GetProjectRevisionsAsync(Guid projectId, [FromQuery(Name = "job-info")] bool jobInfo = false)
         {
             var project = await _dao.GetByIdAsync<ProjectEntity>(projectId);
             if (project == null)
             {
                 return NotFound($"Project {projectId} doesn't exist.");
+            }
+
+            if (jobInfo)
+            {
+                return Ok();
             }
 
             var revisions = await _dao.FindBySpecificationAsync<RevisionEntity>(r => r.ProjectId == projectId);
             return Ok(revisions);
         }
 
-        [HttpGet("{projectId}/revisions/{revisionNumber}")]
-        [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<IActionResult> GetProjectRevisionByRevisionNumberAsync(Guid projectId, int revisionNumber)
-        {
-            var project = await _dao.GetByIdAsync<ProjectEntity>(projectId);
-            if (project == null)
-            {
-                return NotFound($"Project {projectId} doesn't exist.");
-            }
-
-            var revision = await _dao.FindBySpecificationAsync<RevisionEntity>(rev => rev.ProjectId == projectId && rev.RevisionNumber == revisionNumber);
-            if (revision == null)
-            {
-                return NotFound($"No revision {{{revisionNumber}}} found in project {projectId}");
-            }
-
-            return Ok(revision);
-        }
-
         [HttpPost("{projectId}/revisions")]
         [ProducesResponseType(StatusCodes.Status201Created)]
-
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> CreateProjectRevisionAsync(Guid projectId)
         {
             var project = await _dao.GetByIdAsync<ProjectEntity>(projectId);
@@ -173,20 +160,75 @@ namespace Abacuza.Projects.ApiService.Controllers
                 CreatedDate = DateTime.UtcNow
             };
 
-            
+            // firstly get the job runner and then the payload template.
+            var jobRunner = await _jobsApiService.GetJobRunnerByIdAsync(project.JobRunnerId);
+            var payload = jobRunner.PayloadTemplate;
 
-            // TODO: revisionNumber
-
-            // TODO: JobId
-
-            await _dao.AddAsync(revision);
-            return CreatedAtAction(nameof(GetProjectRevisionByRevisionNumberAsync), new
+            // then normalize the payload.
+            foreach (var payloadTemplateFunc in PayloadTemplateFuncs)
             {
-                projectId,
-                revisionNumber = revision.RevisionNumber
-            }, revision.RevisionNumber);
+                payload = payloadTemplateFunc(payload, project, jobRunner);
+            }
+
+            // and then create the job and get the job submission name.
+            var dict = JsonConvert.DeserializeObject<Dictionary<string, object>>(payload);
+            var jobName = await _jobsApiService.SubmitJobAsync(jobRunner.ClusterType, dict);
+            revision.JobSubmissionName = jobName;
+
+            // save the revision.
+            await _dao.AddAsync(revision);
+            return CreatedAtRoute("GetRevisionById", new
+            {
+                id = revision.Id
+            }, revision.Id);
+        }
+
+        [HttpGet("{projectId}/revisions/jobs")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<IActionResult> GetProjectRevisionJobsAsync(Guid projectId)
+        {
+            var project = await _dao.GetByIdAsync<ProjectEntity>(projectId);
+            if (project == null)
+            {
+                return NotFound($"Project {projectId} doesn't exist.");
+            }
+
+            var revisions = await _dao.FindBySpecificationAsync<RevisionEntity>(r => r.ProjectId == projectId);
+            var jobSubmissionNames = revisions.Select(r => r.JobSubmissionName).Where(n => !string.IsNullOrEmpty(n));
+            return Ok(await _jobsApiService.GetJobsBySubmissionNames(jobSubmissionNames));
         }
 
         #endregion Public Methods
+
+        private readonly static IEnumerable<Func<string, ProjectEntity, JobRunner, string>> PayloadTemplateFuncs
+             = new List<Func<string, ProjectEntity, JobRunner, string>>
+             {
+                 // replace binary file names defined in the job runner.
+                 (input, project, jobRunner) =>
+                 {
+                     var regex = new Regex(@"\${jr:binaries:(?<filename>[\w\._-]+)}");
+                     var matches = regex.Matches(input);
+                     foreach (Match m in matches)
+                     {
+                         var matchedFileName = m.Groups["filename"].Value;
+                         var s3File = jobRunner.BinaryFiles.FirstOrDefault(f => f.File == matchedFileName);
+                         if (s3File != null)
+                         {
+                             input = input.Replace(m.Value, s3File.ToString());
+                         }
+                     }
+
+                     return input;
+                 },
+
+                 // replace the input endpoint name.
+                 (input, project, jobRunner) =>
+                    input.Replace("${proj:input-endpoint}", $"input_endpoint:{project.InputEndpointName}"),
+
+                 // replace the input endpoint settings.
+                 (input, project, jobRunner) =>
+                    input.Replace("${proj:input-endpoint-settings}", $"input_endpoint_settings:{project.InputEndpointSettings.Replace("\"", "\\\"").Replace("\r\n", "")}")
+             };
     }
 }

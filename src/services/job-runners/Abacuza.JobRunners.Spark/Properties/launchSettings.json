@@ -1,8 +1,7 @@
 {
   "profiles": {
     "Abacuza.JobRunners.Spark": {
-      "commandName": "Project",
-      "commandLineArgs": "input_endpoint:endpoints.input.json input_endpoint_settings:\"[{\\\"name\\\":\\\"dropdownSeparator\\\",\\\"value\\\":\\\"Comma\\\"},{\\\"name\\\":\\\"chkHasHeaderRecord\\\",\\\"value\\\":true},{\\\"name\\\":\\\"additionalOptions\\\",\\\"value\\\":\\\"ppp[[[\\\"},{\\\"name\\\":\\\"fpFiles\\\",\\\"value\\\":[{\\\"bucket\\\":\\\"data\\\",\\\"key\\\":\\\"projects/c3af4318-df97-40be-9a16-04afe18d1459/files\\\",\\\"file\\\":\\\"student-por.csv\\\"}]}]\""
+      "commandName": "Project"
     }
   }
 }

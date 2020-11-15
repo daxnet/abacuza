@@ -6,12 +6,12 @@ namespace Abacuza.Clusters.Common
 {
     public enum ClusterJobState
     {
+        Unknown,
         Created,
         Initializing,
         Running,
         Completed,
         Cancelled,
-        Failed,
-        Unknown
+        Failed
     }
 }

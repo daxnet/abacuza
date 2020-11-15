@@ -89,6 +89,9 @@ services:
             - mongo__connectionString=mongodb://abacuza-mongo:27017
             - mongo__database=abacuza-projects
             - redis__connectionString=abacuza-redis:6379
+            - services__jobsService__url=http://abacuza-job-service:9024
+            - services__jobsService__timeout=5m
+            - services__jobsService__retries=5
     abacuza-job-service:
         image: daxnet/abacuza-job-service
         ports:

@@ -15,12 +15,6 @@ import { LocalDataSource } from 'ng2-smart-table';
 import { Subscription, throwError } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 
-export const sortRevisionNumber = (direction: any, a: any, b: any) => {
-  const revisionA = Number(a);
-  const revisionB = Number(b);
-  return revisionA < revisionB ? direction * -1 : direction;
-};
-
 @Component({
   selector: 'ngx-project-details',
   templateUrl: './project-details.component.html',
@@ -32,22 +26,24 @@ export class ProjectDetailsComponent implements OnInit, OnDestroy {
 
   revisionsTableSettings = {
     columns: {
-      revisionNumber: {
-        title: 'Revision #',
-        type: 'text',
-        sort: true,
-        sortDirection: 'desc',
-        compareFunction: sortRevisionNumber,
-      },
-      createdDate: {
+      dateJobCreated: {
         title: 'Date Created',
+        type: 'custom',
+        renderComponent: SmartTableDateCellRenderComponent,
+      },
+      dateJobEnded: {
+        title: 'Date Ended',
         type: 'custom',
         renderComponent: SmartTableDateCellRenderComponent,
       },
       jobSubmissionName: {
         title: 'Job Ref',
         type: 'text',
-      }
+      },
+      jobStatus: {
+        title: 'Status',
+        type: 'text',
+      },
     },
     actions: {
       add: false,
@@ -62,6 +58,7 @@ export class ProjectDetailsComponent implements OnInit, OnDestroy {
   jobRunnerEntity: JobRunner;
   updatingProject: { description: string } = <any>{};
   revisionsSource: LocalDataSource = new LocalDataSource();
+  isRevisionsTabActive: boolean = false;
 
   private componentEventSubscriptions: Subscription[] = [];
 
@@ -159,6 +156,36 @@ export class ProjectDetailsComponent implements OnInit, OnDestroy {
       .subscribe(res => {
         this.toastrService.success('Project updated successfully.', 'Success');
       });
+  }
+
+  submit(): void {
+    // firstly save the current project.
+    if (this.projectEntity.uiComponentData) {
+      this.projectEntity.inputEndpointSettings = JSON.stringify(this.projectEntity.uiComponentData);
+    }
+
+    this.projectsService.updateProject(this.projectEntity.id, this.projectEntity)
+      .pipe(catchError(err => {
+        this.toastrService.danger(`Server responded error message: ${err.message}`, 'Failed to update project');
+        return throwError(err.message);
+      }))
+      .subscribe(res => {
+        // then create the revision.
+        this.projectsService.createRevision(this.projectEntity.id)
+          .pipe(catchError(err => {
+            this.toastrService.danger(err.message, 'Failed to create the revision');
+            return throwError(err.message);
+          }))
+          .subscribe(revisionId => {
+
+          })
+      });
+
+    this.isRevisionsTabActive = true;
+  }
+
+  onChangeTab(event): void {
+    this.isRevisionsTabActive = event.title === 'Revisions';
   }
 
   ngOnDestroy(): void {

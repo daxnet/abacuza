@@ -1,17 +1,24 @@
+// ==============================================================
+//           _
+//     /\   | |
+//    /  \  | |__ __ _ ___ _ _ ______ _
+//   / /\ \ | '_ \ / _` |/ __| | | |_  / _` |
+//  / ____ \| |_) | (_| | (__| |_| |/ / (_| |
+// /_/    \_\_.__/ \__,_|\___|\__,_/___\__,_|
+//
+// Data Processing Platform
+// Copyright 2020 by daxnet. All rights reserved.
+// Licensed under LGPL-v3
+// ==============================================================
+
 using Abacuza.Common.DataAccess;
 using Abacuza.JobSchedulers.Models;
-using Abacuza.JobSchedulers.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Quartz;
 using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.CompilerServices;
-using System.Text.Json;
 using System.Threading.Tasks;
 
 namespace Abacuza.JobSchedulers.Controllers
@@ -20,10 +27,16 @@ namespace Abacuza.JobSchedulers.Controllers
     [ApiController]
     public class JobsController : ControllerBase
     {
+        #region Private Fields
+
         private const string JobGroupName = "job-execution";
-        private readonly IScheduler _quartzScheduler;
         private readonly IDataAccessObject _dao;
         private readonly ILogger<JobsController> _logger;
+        private readonly IScheduler _quartzScheduler;
+
+        #endregion Private Fields
+
+        #region Public Constructors
 
         public JobsController(IScheduler quartzScheduler, IDataAccessObject dao, ILogger<JobsController> logger)
         {
@@ -31,7 +44,64 @@ namespace Abacuza.JobSchedulers.Controllers
             _dao = dao;
             _logger = logger;
         }
-        
+
+        #endregion Public Constructors
+
+        #region Public Methods
+
+        [HttpGet]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(JobEntity[]))]
+        public async Task<IActionResult> GetAllJobsAsync()
+            => Ok(await _dao.GetAllAsync<JobEntity>());
+
+        [HttpGet("{id}")]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(JobEntity))]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<IActionResult> GetJobByIdAsync(Guid id)
+        {
+            var jobEntity = await _dao.GetByIdAsync<JobEntity>(id);
+            if (jobEntity == null)
+            {
+                return NotFound($"The job {id} doesn't exist.");
+            }
+
+            return Ok(jobEntity);
+        }
+
+        // TODO: Pagination should be supported.
+        [HttpGet("submissions/{submissionName}")]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(JobEntity[]))]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<IActionResult> GetJobBySubmissionNameAsync(string submissionName)
+        {
+            var jobEntities = await _dao.FindBySpecificationAsync<JobEntity>(je =>
+                je.SubmissionName == submissionName);
+            if (jobEntities == null)
+            {
+                return NotFound($"The job submission {submissionName} doesn't exist.");
+            }
+
+            return Ok(jobEntities);
+        }
+
+        // TODO: Pagination should be supported.
+        [HttpPost("submissions")]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(JobEntity[]))]
+        public async Task<IActionResult> GetJobsBySubmissionNamesAsync([FromBody] IEnumerable<string> submissionNames)
+        {
+            var jobEntities = new List<JobEntity>();
+            foreach (var name in submissionNames)
+            {
+                var entity = await _dao.FindBySpecificationAsync<JobEntity>(je => je.SubmissionName == name);
+                if (entity != null)
+                {
+                    jobEntities.AddRange(entity);
+                }
+            }
+
+            return Ok(jobEntities);
+        }
+
         [HttpPost("submit")]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status201Created)]
@@ -44,7 +114,6 @@ namespace Abacuza.JobSchedulers.Controllers
             }
 
             var jobName = $"job-submit-{DateTime.UtcNow:yyyyMMddHHmmss-fff}";
-
 
             var jobDetail = JobBuilder.Create<JobSubmitExecutor>()
                 .WithIdentity(new JobKey(jobName, JobGroupName))
@@ -67,38 +136,6 @@ namespace Abacuza.JobSchedulers.Controllers
             return CreatedAtAction(nameof(GetJobBySubmissionNameAsync), new { submissionName = jobName }, jobName);
         }
 
-        [HttpGet]
-        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(JobEntity[]))]
-        public async Task<IActionResult> GetAllJobsAsync()
-            => Ok(await _dao.GetAllAsync<JobEntity>()); // TODO: Pagination should be supported.
-
-        [HttpGet("{id}")]
-        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(JobEntity))]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<IActionResult> GetJobByIdAsync(Guid id)
-        {
-            var jobEntity = await _dao.GetByIdAsync<JobEntity>(id);
-            if (jobEntity == null)
-            {
-                return NotFound($"The job {id} doesn't exist.");
-            }
-
-            return Ok(jobEntity);
-        }
-
-        [HttpGet("submissions/{submissionName}")]
-        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(JobEntity[]))]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<IActionResult> GetJobBySubmissionNameAsync(string submissionName)
-        {
-            var jobEntities = await _dao.FindBySpecificationAsync<JobEntity>(je =>
-                je.SubmissionName == submissionName);
-            if (jobEntities == null)
-            {
-                return NotFound($"The job submission {submissionName} doesn't exist.");
-            }
-
-            return Ok(jobEntities);
-        }
+        #endregion Public Methods
     }
 }
