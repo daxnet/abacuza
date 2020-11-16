@@ -1,4 +1,4 @@
-import { Component, ComponentFactoryResolver, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, ComponentFactoryResolver, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { NbToastrService } from '@nebular/theme';
 import { SmartTableDateCellRenderComponent } from 'app/components/smart-table-date-cell-render/smart-table-date-cell-render.component';
@@ -20,19 +20,14 @@ import { catchError } from 'rxjs/operators';
   templateUrl: './project-details.component.html',
   styleUrls: ['./project-details.component.scss'],
 })
-export class ProjectDetailsComponent implements OnInit, OnDestroy {
+export class ProjectDetailsComponent implements OnInit, AfterViewInit, OnDestroy {
 
   @ViewChild(UIComponentsHostDirective, { static: true }) ngxUIComponentsHost: UIComponentsHostDirective;
 
   revisionsTableSettings = {
     columns: {
-      dateJobCreated: {
-        title: 'Date Created',
-        type: 'custom',
-        renderComponent: SmartTableDateCellRenderComponent,
-      },
-      dateJobEnded: {
-        title: 'Date Ended',
+      createdDate: {
+        title: 'Created At',
         type: 'custom',
         renderComponent: SmartTableDateCellRenderComponent,
       },
@@ -40,9 +35,24 @@ export class ProjectDetailsComponent implements OnInit, OnDestroy {
         title: 'Job Ref',
         type: 'text',
       },
-      jobStatus: {
-        title: 'Status',
+      jobStatusName: {
+        title: 'Job Status',
         type: 'text',
+      },
+      jobCompletedDate: {
+        title: 'Completed At',
+        type: 'custom',
+        renderComponent: SmartTableDateCellRenderComponent,
+      },
+      jobFailedDate: {
+        title: 'Failed At',
+        type: 'custom',
+        renderComponent: SmartTableDateCellRenderComponent,
+      },
+      jobCancelledDate: {
+        title: 'Cancelled At',
+        type: 'custom',
+        renderComponent: SmartTableDateCellRenderComponent,
       },
     },
     actions: {
@@ -53,6 +63,7 @@ export class ProjectDetailsComponent implements OnInit, OnDestroy {
     mode: 'external',
   };
 
+  timerId: any;
   projectEntity: Project;
   inputEndpointEntity: Endpoint;
   jobRunnerEntity: JobRunner;
@@ -71,6 +82,15 @@ export class ProjectDetailsComponent implements OnInit, OnDestroy {
     private componentsProvider: UIComponentsProviderService,
     private componentFactoryResolver: ComponentFactoryResolver,
   ) { }
+
+  ngAfterViewInit(): void {
+    this.timerId = setInterval(() => {
+      this.projectsService.getRevisions(this.projectEntity.id)
+        .subscribe(revisions => {
+          this.revisionsSource.load(revisions);
+        });
+    }, 5000);
+  }
 
   ngOnInit(): void {
     this.activatedRoute.params.subscribe(params => {
@@ -169,7 +189,7 @@ export class ProjectDetailsComponent implements OnInit, OnDestroy {
         this.toastrService.danger(`Server responded error message: ${err.message}`, 'Failed to update project');
         return throwError(err.message);
       }))
-      .subscribe(res => {
+      .subscribe(_ => {
         // then create the revision.
         this.projectsService.createRevision(this.projectEntity.id)
           .pipe(catchError(err => {
@@ -177,7 +197,7 @@ export class ProjectDetailsComponent implements OnInit, OnDestroy {
             return throwError(err.message);
           }))
           .subscribe(revisionId => {
-
+            this.toastrService.success(`Revision created with ID: ${revisionId}`);
           })
       });
 
@@ -189,6 +209,7 @@ export class ProjectDetailsComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
+    clearTimeout(this.timerId);
     this.componentEventSubscriptions.forEach(s => s.unsubscribe());
   }
 }

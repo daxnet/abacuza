@@ -211,6 +211,7 @@ namespace Abacuza.Projects.ApiService.Controllers
                 var revisionsWithJobs = from revision in revisions
                                         join j in jobs on revision.JobSubmissionName equals j.SubmissionName into g
                                         from job in g.DefaultIfEmpty()
+                                        orderby revision.CreatedDate descending
                                         select new
                                         {
                                             revision.Id,

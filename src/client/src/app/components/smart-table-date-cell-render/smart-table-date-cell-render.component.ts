@@ -16,8 +16,12 @@ export class SmartTableDateCellRenderComponent implements ViewCell, OnInit {
   @Input() rowData: any;
 
   ngOnInit(): void {
-    const utcDateValue = Date.parse(this.value.toString());
-    const date = new Date(utcDateValue);
-    this.renderValue = `${date.toLocaleDateString()} ${date.toLocaleTimeString()}`;
+    if (!this.value) {
+      this.renderValue = '';
+    } else {
+      const utcDateValue = Date.parse(this.value.toString());
+      const date = new Date(utcDateValue);
+      this.renderValue = `${date.toLocaleDateString()} ${date.toLocaleTimeString()}`;
+    }
   }
 }

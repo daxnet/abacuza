@@ -10,6 +10,7 @@ namespace Abacuza.Clusters.Common
         Created,
         Initializing,
         Running,
+        Busy,
         Completed,
         Cancelled,
         Failed

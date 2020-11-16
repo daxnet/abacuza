@@ -130,7 +130,8 @@ namespace Abacuza.Clusters.Spark
         {
             "not_started" => ClusterJobState.Created,
             "starting" => ClusterJobState.Initializing,
-            "busy" => ClusterJobState.Running,
+            "running" => ClusterJobState.Running,
+            "busy" => ClusterJobState.Busy,
             "error" => ClusterJobState.Failed,
             "dead" => ClusterJobState.Failed,
             "killed" => ClusterJobState.Cancelled,

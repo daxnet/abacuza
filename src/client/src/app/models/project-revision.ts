@@ -1,8 +1,11 @@
 export class ProjectRevision {
     id: string;
     projectId: string;
+    createdDate: Date;
     jobSubmissionName: string;
-    jobStatus: string;
-    dateJobCreated: Date;
-    dateJobEnded: Date;
+    jobStatusName: string;
+    jobCancelledDate: Date;
+    jobCompletedDate: Date;
+    jobCreatedDate: Date;
+    jobFailedDate: Date;
 }

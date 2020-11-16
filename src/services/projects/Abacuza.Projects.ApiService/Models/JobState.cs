@@ -23,6 +23,7 @@ namespace Abacuza.Projects.ApiService.Models
         Created,
         Initializing,
         Running,
+        Busy,
         Completed,
         Cancelled,
         Failed

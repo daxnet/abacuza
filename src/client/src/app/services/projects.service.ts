@@ -1,6 +1,7 @@
 import { HttpClient, HttpResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Project } from 'app/models/project';
+import { ProjectRevision } from 'app/models/project-revision';
 import { environment } from 'environments/environment';
 import { Observable } from 'rxjs';
 
@@ -71,6 +72,12 @@ export class ProjectsService {
 
   public createRevision(projectId: string): Observable<string> {
     return this.httpClient.post<string>(`${environment.projectServiceBaseUrl}api/projects/${projectId}/revisions`, null, {
+      observe: 'body',
+    });
+  }
+
+  public getRevisions(projectId: string, includeJobInformation: boolean = true): Observable<ProjectRevision[]> {
+    return this.httpClient.get<ProjectRevision[]>(`${environment.projectServiceBaseUrl}api/projects/${projectId}/revisions?job-info=${includeJobInformation}`, {
       observe: 'body',
     });
   }

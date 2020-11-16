@@ -10,6 +10,7 @@ namespace Abacuza.JobSchedulers.Models
         Created,
         Initializing,
         Running,
+        Busy,
         Completed,
         Cancelled,
         Failed
