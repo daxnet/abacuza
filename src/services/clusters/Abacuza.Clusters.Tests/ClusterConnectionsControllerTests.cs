@@ -21,6 +21,7 @@ namespace Abacuza.Clusters.Tests
         private readonly ILogger<ClusterConnectionsController> _logger;
         private static readonly Guid _cluster1Guid = new Guid("{21BA40B4-E29E-43DF-A3C7-92579F68B36E}");
         private static readonly Guid _cluster2Guid = new Guid("{9FA1D1DC-D0F1-40E0-86C6-F13EFFB3DF79}");
+        private static readonly Guid _clusterConnection1Guid = new Guid("{D71C5B22-3B9D-4006-BDDB-215A2BF344E3}");
 
         public ClusterConnectionsControllerTests()
         {
@@ -31,8 +32,6 @@ namespace Abacuza.Clusters.Tests
         [SetUp]
         public void Setup()
         {
-            _dao = new InMemoryDataAccessObject();
-
             var mockCluster1 = new Mock<ICluster>();
             mockCluster1.Setup(x => x.Id).Returns(_cluster1Guid);
             mockCluster1.Setup(x => x.Name).Returns("cluster1");
@@ -49,6 +48,15 @@ namespace Abacuza.Clusters.Tests
                 mockCluster2.Object
             };
 
+            _dao = new InMemoryDataAccessObject();
+            _dao.AddAsync(new ClusterConnectionEntity
+            {
+                Id = _clusterConnection1Guid,
+                ClusterType = "cluster",
+                Description = "fake cluster connection",
+                Name = "FakeClusterConnection",
+            });
+
             _controller = new ClusterConnectionsController(_logger, _clusters, _dao);
         }
 
@@ -62,6 +70,51 @@ namespace Abacuza.Clusters.Tests
 
             var result = await _controller.CreateClusterConnectionAsync(model);
             Assert.IsInstanceOf<BadRequestObjectResult>(result);
+        }
+
+        [Test]
+        public async Task CreateConnectionWithDuplicatedNameTest()
+        {
+            var model = new ClusterConnectionEntity
+            {
+                ClusterType = "cluster",
+                Name = "FakeClusterConnection"
+            };
+
+            var result = await _controller.CreateClusterConnectionAsync(model);
+            Assert.IsInstanceOf<ConflictObjectResult>(result);
+        }
+
+        [Test]
+        public async Task CreateConnectionSuccessfulTest()
+        {
+            var cnt = (await _dao.GetAllAsync<ClusterConnectionEntity>()).Count();
+            var model = new ClusterConnectionEntity
+            {
+                ClusterType = "cluster",
+                Name = "Connection 1"
+            };
+
+            var result = await _controller.CreateClusterConnectionAsync(model);
+            var cnt2 = (await _dao.GetAllAsync<ClusterConnectionEntity>()).Count();
+            Assert.AreEqual(cnt + 1, cnt2);
+            Assert.IsInstanceOf<CreatedAtActionResult>(result);
+        }
+
+        [Test]
+        public async Task DeleteClusterConnectionWithInvalidIdTest()
+        {
+            var id = Guid.Empty;
+            var result = await _controller.DeleteClusterConnectionAsync(id);
+            Assert.IsInstanceOf<NotFoundObjectResult>(result);
+        }
+
+        [Test]
+        public async Task DeleteClusterConnectionSuccessfulTest()
+        {
+            var id = _clusterConnection1Guid;
+            var result = await _controller.DeleteClusterConnectionAsync(id);
+            Assert.IsInstanceOf<OkResult>(result);
         }
     }
 }

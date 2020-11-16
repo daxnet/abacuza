@@ -42,7 +42,15 @@ namespace Abacuza.DataAccess.InMemory
 
         public Task<IEnumerable<TObject>> GetAllAsync<TObject>() where TObject : IEntity => Task.FromResult(_storage.Values.Select(x => (TObject)x));
 
-        public Task<TObject> GetByIdAsync<TObject>(Guid id) where TObject : IEntity => Task.FromResult((TObject)_storage[id]);
+        public Task<TObject> GetByIdAsync<TObject>(Guid id) where TObject : IEntity
+        {
+            if (_storage.ContainsKey(id))
+            {
+                return Task.FromResult((TObject)_storage[id]);
+            }
+
+            return Task.FromResult<TObject>(default);
+        }
 
         public Task UpdateByIdAsync<TObject>(Guid id, TObject entity) where TObject : IEntity
         {

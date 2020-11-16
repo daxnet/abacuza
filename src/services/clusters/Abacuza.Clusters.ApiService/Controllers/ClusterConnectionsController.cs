@@ -77,9 +77,16 @@ namespace Abacuza.Clusters.ApiService.Controllers
 
         [HttpDelete("{id}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> DeleteClusterConnectionAsync(Guid id)
         {
             _logger.LogDebug($"Deleting cluster connection {id}.");
+            var clusterConnection = await _dao.GetByIdAsync<ClusterConnectionEntity>(id);
+            if (clusterConnection == null)
+            {
+                return NotFound($"Cluster connection {id} doesn't exist.");
+            }
+
             await _dao.DeleteByIdAsync<ClusterConnectionEntity>(id);
             return Ok();
         }

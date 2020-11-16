@@ -1,4 +1,17 @@
-﻿using Abacuza.Common.DataAccess;
+﻿// ==============================================================
+//           _
+//     /\   | |
+//    /  \  | |__ __ _ ___ _ _ ______ _
+//   / /\ \ | '_ \ / _` |/ __| | | |_  / _` |
+//  / ____ \| |_) | (_| | (__| |_| |/ / (_| |
+// /_/    \_\_.__/ \__,_|\___|\__,_/___\__,_|
+//
+// Data Processing Platform
+// Copyright 2020 by daxnet. All rights reserved.
+// Licensed under LGPL-v3
+// ==============================================================
+
+using Abacuza.Common.DataAccess;
 using Abacuza.Projects.ApiService.Models;
 using Abacuza.Projects.ApiService.Services;
 using Microsoft.AspNetCore.Http;
@@ -9,7 +22,6 @@ using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Security.Permissions;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
@@ -22,14 +34,44 @@ namespace Abacuza.Projects.ApiService.Controllers
         #region Private Fields
 
         private readonly IDataAccessObject _dao;
-        private readonly ILogger<ProjectsController> _logger;
         private readonly JobsApiService _jobsApiService;
+        private readonly ILogger<ProjectsController> _logger;
+
+        private readonly static IEnumerable<Func<string, ProjectEntity, JobRunner, string>> PayloadTemplateFuncs
+             = new List<Func<string, ProjectEntity, JobRunner, string>>
+             {
+                 // replace binary file names defined in the job runner.
+                 (input, project, jobRunner) =>
+                 {
+                     var regex = new Regex(@"\${jr:binaries:(?<filename>[\w\._-]+)}");
+                     var matches = regex.Matches(input);
+                     foreach (Match m in matches)
+                     {
+                         var matchedFileName = m.Groups["filename"].Value;
+                         var s3File = jobRunner.BinaryFiles.FirstOrDefault(f => f.File == matchedFileName);
+                         if (s3File != null)
+                         {
+                             input = input.Replace(m.Value, s3File.ToString());
+                         }
+                     }
+
+                     return input;
+                 },
+
+                 // replace the input endpoint name.
+                 (input, project, jobRunner) =>
+                    input.Replace("${proj:input-endpoint}", $"input_endpoint:{project.InputEndpointName}"),
+
+                 // replace the input endpoint settings.
+                 (input, project, jobRunner) =>
+                    input.Replace("${proj:input-endpoint-settings}", $"input_endpoint_settings:{project.InputEndpointSettings.Replace("\"", "\\\"").Replace("\r\n", "")}")
+             };
 
         #endregion Private Fields
 
         #region Public Constructors
 
-        public ProjectsController(IDataAccessObject dao, 
+        public ProjectsController(IDataAccessObject dao,
             ILogger<ProjectsController> logger,
             JobsApiService jobsApiService)
         {
@@ -58,89 +100,6 @@ namespace Abacuza.Projects.ApiService.Controllers
             await _dao.AddAsync(projectEntity);
 
             return CreatedAtAction(nameof(GetProjectByIdAsync), new { id = projectEntity.Id }, projectEntity.Id);
-        }
-
-        [HttpGet]
-        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ProjectEntity[]))]
-        public async Task<IActionResult> GetAllProjectsAsync()
-            => Ok(await _dao.GetAllAsync<ProjectEntity>());
-
-        [HttpGet("{id}")]
-        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ProjectEntity))]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<IActionResult> GetProjectByIdAsync(Guid id)
-        {
-            var project = await _dao.GetByIdAsync<ProjectEntity>(id);
-            if (project == null)
-            {
-                return NotFound($"The project {id} doesn't exist.");
-            }
-
-            return Ok(project);
-        }
-
-        [HttpDelete("{id}")]
-        [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<IActionResult> DeleteProjectByIdAsync(Guid id)
-        {
-            var project = await _dao.GetByIdAsync<ProjectEntity>(id);
-            if (project == null)
-            {
-                return NotFound($"The project {id} doesn't exist.");
-            }
-
-            await _dao.DeleteByIdAsync<ProjectEntity>(id);
-            return Ok();
-        }
-
-        [HttpPatch("{id}")]
-        [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<IActionResult> PatchProjectAsync(Guid id, [FromBody] JsonPatchDocument<ProjectEntity> patchDoc)
-        {
-            var updatingEntity = await _dao.GetByIdAsync<ProjectEntity>(id);
-            if (updatingEntity == null)
-            {
-                return NotFound($"Project {id} doesn't exist.");
-            }
-
-            if (patchDoc != null)
-            {
-                patchDoc.ApplyTo(updatingEntity, ModelState);
-                if (!ModelState.IsValid)
-                {
-                    return BadRequest(ModelState);
-                }
-
-                await _dao.UpdateByIdAsync(id, updatingEntity);
-
-                return Ok(updatingEntity);
-            }
-            else
-            {
-                return BadRequest(ModelState);
-            }
-        }
-
-        [HttpGet("{projectId}/revisions")]
-        [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<IActionResult> GetProjectRevisionsAsync(Guid projectId, [FromQuery(Name = "job-info")] bool jobInfo = false)
-        {
-            var project = await _dao.GetByIdAsync<ProjectEntity>(projectId);
-            if (project == null)
-            {
-                return NotFound($"Project {projectId} doesn't exist.");
-            }
-
-            if (jobInfo)
-            {
-                return Ok();
-            }
-
-            var revisions = await _dao.FindBySpecificationAsync<RevisionEntity>(r => r.ProjectId == projectId);
-            return Ok(revisions);
         }
 
         [HttpPost("{projectId}/revisions")]
@@ -183,6 +142,40 @@ namespace Abacuza.Projects.ApiService.Controllers
             }, revision.Id);
         }
 
+        [HttpDelete("{id}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<IActionResult> DeleteProjectByIdAsync(Guid id)
+        {
+            var project = await _dao.GetByIdAsync<ProjectEntity>(id);
+            if (project == null)
+            {
+                return NotFound($"The project {id} doesn't exist.");
+            }
+
+            await _dao.DeleteByIdAsync<ProjectEntity>(id);
+            return Ok();
+        }
+
+        [HttpGet]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ProjectEntity[]))]
+        public async Task<IActionResult> GetAllProjectsAsync()
+            => Ok(await _dao.GetAllAsync<ProjectEntity>());
+
+        [HttpGet("{id}")]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ProjectEntity))]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<IActionResult> GetProjectByIdAsync(Guid id)
+        {
+            var project = await _dao.GetByIdAsync<ProjectEntity>(id);
+            if (project == null)
+            {
+                return NotFound($"The project {id} doesn't exist.");
+            }
+
+            return Ok(project);
+        }
+
         [HttpGet("{projectId}/revisions/jobs")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -199,36 +192,78 @@ namespace Abacuza.Projects.ApiService.Controllers
             return Ok(await _jobsApiService.GetJobsBySubmissionNames(jobSubmissionNames));
         }
 
+        [HttpGet("{projectId}/revisions")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<IActionResult> GetProjectRevisionsAsync(Guid projectId, [FromQuery(Name = "job-info")] bool jobInfo = false)
+        {
+            var project = await _dao.GetByIdAsync<ProjectEntity>(projectId);
+            if (project == null)
+            {
+                return NotFound($"Project {projectId} doesn't exist.");
+            }
+
+            var revisions = await _dao.FindBySpecificationAsync<RevisionEntity>(r => r.ProjectId == projectId);
+            if (jobInfo)
+            {
+                var jobSubmissionNames = revisions.Select(r => r.JobSubmissionName).Where(n => !string.IsNullOrEmpty(n));
+                var jobs = await _jobsApiService.GetJobsBySubmissionNames(jobSubmissionNames);
+                var revisionsWithJobs = from revision in revisions
+                                        join j in jobs on revision.JobSubmissionName equals j.SubmissionName into g
+                                        from job in g.DefaultIfEmpty()
+                                        select new
+                                        {
+                                            revision.Id,
+                                            revision.ProjectId,
+                                            revision.JobSubmissionName,
+                                            revision.CreatedDate,
+                                            JobCancelledDate = job.CancelledDate,
+                                            JobCompletedDate = job.CompletedDate,
+                                            JobConnectionId = job.ConnectionId,
+                                            JobCreatedDate = job.CreatedDate,
+                                            JobFailedDate = job.FailedDate,
+                                            JobId = job.Id,
+                                            job.JobStatusName,
+                                            JobName = job.Name,
+                                            JobState = job.State,
+                                        };
+                return Ok(revisionsWithJobs);
+            }
+            else
+            {
+                return Ok(revisions);
+            }
+        }
+
+        [HttpPatch("{id}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<IActionResult> PatchProjectAsync(Guid id, [FromBody] JsonPatchDocument<ProjectEntity> patchDoc)
+        {
+            var updatingEntity = await _dao.GetByIdAsync<ProjectEntity>(id);
+            if (updatingEntity == null)
+            {
+                return NotFound($"Project {id} doesn't exist.");
+            }
+
+            if (patchDoc != null)
+            {
+                patchDoc.ApplyTo(updatingEntity, ModelState);
+                if (!ModelState.IsValid)
+                {
+                    return BadRequest(ModelState);
+                }
+
+                await _dao.UpdateByIdAsync(id, updatingEntity);
+
+                return Ok(updatingEntity);
+            }
+            else
+            {
+                return BadRequest(ModelState);
+            }
+        }
+
         #endregion Public Methods
-
-        private readonly static IEnumerable<Func<string, ProjectEntity, JobRunner, string>> PayloadTemplateFuncs
-             = new List<Func<string, ProjectEntity, JobRunner, string>>
-             {
-                 // replace binary file names defined in the job runner.
-                 (input, project, jobRunner) =>
-                 {
-                     var regex = new Regex(@"\${jr:binaries:(?<filename>[\w\._-]+)}");
-                     var matches = regex.Matches(input);
-                     foreach (Match m in matches)
-                     {
-                         var matchedFileName = m.Groups["filename"].Value;
-                         var s3File = jobRunner.BinaryFiles.FirstOrDefault(f => f.File == matchedFileName);
-                         if (s3File != null)
-                         {
-                             input = input.Replace(m.Value, s3File.ToString());
-                         }
-                     }
-
-                     return input;
-                 },
-
-                 // replace the input endpoint name.
-                 (input, project, jobRunner) =>
-                    input.Replace("${proj:input-endpoint}", $"input_endpoint:{project.InputEndpointName}"),
-
-                 // replace the input endpoint settings.
-                 (input, project, jobRunner) =>
-                    input.Replace("${proj:input-endpoint-settings}", $"input_endpoint_settings:{project.InputEndpointSettings.Replace("\"", "\\\"").Replace("\r\n", "")}")
-             };
     }
 }
