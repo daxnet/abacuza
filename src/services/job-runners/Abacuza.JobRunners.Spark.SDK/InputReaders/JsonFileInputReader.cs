@@ -13,6 +13,7 @@
 
 using Abacuza.Endpoints.Input;
 using Microsoft.Spark.Sql;
+using System;
 using System.Linq;
 
 namespace Abacuza.JobRunners.Spark.SDK.InputReaders
@@ -30,6 +31,16 @@ namespace Abacuza.JobRunners.Spark.SDK.InputReaders
                 .Files
                 .Select(f => $"s3a://{f.Bucket}/{f.Key}/{f.File}")
                 .ToArray();
+
+            foreach(var jf in jsonFiles)
+            {
+                Console.WriteLine($"** [JsonFileInputReader] Read from file: {jf}");
+            }
+
+            if (jsonFiles?.Length == 0)
+            {
+                throw new SparkRunnerException("No files could be read by the JsonFileInputReader");
+            }
 
             return sparkSession.Read().Json(jsonFiles);
         }

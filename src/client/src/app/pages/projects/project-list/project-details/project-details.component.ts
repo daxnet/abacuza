@@ -89,7 +89,7 @@ export class ProjectDetailsComponent implements OnInit, AfterViewInit, OnDestroy
         .subscribe(revisions => {
           this.revisionsSource.load(revisions);
         });
-    }, 5000);
+    }, 3000);
   }
 
   ngOnInit(): void {

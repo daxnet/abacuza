@@ -16,7 +16,7 @@
     <ProjectReference Include="..\Abacuza.Clusters.Common\Abacuza.Clusters.Common.csproj" />
   </ItemGroup>
 
-  <Target Name="CopyBuildArtifacts" AfterTargets="Build">
+  <Target Name="CopyBuildArtifacts" AfterTargets="Build" Condition="Exists('$(SolutionDir)')">
     <ItemGroup>
       <BuildArtifacts Include="$(OutDir)*.*" />
     </ItemGroup>

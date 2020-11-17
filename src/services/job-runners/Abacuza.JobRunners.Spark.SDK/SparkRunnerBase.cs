@@ -80,10 +80,14 @@ namespace Abacuza.JobRunners.Spark.SDK
                 throw new SparkRunnerException("Input endpoint name is not specified in the argument list.");
             }
 
+            Console.WriteLine($"** Input Endpoint Name: {inputEndpointName}");
+
             if (!TryParseSingleValue(_args, InputEndpointSettingsKey, out var inputEndpointSettings))
             {
                 throw new SparkRunnerException("Input endpoint settings is not specified in the argument list.");
             }
+
+            Console.WriteLine($"** Input Endpoint Settings: {inputEndpointSettings}");
 
             var builder = SparkSession.Builder();
             if (TryParseSingleValue(_args, AppNameKey, out var appName))
