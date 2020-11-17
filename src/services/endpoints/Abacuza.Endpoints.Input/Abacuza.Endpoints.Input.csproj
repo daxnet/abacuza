@@ -11,7 +11,7 @@
     <ProjectReference Include="..\Abacuza.Endpoints\Abacuza.Endpoints.csproj" />
   </ItemGroup>
 
-  <Target Name="CopyBuildArtifacts" AfterTargets="Build">
+  <Target Name="CopyBuildArtifacts" AfterTargets="Build" Condition="Exists('$(SolutionDir)')">
     <ItemGroup>
       <BuildArtifacts Include="$(OutDir)*.*" />
     </ItemGroup>
