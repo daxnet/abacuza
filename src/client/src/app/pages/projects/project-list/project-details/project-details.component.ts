@@ -2,6 +2,7 @@ import { AfterViewInit, Component, ComponentFactoryResolver, OnDestroy, OnInit, 
 import { ActivatedRoute, Router } from '@angular/router';
 import { NbToastrService } from '@nebular/theme';
 import { SmartTableDateCellRenderComponent } from 'app/components/smart-table-date-cell-render/smart-table-date-cell-render.component';
+import { SmartTableJobStatusRenderComponent } from 'app/components/smart-table-job-status-render/smart-table-job-status-render.component';
 import { Endpoint } from 'app/models/endpoint';
 import { JobRunner } from 'app/models/job-runner';
 import { Project } from 'app/models/project';
@@ -37,7 +38,8 @@ export class ProjectDetailsComponent implements OnInit, AfterViewInit, OnDestroy
       },
       jobStatusName: {
         title: 'Job Status',
-        type: 'text',
+        type: 'custom',
+        renderComponent: SmartTableJobStatusRenderComponent,
       },
       jobCompletedDate: {
         title: 'Completed At',
@@ -61,6 +63,7 @@ export class ProjectDetailsComponent implements OnInit, AfterViewInit, OnDestroy
       delete: false,
     },
     mode: 'external',
+    noDataMessage: 'Loading revisions ...',
   };
 
   timerId: any;
@@ -89,7 +92,7 @@ export class ProjectDetailsComponent implements OnInit, AfterViewInit, OnDestroy
         .subscribe(revisions => {
           this.revisionsSource.load(revisions);
         });
-    }, 3000);
+    }, 5000);
   }
 
   ngOnInit(): void {
@@ -197,7 +200,7 @@ export class ProjectDetailsComponent implements OnInit, AfterViewInit, OnDestroy
             return throwError(err.message);
           }))
           .subscribe(revisionId => {
-            this.toastrService.success(`Revision created with ID: ${revisionId}`);
+            this.toastrService.success(`Revision created with ID: ${revisionId}`, 'Success');
           })
       });
 

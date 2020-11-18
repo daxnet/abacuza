@@ -1,5 +1,6 @@
 ﻿using Abacuza.JobSchedulers.Models;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
@@ -22,17 +23,20 @@ namespace Abacuza.JobSchedulers.Services
         private readonly HttpClient _httpClient;
         private readonly IConfiguration _configuration;
         private readonly Uri _clusterApiBaseUri;
+        private readonly ILogger<ClusterApiService> _logger;
 
         /// <summary>
         /// Initializes a new instance of the <c>ClusterApiService</c> class.
         /// </summary>
         /// <param name="httpClient">The http client instance for communicating with the cluster service.</param>
         /// <param name="configuration">The instance that holds the configuration information.</param>
-        public ClusterApiService(HttpClient httpClient, IConfiguration configuration)
+        /// <param name="logger">The logger.</param>
+        public ClusterApiService(HttpClient httpClient, IConfiguration configuration, ILogger<ClusterApiService> logger)
         {
             _httpClient = httpClient;
             _configuration = configuration;
             _clusterApiBaseUri = new Uri(_configuration[ClusterServiceUrlConfigurationKey]);
+            _logger = logger;
         }
 
 
@@ -45,8 +49,22 @@ namespace Abacuza.JobSchedulers.Services
                 properties
             });
 
-            var responseMessage = await _httpClient.PostAsync(submitJobUrl, new StringContent(payloadJson, Encoding.UTF8, "application/json"));
-            responseMessage.EnsureSuccessStatusCode();
+            _logger.LogDebug($"Submit job URL: {submitJobUrl}");
+            _logger.LogDebug($"Payload JSON: {payloadJson}");
+
+            using var responseMessage = await _httpClient.PostAsync(submitJobUrl, new StringContent(payloadJson, Encoding.UTF8, "application/json"));
+            try
+            {
+                responseMessage.EnsureSuccessStatusCode();
+            }
+            catch
+            {
+                // TODO: Even though the job submission could fail, we still need to store the JobEntity
+                // to database, but flag it to "Failed", so that the state could be tracked.
+                _logger.LogError(await responseMessage.Content.ReadAsStringAsync());
+                throw;
+            }
+
             var jsonObj = JObject.Parse(await responseMessage.Content.ReadAsStringAsync());
             var jobEntity = new JobEntity
             {

@@ -13,6 +13,7 @@ import { NbEvaIconsModule } from '@nebular/eva-icons';
 import { NbIconModule, NbInputModule, NbCardModule, NbButtonModule, NbCheckboxModule, NbSelectModule, NbToastrModule, NbTooltipModule, NbProgressBarModule, NbDialogModule, NbMenuModule, NbSidebarModule } from '@nebular/theme';
 import { FormsModule } from '@angular/forms';
 import { SmartTableDateCellRenderComponent } from 'app/components/smart-table-date-cell-render/smart-table-date-cell-render.component';
+import { SmartTableJobStatusRenderComponent } from 'app/components/smart-table-job-status-render/smart-table-job-status-render.component';
 
 
 
@@ -26,7 +27,8 @@ import { SmartTableDateCellRenderComponent } from 'app/components/smart-table-da
     DropDownBoxComponent,
     TextBoxComponent,
     FilePickerComponent,
-    SmartTableDateCellRenderComponent,],
+    SmartTableDateCellRenderComponent,
+    SmartTableJobStatusRenderComponent,],
   imports: [
     CommonModule,
     FormsModule,

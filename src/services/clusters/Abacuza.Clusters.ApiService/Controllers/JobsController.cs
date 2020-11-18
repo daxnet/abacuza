@@ -41,6 +41,9 @@ namespace Abacuza.Clusters.ApiService.Controllers
             {
                 var clusterConnection = clusterConnectionEntity.Create(clusterImplementation.ConnectionType);
                 var state = await clusterImplementation.GetStateAsync(clusterConnection);
+
+                _logger.LogDebug($"Cluster connection: {clusterConnectionEntity.Name}, State: {state}");
+
                 if (state == ClusterState.Online)
                 {
                     availableClusters.Add((clusterImplementation, clusterConnection));
@@ -58,6 +61,7 @@ namespace Abacuza.Clusters.ApiService.Controllers
                 }
                 catch (ClusterJobException je)
                 {
+                    _logger.LogError($"Failed submitting the job. {je}");
                     return BadRequest(je.ToString());
                 }
                 catch (Exception ex)
