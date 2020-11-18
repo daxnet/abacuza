@@ -17,11 +17,7 @@ namespace Abacuza.Endpoints.ApiService.Controllers
         private readonly ILogger<EndpointsController> _logger;
 
         public EndpointsController(EndpointCollection endpoints,
-            ILogger<EndpointsController> logger)
-        {
-            _endpoints = endpoints;
-            _logger = logger;
-        }
+            ILogger<EndpointsController> logger) => (_endpoints, _logger) = (endpoints, logger);
 
         [HttpGet]
         [ProducesResponseType(StatusCodes.Status200OK)]

@@ -41,12 +41,7 @@ namespace Abacuza.Clusters.ApiService.Controllers
 
         public ClusterConnectionsController(ILogger<ClusterConnectionsController> logger,
             ClusterCollection clusterImplementations,
-            IDataAccessObject dao)
-        {
-            _logger = logger;
-            _clusterImplementations = clusterImplementations;
-            _dao = dao;
-        }
+            IDataAccessObject dao) => (_clusterImplementations, _dao, _logger) = (clusterImplementations, dao, logger);
 
         #endregion Public Constructors
 

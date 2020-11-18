@@ -74,11 +74,7 @@ namespace Abacuza.Projects.ApiService.Controllers
         public ProjectsController(IDataAccessObject dao,
             ILogger<ProjectsController> logger,
             JobsApiService jobsApiService)
-        {
-            _dao = dao;
-            _logger = logger;
-            _jobsApiService = jobsApiService;
-        }
+        => (_jobsApiService, _dao, _logger) = (jobsApiService, dao, logger);
 
         #endregion Public Constructors
 
@@ -224,9 +220,9 @@ namespace Abacuza.Projects.ApiService.Controllers
                                             JobCreatedDate = job?.CreatedDate,
                                             JobFailedDate = job?.FailedDate,
                                             JobId = job?.Id,
-                                            job?.JobStatusName,
+                                            JobStatusName = job?.JobStatusName ?? Enum.GetName(JobState.Created),
                                             JobName = job?.Name,
-                                            JobState = job?.State,
+                                            JobState = job?.State ?? JobState.Created,
                                         };
                 return Ok(revisionsWithJobs);
             }

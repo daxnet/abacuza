@@ -29,14 +29,9 @@ namespace Abacuza.Jobs.ApiService.Controllers
 
         #region Public Constructors
 
-        public JobRunnersController(IDataAccessObject dao, 
-            CommonApiService commonService, 
-            ILogger<JobRunnersController> logger)
-        {
-            _dao = dao;
-            _commonService = commonService;
-            _logger = logger;
-        }
+        public JobRunnersController(IDataAccessObject dao,
+            CommonApiService commonService,
+            ILogger<JobRunnersController> logger) => (_commonService, _dao, _logger) = (commonService, dao, logger);
 
         #endregion Public Constructors
 

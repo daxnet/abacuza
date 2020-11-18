@@ -19,6 +19,7 @@ using Microsoft.Extensions.Logging;
 using Quartz;
 using System;
 using System.Collections.Generic;
+using System.Linq.Expressions;
 using System.Threading.Tasks;
 
 namespace Abacuza.JobSchedulers.Controllers
@@ -39,11 +40,7 @@ namespace Abacuza.JobSchedulers.Controllers
         #region Public Constructors
 
         public JobsController(IScheduler quartzScheduler, IDataAccessObject dao, ILogger<JobsController> logger)
-        {
-            _quartzScheduler = quartzScheduler;
-            _dao = dao;
-            _logger = logger;
-        }
+            => (_quartzScheduler, _dao, _logger) = (quartzScheduler, dao, logger);
 
         #endregion Public Constructors
 
@@ -89,17 +86,20 @@ namespace Abacuza.JobSchedulers.Controllers
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(JobEntity[]))]
         public async Task<IActionResult> GetJobsBySubmissionNamesAsync([FromBody] IEnumerable<string> submissionNames)
         {
-            var jobEntities = new List<JobEntity>();
+            Expression finalExpression = Expression.Constant(false);
+            var parameterExpression = Expression.Parameter(typeof(JobEntity), "p");
+            var propertyExpression = Expression.Property(parameterExpression, "SubmissionName");
+
             foreach (var name in submissionNames)
             {
-                var entity = await _dao.FindBySpecificationAsync<JobEntity>(je => je.SubmissionName == name);
-                if (entity != null)
-                {
-                    jobEntities.AddRange(entity);
-                }
+                var equalsExpression = Expression.Equal(propertyExpression, Expression.Constant(name));
+                finalExpression = Expression.OrElse(finalExpression, equalsExpression);
             }
 
-            return Ok(jobEntities);
+            var lambda = Expression.Lambda<Func<JobEntity, bool>>(finalExpression, parameterExpression);
+            var entities = await _dao.FindBySpecificationAsync(lambda);
+
+            return Ok(entities);
         }
 
         [HttpPost("submit")]

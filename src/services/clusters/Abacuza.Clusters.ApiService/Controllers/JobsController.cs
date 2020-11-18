@@ -21,12 +21,7 @@ namespace Abacuza.Clusters.ApiService.Controllers
 
         public JobsController(ClusterCollection clusterImplementations,
             ILogger<ClustersController> logger,
-            IDataAccessObject dao)
-        {
-            _clusterImplementations = clusterImplementations;
-            _logger = logger;
-            _dao = dao;
-        }
+            IDataAccessObject dao) => (_clusterImplementations, _dao, _logger) = (clusterImplementations, dao, logger);
 
         [HttpPost("submit")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ClusterJob))]

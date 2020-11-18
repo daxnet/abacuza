@@ -18,10 +18,7 @@ namespace Abacuza.Projects.ApiService.Controllers
         private readonly ILogger<RevisionsController> _logger;
 
         public RevisionsController(IDataAccessObject dao, ILogger<RevisionsController> logger)
-        {
-            _dao = dao;
-            _logger = logger;
-        }
+            => (_dao, _logger) = (dao, logger);
 
         [HttpGet("{id}", Name = "GetRevisionById")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(RevisionEntity))]

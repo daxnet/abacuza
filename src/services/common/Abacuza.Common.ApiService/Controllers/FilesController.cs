@@ -46,11 +46,7 @@ namespace Abacuza.Common.ApiService.Controllers
         /// <param name="logger"></param>
         /// <param name="s3"></param>
         public FilesController(ILogger<FilesController> logger,
-            IAmazonS3 s3)
-        {
-            _logger = logger;
-            _s3 = s3;
-        }
+            IAmazonS3 s3) => (_s3, _logger) = (s3, logger);
 
         [HttpPost("s3")]
         [ProducesResponseType(StatusCodes.Status200OK)]
