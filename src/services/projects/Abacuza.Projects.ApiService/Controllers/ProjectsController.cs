@@ -12,11 +12,13 @@
 // ==============================================================
 
 using Abacuza.Common.DataAccess;
+using Abacuza.Common.Utilities;
 using Abacuza.Projects.ApiService.Models;
 using Abacuza.Projects.ApiService.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using System;
@@ -33,9 +35,14 @@ namespace Abacuza.Projects.ApiService.Controllers
     {
         #region Private Fields
 
+        private const string MaxReservedRevisionsConfigKey = "options:maxReservedRevisions";
+        private const int DefaultMaxReservedRevisions = 20;
+
         private readonly IDataAccessObject _dao;
         private readonly JobsApiService _jobsApiService;
         private readonly ILogger<ProjectsController> _logger;
+        private readonly IConfiguration _configuration;
+        private readonly int maxReservedRevisions;
 
         private readonly static IEnumerable<Func<string, ProjectEntity, JobRunner, string>> PayloadTemplateFuncs
              = new List<Func<string, ProjectEntity, JobRunner, string>>
@@ -73,8 +80,14 @@ namespace Abacuza.Projects.ApiService.Controllers
 
         public ProjectsController(IDataAccessObject dao,
             ILogger<ProjectsController> logger,
-            JobsApiService jobsApiService)
-        => (_jobsApiService, _dao, _logger) = (jobsApiService, dao, logger);
+            JobsApiService jobsApiService,
+            IConfiguration configuration)
+        {
+            (_jobsApiService, _dao, _logger, _configuration) = (jobsApiService, dao, logger, configuration);
+            maxReservedRevisions = configuration[MaxReservedRevisionsConfigKey] == null ? 
+                DefaultMaxReservedRevisions : 
+                Convert.ToInt32(configuration[MaxReservedRevisionsConfigKey]);
+        }
 
         #endregion Public Constructors
 
@@ -199,7 +212,9 @@ namespace Abacuza.Projects.ApiService.Controllers
                 return NotFound($"Project {projectId} doesn't exist.");
             }
 
-            var revisions = await _dao.FindBySpecificationAsync<RevisionEntity>(r => r.ProjectId == projectId);
+            var revisions = (await _dao.FindBySpecificationAsync<RevisionEntity>(r => r.ProjectId == projectId))
+                .OrderByDescending(r => r.CreatedDate)
+                .Take(maxReservedRevisions);
             if (jobInfo)
             {
                 var jobSubmissionNames = revisions.Select(r => r.JobSubmissionName).Where(n => !string.IsNullOrEmpty(n));
@@ -207,7 +222,6 @@ namespace Abacuza.Projects.ApiService.Controllers
                 var revisionsWithJobs = from revision in revisions
                                         join j in jobs on revision.JobSubmissionName equals j.SubmissionName into g
                                         from job in g.DefaultIfEmpty()
-                                        orderby revision.CreatedDate descending
                                         select new
                                         {
                                             revision.Id,

@@ -18,11 +18,7 @@ namespace Abacuza.JobSchedulers.Models
         private readonly ClusterApiService _clusterService;
 
         public JobUpdateExecutor(IDataAccessObject dao, ILogger<JobUpdateExecutor> logger, ClusterApiService clusterService)
-        {
-            _dao = dao;
-            _logger = logger;
-            _clusterService = clusterService;
-        }
+            => (_dao, _logger, _clusterService) = (dao, logger, clusterService);
 
         public async Task Execute(IJobExecutionContext context)
         {
@@ -32,7 +28,7 @@ namespace Abacuza.JobSchedulers.Models
                     je.State < JobState.Completed &&
                     je.Traceability == JobTraceability.Tracked);
 
-                if (jobEntities.Count() == 0)
+                if (!jobEntities.Any())
                 {
                     return;
                 }
@@ -48,8 +44,8 @@ namespace Abacuza.JobSchedulers.Models
                 var jobStatusEntities = await _clusterService.GetJobStatusesAsync(getStatusRequest, context.CancellationToken);
                 foreach (var jobStatusEntity in jobStatusEntities)
                 {
-                    var jobEntity = jobEntities.FirstOrDefault(x => x.ConnectionId == jobStatusEntity.ConnectionId &&
-                        x.LocalJobId == jobStatusEntity.LocalJobId);
+                    var jobEntity = jobEntities.FirstOrDefault(x => x.ConnectionId == jobStatusEntity?.ConnectionId &&
+                        x.LocalJobId == jobStatusEntity?.LocalJobId);
                     if (jobEntity != null)
                     {
                         if (jobStatusEntity.Succeeded)

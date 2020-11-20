@@ -41,21 +41,11 @@ export class ProjectDetailsComponent implements OnInit, AfterViewInit, OnDestroy
         type: 'custom',
         renderComponent: SmartTableJobStatusRenderComponent,
       },
-      jobCompletedDate: {
-        title: 'Completed At',
-        type: 'custom',
-        renderComponent: SmartTableDateCellRenderComponent,
-      },
-      jobFailedDate: {
-        title: 'Failed At',
-        type: 'custom',
-        renderComponent: SmartTableDateCellRenderComponent,
-      },
-      jobCancelledDate: {
-        title: 'Cancelled At',
-        type: 'custom',
-        renderComponent: SmartTableDateCellRenderComponent,
-      },
+      // jobCancelledDate: {
+      //   title: 'Cancelled At',
+      //   type: 'custom',
+      //   renderComponent: SmartTableDateCellRenderComponent,
+      // },
     },
     actions: {
       add: false,
@@ -64,6 +54,9 @@ export class ProjectDetailsComponent implements OnInit, AfterViewInit, OnDestroy
     },
     mode: 'external',
     noDataMessage: 'Loading revisions ...',
+    pager: {
+      perPage: 8
+    },
   };
 
   timerId: any;

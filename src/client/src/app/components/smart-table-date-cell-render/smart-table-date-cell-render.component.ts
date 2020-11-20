@@ -21,7 +21,7 @@ export class SmartTableDateCellRenderComponent implements ViewCell, OnInit {
     } else {
       const utcDateValue = Date.parse(this.value.toString());
       const date = new Date(utcDateValue);
-      this.renderValue = `${date.toLocaleDateString()} ${date.toLocaleTimeString()}`;
+      this.renderValue = date.toLocaleString();
     }
   }
 }

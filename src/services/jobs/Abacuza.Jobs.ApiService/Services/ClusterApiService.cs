@@ -52,20 +52,32 @@ namespace Abacuza.JobSchedulers.Services
             _logger.LogDebug($"Submit job URL: {submitJobUrl}");
             _logger.LogDebug($"Payload JSON: {payloadJson}");
 
-            using var responseMessage = await _httpClient.PostAsync(submitJobUrl, new StringContent(payloadJson, Encoding.UTF8, "application/json"));
+            using var responseMessage = await _httpClient.PostAsync(submitJobUrl, new StringContent(payloadJson, Encoding.UTF8, "application/json"), cancellationToken);
             try
             {
                 responseMessage.EnsureSuccessStatusCode();
             }
             catch
             {
-                // TODO: Even though the job submission could fail, we still need to store the JobEntity
-                // to database, but flag it to "Failed", so that the state could be tracked.
-                _logger.LogError(await responseMessage.Content.ReadAsStringAsync());
-                throw;
+                var failedClusterJob = JObject.Parse(await responseMessage.Content.ReadAsStringAsync(cancellationToken));
+                var failedJobEntity = new JobEntity
+                {
+                    ConnectionId = Guid.Parse(failedClusterJob["connectionId"]?.Value<string>()),
+                    LocalJobId = failedClusterJob["localJobId"]?.Value<string>(),
+                    Name = failedClusterJob["name"]?.Value<string>(),
+                    State = JobState.Failed,
+                    CreatedDate = DateTime.UtcNow,
+                    FailedDate = DateTime.UtcNow,
+                    Traceability = JobTraceability.Tracked,
+                    TracingFailures = 0,
+                    Logs = failedClusterJob["logs"]?.ToObject<List<string>>()
+                };
+
+                _logger.LogError(string.Join(Environment.NewLine, failedJobEntity.Logs.ToArray()));
+                return failedJobEntity;
             }
 
-            var jsonObj = JObject.Parse(await responseMessage.Content.ReadAsStringAsync());
+            var jsonObj = JObject.Parse(await responseMessage.Content.ReadAsStringAsync(cancellationToken));
             var jobEntity = new JobEntity
             {
                 ConnectionId = Guid.Parse(jsonObj["connectionId"]?.Value<string>()),
@@ -90,12 +102,12 @@ namespace Abacuza.JobSchedulers.Services
                     localJobIdentifiers = kvp.Value
                 }));
 
-            var responseMessage = await _httpClient.PostAsync(url, 
+            using var responseMessage = await _httpClient.PostAsync(url, 
                 new StringContent(payloadJson, Encoding.UTF8, "application/json"),
                 cancellationToken);
 
             responseMessage.EnsureSuccessStatusCode();
-            var responseJson = await responseMessage.Content.ReadAsStringAsync();
+            var responseJson = await responseMessage.Content.ReadAsStringAsync(cancellationToken);
             var response = JArray.Parse(responseJson);
             var jobStatusEntities = new List<JobStatusEntity>();
             foreach (var item in response)

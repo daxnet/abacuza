@@ -1,22 +1,43 @@
-using System.Collections.Generic;
-using System;
+// ==============================================================
+//           _
+//     /\   | |
+//    /  \  | |__ __ _ ___ _ _ ______ _
+//   / /\ \ | '_ \ / _` |/ __| | | |_  / _` |
+//  / ____ \| |_) | (_| | (__| |_| |/ / (_| |
+// /_/    \_\_.__/ \__,_|\___|\__,_/___\__,_|
+//
+// Data Processing Platform
+// Copyright 2020 by daxnet. All rights reserved.
+// Licensed under LGPL-v3
+// ==============================================================
+
 using Abacuza.Common;
 using Abacuza.Common.DataAccess;
-using Newtonsoft.Json;
+using System;
+using System.Collections.Generic;
 
 namespace Abacuza.JobSchedulers.Models
 {
     [StorageModel("jobs")]
     public sealed class JobEntity : IEntity
     {
+
+        #region Public Constructors
+
         public JobEntity()
         {
-
         }
 
-        public Guid Id { get; set; }
+        #endregion Public Constructors
 
+        #region Public Properties
+
+        public DateTime? CancelledDate { get; set; }
+        public DateTime? CompletedDate { get; set; }
         public Guid? ConnectionId { get; set; }
+        public DateTime? CreatedDate { get; set; }
+        public DateTime? FailedDate { get; set; }
+        public Guid Id { get; set; }
 
         /// <summary>
         /// Gets or sets the job id that is specific to the cluster on which
@@ -24,15 +45,9 @@ namespace Abacuza.JobSchedulers.Models
         /// </summary>
         public string LocalJobId { get; set; }
 
+        public List<string> Logs { get; set; } = new List<string>();
         public string Name { get; set; }
-
-        public DateTime? CreatedDate { get; set; }
-
-        public DateTime? CompletedDate { get; set; }
-
-        public DateTime? FailedDate { get; set; }
-
-        public DateTime? CancelledDate { get; set; }
+        public JobState State { get; set; }
 
         /// <summary>
         /// Gets or sets the name of the job submission, this is usually
@@ -40,13 +55,16 @@ namespace Abacuza.JobSchedulers.Models
         /// </summary>
         public string SubmissionName { get; set; }
 
-        public JobState State { get; set; }
-
         public JobTraceability? Traceability { get; set; }
-
 
         public int? TracingFailures { get; set; }
 
-        public List<string> Logs { get; set; } = new List<string>();
+        #endregion Public Properties
+
+        #region Public Methods
+
+        public override string ToString() => SubmissionName;
+
+        #endregion Public Methods
     }
 }

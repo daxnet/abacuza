@@ -9,6 +9,8 @@ export class SmartTableJobStatusRenderComponent implements OnInit {
 
   renderValue: string;
   renderClass: string;
+  dateTextClass: string;
+  dateText: string;
 
   constructor() { }
 
@@ -20,11 +22,18 @@ export class SmartTableJobStatusRenderComponent implements OnInit {
       this.renderValue = '';
     } else {
       switch (this.value) {
+        case 'Created':
+          this.renderClass = 'badge badge-light';
+          break;
         case 'Completed':
           this.renderClass = 'badge badge-success';
+          this.dateText = this.getDateText(this.rowData.jobCompletedDate);
+          this.dateTextClass = 'small text-success';
           break;
         case 'Failed':
           this.renderClass = 'badge badge-danger';
+          this.dateText = this.getDateText(this.rowData.jobFailedDate);
+          this.dateTextClass = 'small text-danger';
           break;
         case 'Running':
           this.renderClass = 'badge badge-info';
@@ -36,5 +45,9 @@ export class SmartTableJobStatusRenderComponent implements OnInit {
 
       this.renderValue = this.value.toString().toUpperCase();
     }
+  }
+
+  getDateText(date: any): string {
+    return new Date(date).toLocaleString();
   }
 }

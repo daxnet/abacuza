@@ -29,10 +29,16 @@ namespace Abacuza.Clusters.ApiService.Controllers
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> ExecuteJobAsync([FromBody] ExecuteJobRequest request)
         {
+            var failedClusterJob = new ClusterJob
+            {
+                State = ClusterJobState.Failed
+            };
+
             var clusterImplementation = _clusterImplementations.FirstOrDefault(ci => ci.Type == request.ClusterType);
             if (clusterImplementation == null)
             {
-                return NotFound($"The cluster whose type is {request.ClusterType} does not exist.");
+                failedClusterJob.Logs.Add($"The cluster whose type is {request.ClusterType} does not exist.");
+                return NotFound(failedClusterJob);
             }
 
             var clusterConnectionEntities = await _dao.FindBySpecificationAsync<ClusterConnectionEntity>(ce => ce.ClusterType == request.ClusterType);
@@ -62,15 +68,20 @@ namespace Abacuza.Clusters.ApiService.Controllers
                 catch (ClusterJobException je)
                 {
                     _logger.LogError($"Failed submitting the job. {je}");
-                    return BadRequest(je.ToString());
+                    failedClusterJob.Logs.Add(je.ToString());
+                    return BadRequest(failedClusterJob);
                 }
                 catch (Exception ex)
                 {
-                    return StatusCode(500, ex.ToString());
+                    _logger.LogError($"General error occurred when executing the job on cluster {connection.Name}.");
+                    _logger.LogError(ex.ToString());
+                    failedClusterJob.Logs.Add(ex.ToString());
+                    return StatusCode(500, failedClusterJob);
                 }
             }
 
-            return BadRequest($"There is no available cluster whose type is '{request.ClusterType}' that can serve the job execution request.");
+            failedClusterJob.Logs.Add($"There is no available cluster whose type is '{request.ClusterType}' that can serve the job execution request.");
+            return BadRequest(failedClusterJob);
         }
 
         [HttpPost("statuses")]

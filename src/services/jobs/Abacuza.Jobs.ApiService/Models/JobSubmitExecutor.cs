@@ -63,7 +63,15 @@ namespace Abacuza.JobSchedulers.Models
 
                 var jobEntity = await _clusterService.SubmitJobAsync(clusterType, properties, context.CancellationToken);
 
-                _logger.LogInformation($"Job {jobName} has been successfully submitted to the cluster whose type is {clusterType}");
+                if (jobEntity.State == JobState.Created)
+                {
+                    _logger.LogInformation($"Job {jobName} has been successfully submitted to the cluster whose type is {clusterType}");
+                }
+                else
+                {
+                    _logger.LogError($"Job {jobName} created failed, check log for more information.");
+                    _logger.LogError(string.Join(Environment.NewLine, jobEntity.Logs.ToArray()));
+                }
 
                 jobEntity.SubmissionName = jobName;
                 await _dao.AddAsync(jobEntity);
