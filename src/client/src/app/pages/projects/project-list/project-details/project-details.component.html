@@ -30,7 +30,7 @@
                     <ng-template ngxUIComponentsHost></ng-template>
                 </nb-tab>
                 <nb-tab tabTitle="Revisions" [active]='isRevisionsTabActive'>
-                    <ng2-smart-table [settings]="revisionsTableSettings" [source]="revisionsSource">
+                    <ng2-smart-table [settings]="revisionsTableSettings" [source]="revisionsSource" (custom)='onRevisionsCustomAction($event)'>
                     </ng2-smart-table>
                 </nb-tab>
             </nb-tabset>

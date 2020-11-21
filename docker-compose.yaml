@@ -92,6 +92,7 @@ services:
             - services__jobsService__url=http://abacuza-job-service:9024
             - services__jobsService__timeout=5m
             - services__jobsService__retries=5
+            - options__maxReservedRevisions=24
     abacuza-job-service:
         image: daxnet/abacuza-job-service
         ports:

@@ -9,6 +9,7 @@ import { Project } from 'app/models/project';
 import { EndpointsService } from 'app/services/endpoints.service';
 import { JobRunnersService } from 'app/services/job-runners.service';
 import { ProjectsService } from 'app/services/projects.service';
+import { TextMessageDialogService } from 'app/services/text-message-dialog.service';
 import { UIComponentBase } from 'app/ui-components/uicomponent-base';
 import { UIComponentsHostDirective } from 'app/ui-components/uicomponents-host.directive';
 import { UIComponentsProviderService } from 'app/ui-components/uicomponents-provider.service';
@@ -51,9 +52,19 @@ export class ProjectDetailsComponent implements OnInit, AfterViewInit, OnDestroy
       add: false,
       edit: false,
       delete: false,
+      custom: [
+        { 
+          name: 'viewLogs', 
+          title: '<i class="eva eva-file-text-outline" title="View logs"></i>'
+        },
+        // { 
+        //   name: 'ourCustomAction2', 
+        //   title: '<i class="eva eva-github"></i>' 
+        // },
+      ],
+      position: 'right'
     },
     mode: 'external',
-    noDataMessage: 'Loading revisions ...',
     pager: {
       perPage: 8
     },
@@ -76,6 +87,7 @@ export class ProjectDetailsComponent implements OnInit, AfterViewInit, OnDestroy
     private jobRunnersService: JobRunnersService,
     private toastrService: NbToastrService,
     private componentsProvider: UIComponentsProviderService,
+    private textMessageDialogService: TextMessageDialogService,
     private componentFactoryResolver: ComponentFactoryResolver,
   ) { }
 
@@ -200,8 +212,25 @@ export class ProjectDetailsComponent implements OnInit, AfterViewInit, OnDestroy
     this.isRevisionsTabActive = true;
   }
 
-  onChangeTab(event): void {
+  onChangeTab(event: { title: string; }): void {
     this.isRevisionsTabActive = event.title === 'Revisions';
+  }
+
+  onRevisionsCustomAction(event: any): void {
+    switch(event.action) {
+      case 'viewLogs':
+        this.showLogs(event.data.id);
+      break;
+    }
+  }
+
+  showLogs(revisionId: string): void {
+    this.projectsService.getRevisionLogs(revisionId)
+      .subscribe(logEntries => {
+        let log = '';
+        logEntries.forEach(le => log = log.concat(le).concat('\r\n'));
+        this.textMessageDialogService.show('Revision Log', log);
+      });
   }
 
   ngOnDestroy(): void {

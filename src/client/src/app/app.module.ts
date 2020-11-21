@@ -11,24 +11,6 @@ import { CoreModule } from './@core/core.module';
 import { ThemeModule } from './@theme/theme.module';
 import { AppComponent } from './app.component';
 import { AppRoutingModule } from './app-routing.module';
-import { NbEvaIconsModule } from '@nebular/eva-icons';
-import {
-  NbButtonModule,
-  NbCardModule,
-  NbChatModule,
-  NbCheckboxModule,
-  NbDatepickerModule,
-  NbDialogModule,
-  NbIconModule,
-  NbInputModule,
-  NbMenuModule,
-  NbProgressBarModule,
-  NbSelectModule,
-  NbSidebarModule,
-  NbToastrModule,
-  NbTooltipModule,
-  NbWindowModule,
-} from '@nebular/theme';
 import { CommonDialogComponent } from './services/common-dialog/common-dialog.component';
 import { CommonDialogService } from './services/common-dialog.service';
 import { FileUploadComponent } from './services/file-upload/file-upload.component';
@@ -39,9 +21,10 @@ import { DropDownBoxComponent } from './ui-components/drop-down-box.component';
 import { TextBoxComponent } from './ui-components/text-box.component';
 import { FormsModule } from '@angular/forms';
 import { FileListComponent } from './components/file-list/file-list.component';
-import { Ng2SmartTableModule } from 'ng2-smart-table';
 import { FilePickerComponent } from './ui-components/file-picker.component';
 import { SharedModule } from './shared/shared.module';
+import { TextMessageDialogComponent } from './services/text-message-dialog/text-message-dialog.component';
+import { TextMessageDialogService } from './services/text-message-dialog.service';
 
 @NgModule({
   declarations: [
@@ -54,16 +37,14 @@ import { SharedModule } from './shared/shared.module';
     HttpClientModule,
     AppRoutingModule,
     SharedModule,
-    // NbSidebarModule.forRoot(),
-    // NbMenuModule.forRoot(),
-    // NbDialogModule.forRoot(),
     CoreModule.forRoot(),
     ThemeModule.forRoot(),
   ],
   bootstrap: [AppComponent],
-  providers: [CommonDialogService, FileUploadService],
+  providers: [CommonDialogService, FileUploadService, TextMessageDialogService,],
   entryComponents: [
     CommonDialogComponent,
+    TextMessageDialogComponent,
     FileUploadComponent,
     CheckBoxComponent,
     TextAreaComponent,

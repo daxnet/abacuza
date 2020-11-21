@@ -13,6 +13,7 @@ import { UIComponentsHostDirective } from 'app/ui-components/uicomponents-host.d
 import { FileListComponent } from 'app/components/file-list/file-list.component';
 import { SharedModule } from 'app/shared/shared.module';
 import { NbEvaIconsModule } from '@nebular/eva-icons';
+import { ThemeModule } from 'app/@theme/theme.module';
 
 @NgModule({
   declarations: [
@@ -24,6 +25,7 @@ import { NbEvaIconsModule } from '@nebular/eva-icons';
   imports: [
     FormsModule,
     CommonModule,
+    ThemeModule,
     JobsRoutingModule,
     Ng2SmartTableModule,
     NbEvaIconsModule,

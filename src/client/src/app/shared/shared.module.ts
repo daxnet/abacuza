@@ -14,6 +14,8 @@ import { NbIconModule, NbInputModule, NbCardModule, NbButtonModule, NbCheckboxMo
 import { FormsModule } from '@angular/forms';
 import { SmartTableDateCellRenderComponent } from 'app/components/smart-table-date-cell-render/smart-table-date-cell-render.component';
 import { SmartTableJobStatusRenderComponent } from 'app/components/smart-table-job-status-render/smart-table-job-status-render.component';
+import { TextMessageDialogComponent } from 'app/services/text-message-dialog/text-message-dialog.component';
+import { ThemeModule } from 'app/@theme/theme.module';
 
 
 
@@ -21,6 +23,7 @@ import { SmartTableJobStatusRenderComponent } from 'app/components/smart-table-j
   declarations: [
     FileListComponent,
     CommonDialogComponent,
+    TextMessageDialogComponent,
     FileUploadComponent,
     CheckBoxComponent,
     TextAreaComponent,
@@ -32,6 +35,7 @@ import { SmartTableJobStatusRenderComponent } from 'app/components/smart-table-j
   imports: [
     CommonModule,
     FormsModule,
+    ThemeModule,
     Ng2SmartTableModule,
     NbEvaIconsModule,
     NbIconModule,
@@ -50,6 +54,7 @@ import { SmartTableJobStatusRenderComponent } from 'app/components/smart-table-j
   exports: [
     FileListComponent,
     CommonDialogComponent,
+    TextMessageDialogComponent,
     FileUploadComponent,
     CheckBoxComponent,
     TextAreaComponent,

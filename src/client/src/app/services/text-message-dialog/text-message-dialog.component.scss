@@ -1,0 +1,13 @@
+@import '../../@theme/styles/themes';
+
+@include nb-install-component() {
+  nb-card {
+    min-width: 1024px;
+    max-width: 1500px;
+    max-height: 600px;
+  }
+
+//   textarea {
+//       font-family: 'Courier New', Courier, monospace;
+//   }
+}

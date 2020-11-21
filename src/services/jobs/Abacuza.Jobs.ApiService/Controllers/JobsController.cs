@@ -18,6 +18,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Quartz;
 using System;
+using System.Linq;
 using System.Collections.Generic;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
@@ -71,14 +72,14 @@ namespace Abacuza.JobSchedulers.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> GetJobBySubmissionNameAsync(string submissionName)
         {
-            var jobEntities = await _dao.FindBySpecificationAsync<JobEntity>(je =>
-                je.SubmissionName == submissionName);
-            if (jobEntities == null)
+            var jobEntity = (await _dao.FindBySpecificationAsync<JobEntity>(je =>
+                je.SubmissionName == submissionName)).FirstOrDefault();
+            if (jobEntity == null)
             {
                 return NotFound($"The job submission {submissionName} doesn't exist.");
             }
 
-            return Ok(jobEntities);
+            return Ok(jobEntity);
         }
 
         // TODO: Pagination should be supported.

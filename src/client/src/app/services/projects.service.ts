@@ -81,4 +81,12 @@ export class ProjectsService {
       observe: 'body',
     });
   }
+
+  public getRevisionLogs(revisionId: string): Observable<string[]> {
+    return this.httpClient.get<string[]>(`${environment.projectServiceBaseUrl}api/revisions/${revisionId}/logs`, {
+      observe: 'body',
+    });
+  }
+
+  
 }
