@@ -46,7 +46,7 @@ namespace Abacuza.Common.Models
             return HashCode.Combine(Bucket, Key, File);
         }
 
-        public override string ToString() => $"s3://{Bucket}/{Key}/{File}";
+        public override string ToString() => $"s3a://{Bucket}/{Key}/{File}";
 
 
     }

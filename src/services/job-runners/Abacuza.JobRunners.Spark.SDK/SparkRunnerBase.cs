@@ -29,6 +29,7 @@ namespace Abacuza.JobRunners.Spark.SDK
     /// </summary>
     public abstract class SparkRunnerBase
     {
+
         #region Protected Fields
 
         protected readonly string[] _args;
@@ -58,9 +59,9 @@ namespace Abacuza.JobRunners.Spark.SDK
         #region Protected Constructors
 
         /// <summary>
-        /// Initializes a new instance of the <c>SparkRunnerBase</c> class.
+        /// Initializes a new instance of the <see cref="SparkRunnerBase"/> class.
         /// </summary>
-        /// <param name="args">The command line arguments.</param>
+        /// <param name="args">The arguments used for running the job.</param>
         protected SparkRunnerBase(string[] args)
         {
             _args = args;
@@ -112,6 +113,11 @@ namespace Abacuza.JobRunners.Spark.SDK
 
         #region Protected Methods
 
+        /// <summary>
+        /// Runs the data processing based on the data frame.
+        /// </summary>
+        /// <param name="sparkSession">The spark session.</param>
+        /// <param name="dataFrame">The data frame.</param>
         protected abstract void RunInternal(SparkSession sparkSession, DataFrame dataFrame);
 
         #endregion Protected Methods
@@ -193,5 +199,6 @@ namespace Abacuza.JobRunners.Spark.SDK
         }
 
         #endregion Private Methods
+
     }
 }

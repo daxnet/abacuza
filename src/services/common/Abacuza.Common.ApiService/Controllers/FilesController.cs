@@ -12,17 +12,15 @@
 // ==============================================================
 
 using Abacuza.Common.Models;
-using Amazon;
 using Amazon.S3;
+using Amazon.S3.Model;
 using Amazon.S3.Transfer;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Net;
 using System.Net.Http.Headers;
 using System.Threading.Tasks;
 using System.Web;
@@ -37,8 +35,14 @@ namespace Abacuza.Common.ApiService.Controllers
     [Route("api/files")]
     public class FilesController : ControllerBase
     {
+        #region Private Fields
+
         private readonly ILogger<FilesController> _logger;
         private readonly IAmazonS3 _s3;
+
+        #endregion Private Fields
+
+        #region Public Constructors
 
         /// <summary>
         /// Initializes a new instance of the <c>FilesController</c> class.
@@ -47,6 +51,43 @@ namespace Abacuza.Common.ApiService.Controllers
         /// <param name="s3"></param>
         public FilesController(ILogger<FilesController> logger,
             IAmazonS3 s3) => (_s3, _logger) = (s3, logger);
+
+        #endregion Public Constructors
+
+        #region Public Methods
+
+        [HttpDelete("{bucket}/{key}/{file}")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        public async Task<IActionResult> DeleteS3FileAsync(string bucket, string key, string file)
+        {
+            var denormalizedBucket = HttpUtility.UrlDecode(bucket);
+            var denormalizedKey = HttpUtility.UrlDecode(key);
+            var denormalizedFile = HttpUtility.UrlDecode(file);
+
+            var combinedKey = $"{denormalizedKey}/{denormalizedFile}";
+            var response = await _s3.DeleteObjectAsync(denormalizedBucket, combinedKey);
+            return StatusCode((int)response.HttpStatusCode, response.ResponseMetadata);
+        }
+
+        [HttpDelete("{bucket}/{folderPath}")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        public async Task<IActionResult> DeleteS3FolderAsync(string bucket, string folderPath)
+        {
+            var denormalizedBucket = HttpUtility.UrlDecode(bucket);
+            var denormalizedFolderPath = HttpUtility.UrlDecode(folderPath);
+
+            var deleteObjectsRequest = new DeleteObjectsRequest();
+            var listObjectsRequest = new ListObjectsRequest
+            {
+                BucketName = denormalizedBucket,
+                Prefix = denormalizedFolderPath
+            };
+            var listObjectResponse = await _s3.ListObjectsAsync(listObjectsRequest);
+            listObjectResponse.S3Objects.ForEach(o => deleteObjectsRequest.AddKey(o.Key));
+            deleteObjectsRequest.BucketName = denormalizedBucket;
+            var response = await _s3.DeleteObjectsAsync(deleteObjectsRequest);
+            return StatusCode((int)response.HttpStatusCode, response.ResponseMetadata);
+        }
 
         [HttpPost("s3")]
         [ProducesResponseType(StatusCodes.Status200OK)]
@@ -97,17 +138,6 @@ namespace Abacuza.Common.ApiService.Controllers
             }
         }
 
-        [HttpDelete("{bucket}/{key}/{file}")]
-        [ProducesResponseType(StatusCodes.Status204NoContent)]
-        public async Task<IActionResult> DeleteS3FileAsync(string bucket, string key, string file)
-        {
-            var denormalizedBucket = HttpUtility.UrlDecode(bucket);
-            var denormalizedKey = HttpUtility.UrlDecode(key);
-            var denormalizedFile = HttpUtility.UrlDecode(file);
-
-            var combinedKey = $"{denormalizedKey}/{denormalizedFile}";
-            var response = await _s3.DeleteObjectAsync(denormalizedBucket, combinedKey);
-            return StatusCode((int)response.HttpStatusCode, response.ResponseMetadata);
-        }
+        #endregion Public Methods
     }
 }
