@@ -79,6 +79,14 @@ services:
         image: daxnet/abacuza-project-service
         ports:
             - "9027:9027"
+        depends_on: 
+            - abacuza-mongo
+            - abacuza-redis
+            - abacuza-job-service
+        links: 
+            - abacuza-mongo
+            - abacuza-redis
+            - abacuza-job-service
         healthcheck:
             test: ["CMD", "curl", "-f", "http://localhost:9027/api/healthcheck"]
             interval: 20s
@@ -124,6 +132,7 @@ services:
             - services__commonService__url=http://abacuza-common-service:9025
             - services__commonService__timeout=1m
             - services__commonService__retries=3
+        command: ["/wait-for-it.sh", "abacuza-postgres:5432", "--timeout=10", "--strict", "--", "dotnet", "Abacuza.Jobs.ApiService.dll"]
     abacuza-minio:
         image: minio/minio
         volumes:

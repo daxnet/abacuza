@@ -20,6 +20,7 @@ FROM build AS publish
 RUN dotnet publish "Abacuza.Jobs.ApiService.csproj" -c Release -o /app/publish
 
 FROM base AS final
+COPY ["jobs/Abacuza.Jobs.ApiService/wait-for-it.sh", "/wait-for-it.sh"]
 WORKDIR /app
 COPY --from=publish /app/publish .
 CMD ["dotnet", "Abacuza.Jobs.ApiService.dll"]
