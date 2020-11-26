@@ -25,6 +25,7 @@ import { FilePickerComponent } from './ui-components/file-picker.component';
 import { SharedModule } from './shared/shared.module';
 import { TextMessageDialogComponent } from './services/text-message-dialog/text-message-dialog.component';
 import { TextMessageDialogService } from './services/text-message-dialog.service';
+import { NgJsonEditorModule } from 'ang-jsoneditor';
 
 @NgModule({
   declarations: [
@@ -37,6 +38,7 @@ import { TextMessageDialogService } from './services/text-message-dialog.service
     HttpClientModule,
     AppRoutingModule,
     SharedModule,
+    NgJsonEditorModule,
     CoreModule.forRoot(),
     ThemeModule.forRoot(),
   ],

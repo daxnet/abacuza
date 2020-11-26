@@ -22,7 +22,7 @@ import { catchError } from 'rxjs/operators';
   templateUrl: './project-details.component.html',
   styleUrls: ['./project-details.component.scss'],
 })
-export class ProjectDetailsComponent implements OnInit, AfterViewInit, OnDestroy {
+export class ProjectDetailsComponent implements OnInit, OnDestroy {
 
   @ViewChild(UIComponentsHostDirective, { static: true }) ngxUIComponentsHost: UIComponentsHostDirective;
 
@@ -70,7 +70,7 @@ export class ProjectDetailsComponent implements OnInit, AfterViewInit, OnDestroy
     },
   };
 
-  timerId: any;
+  timerId: any = null;
   projectEntity: Project;
   inputEndpointEntity: Endpoint;
   jobRunnerEntity: JobRunner;
@@ -90,15 +90,6 @@ export class ProjectDetailsComponent implements OnInit, AfterViewInit, OnDestroy
     private textMessageDialogService: TextMessageDialogService,
     private componentFactoryResolver: ComponentFactoryResolver,
   ) { }
-
-  ngAfterViewInit(): void {
-    this.timerId = setInterval(() => {
-      this.projectsService.getRevisions(this.projectEntity.id)
-        .subscribe(revisions => {
-          this.revisionsSource.load(revisions);
-        });
-    }, 5000);
-  }
 
   ngOnInit(): void {
     this.activatedRoute.params.subscribe(params => {
@@ -132,11 +123,36 @@ export class ProjectDetailsComponent implements OnInit, AfterViewInit, OnDestroy
             .subscribe(jr => {
               this.jobRunnerEntity = jr.body;
             });
+
+          // firstly update the revisions list
+          this.updateRevisions(this.projectsService, this.projectEntity.id, this.revisionsSource);
         });
     });
   }
 
-  loadInputEndpointUIComponents(inputEndpoint: Endpoint): void {
+  private startTimer(): void {
+    this.stopTimer();
+    this.timerId = setInterval(this.updateRevisions, 
+      5000, 
+      this.projectsService, 
+      this.projectEntity.id, 
+      this.revisionsSource);
+  }
+
+  private stopTimer(): void {
+    if (this.timerId) {
+      clearInterval(this.timerId);
+    }
+  }
+
+  private updateRevisions(ps: ProjectsService, projectId: string, revisionsSource: LocalDataSource): void {
+    ps.getRevisions(projectId)
+      .subscribe(revisions => {
+        revisionsSource.load(revisions);
+      });
+  }
+
+  private loadInputEndpointUIComponents(inputEndpoint: Endpoint): void {
     const viewContainerRef = this.ngxUIComponentsHost.viewContainerRef;
     viewContainerRef.clear();
     inputEndpoint.configurationUIElements.forEach(e => {
@@ -210,10 +226,16 @@ export class ProjectDetailsComponent implements OnInit, AfterViewInit, OnDestroy
       });
 
     this.isRevisionsTabActive = true;
+    this.startTimer();
   }
 
-  onChangeTab(event: { title: string; }): void {
-    this.isRevisionsTabActive = event.title === 'Revisions';
+  onChangeTab(event: { tabTitle: string; }): void {
+    this.isRevisionsTabActive = event.tabTitle === 'Revisions';
+    if (this.isRevisionsTabActive) {
+      this.startTimer();
+    } else {
+      this.stopTimer();
+    }
   }
 
   onRevisionsCustomAction(event: any): void {
@@ -234,7 +256,7 @@ export class ProjectDetailsComponent implements OnInit, AfterViewInit, OnDestroy
   }
 
   ngOnDestroy(): void {
-    clearTimeout(this.timerId);
+    this.stopTimer();
     this.componentEventSubscriptions.forEach(s => s.unsubscribe());
   }
 }

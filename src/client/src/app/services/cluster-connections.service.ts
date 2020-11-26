@@ -3,6 +3,7 @@ import { Injectable } from '@angular/core';
 import { ClusterConnection } from 'app/models/cluster-connection';
 import { environment } from 'environments/environment';
 import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root',
@@ -14,7 +15,12 @@ export class ClusterConnectionsService {
   public getAllClusterConnections(): Observable<HttpResponse<ClusterConnection[]>> {
     return this.httpClient.get<ClusterConnection[]>(`${environment.clusterServiceBaseUrl}api/cluster-connections`, {
       observe: 'response',
-    });
+    }).pipe(
+      map(response => {
+        response.body.forEach(r => r.settingsJsonObject = JSON.parse(r.settings));
+        return response;
+      })
+    );
   }
 
   public createClusterConnection(conn: ClusterConnection): Observable<string> {
@@ -30,7 +36,8 @@ export class ClusterConnectionsService {
     return this.httpClient.delete(`${environment.clusterServiceBaseUrl}api/cluster-connections/${id}`);
   }
 
-  public updateClusterConnection(id: string, description: string, settings: string): Observable<ClusterConnection> {
+  public updateClusterConnection(id: string, description: string, settingsJsonObject: any): Observable<ClusterConnection> {
+
     return this.httpClient.patch<ClusterConnection>(
       `${environment.clusterServiceBaseUrl}api/cluster-connections/${id}`,
       [
@@ -42,7 +49,7 @@ export class ClusterConnectionsService {
         {
           op: 'replace',
           path: '/settings',
-          value: settings,
+          value: JSON.stringify(settingsJsonObject),
         },
       ], {
       observe: 'body',

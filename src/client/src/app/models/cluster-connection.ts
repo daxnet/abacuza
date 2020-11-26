@@ -4,4 +4,16 @@ export class ClusterConnection {
     id: string;
     name: string;
     settings: string;
+
+    /**
+     * Represents the JSON object that reflects the value of settings.
+     *
+     * @type {*}
+     * @memberof ClusterConnection
+     */
+    settingsJsonObject: any;
+
+    constructor() {
+        this.settingsJsonObject = {};
+    }
 }

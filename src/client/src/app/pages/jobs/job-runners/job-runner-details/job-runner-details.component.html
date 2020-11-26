@@ -15,16 +15,16 @@
                     placeholder="Description">
             </div>
             <div class="form-group">
-                <label for="iClusterType">Cluster Type</label>
+                <label for="iClusterType">Cluster type</label>
                 <nb-select [(selected)]="jobRunnerEntity.clusterType" fullWidth placeholder="Choose cluster type">
                     <nb-option *ngFor='let ct of clusterTypes' [value]="ct">{{ct}}</nb-option>
                 </nb-select>
             </div>
             <div class="form-group">
                 <label for="iPayloadTemplate">Payload template</label>
-                <textarea id="iPayloadTemplate" rows="8" [(ngModel)]="jobRunnerEntity.payloadTemplate" nbInput fullWidth
-                    placeholder="Input template in JSON format"></textarea>
+                <json-editor id="iPayloadTemplate" [options]="editorOptions" [(ngModel)]="jobRunnerEntity.payloadTemplateJsonObject"></json-editor>
             </div>
+
             <div class="form-group">
                 <ngx-file-list id='jobRunnerBinaries' title="Binaries" [initFiles]='initFiles' 
                     bucket='data' 

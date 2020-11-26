@@ -11,6 +11,7 @@ import { FormsModule } from '@angular/forms';
 import { FileListComponent } from 'app/components/file-list/file-list.component';
 import { SharedModule } from 'app/shared/shared.module';
 import { NbEvaIconsModule } from '@nebular/eva-icons';
+import { NgJsonEditorModule } from 'ang-jsoneditor';
 
 @NgModule({
   declarations: [JobsComponent, JobRunnersComponent, CreateJobRunnerComponent, JobRunnerDetailsComponent],
@@ -31,6 +32,7 @@ import { NbEvaIconsModule } from '@nebular/eva-icons';
     NbProgressBarModule,
     JobsRoutingModule,
     SharedModule,
+    NgJsonEditorModule,
     NbToastrModule.forRoot({
       duration: 6000,
     }),
