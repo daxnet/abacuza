@@ -1,5 +1,6 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { NbDialogRef } from '@nebular/theme';
+import { JsonEditorOptions } from 'ang-jsoneditor';
 import { ClusterConnection } from 'app/models/cluster-connection';
 
 @Component({
@@ -14,10 +15,15 @@ export class EditClusterConnectionComponent implements OnInit {
   @Input() clusterConnectionEntity: ClusterConnection;
   @Input() mode: string;
 
-  constructor(protected ref: NbDialogRef<EditClusterConnectionComponent>) { }
+  editorOptions: JsonEditorOptions;
+
+  constructor(protected ref: NbDialogRef<EditClusterConnectionComponent>) {
+    this.editorOptions = new JsonEditorOptions();
+    this.editorOptions.mode = 'code';
+    this.editorOptions.mainMenuBar = false;
+  }
 
   ngOnInit(): void {
-
   }
 
   close() {

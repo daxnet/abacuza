@@ -1,6 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { NbToastrService } from '@nebular/theme';
+import { JsonEditorOptions } from 'ang-jsoneditor';
 import { JobRunner } from 'app/models/job-runner';
 import { S3File } from 'app/models/s3-file';
 import { ClustersService } from 'app/services/clusters.service';
@@ -19,12 +20,17 @@ export class JobRunnerDetailsComponent implements OnInit {
   clusterTypes: string[] = [];
   key: string;
   initFiles: S3File[];
+  editorOptions: JsonEditorOptions;
 
   constructor(private activatedRoute: ActivatedRoute,
     private router: Router,
     private clustersService: ClustersService,
     private jobRunnerService: JobRunnersService,
-    private toastrService: NbToastrService) { }
+    private toastrService: NbToastrService) { 
+      this.editorOptions = new JsonEditorOptions();
+      this.editorOptions.mode = 'code';
+      this.editorOptions.mainMenuBar = false;
+    }
 
   ngOnInit(): void {
     this.activatedRoute.params.subscribe(params => {

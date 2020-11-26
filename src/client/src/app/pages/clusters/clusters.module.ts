@@ -16,6 +16,8 @@ import { ClusterConnectionsComponent } from './cluster-connections/cluster-conne
 import { EditClusterConnectionComponent } from './cluster-connections/edit-cluster-connection/edit-cluster-connection.component';
 
 import { ThemeModule } from '../../@theme/theme.module';
+import { SharedModule } from 'app/shared/shared.module';
+import { NgJsonEditorModule } from 'ang-jsoneditor';
 
 @NgModule({
   declarations: [
@@ -33,11 +35,13 @@ import { ThemeModule } from '../../@theme/theme.module';
     NbCardModule,
     NbIconModule,
     NbInputModule,
+    NgJsonEditorModule,
     NbToastrModule.forRoot({
       duration: 6000,
     }),
     NbDialogModule.forRoot(),
     ClustersRoutingModule,
+    SharedModule,
     Ng2SmartTableModule,
   ],
   entryComponents: [

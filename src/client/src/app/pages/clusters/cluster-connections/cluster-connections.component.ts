@@ -94,7 +94,7 @@ export class ClusterConnectionsComponent implements OnInit {
       if (res) {
         this.clusterConnectionsService.updateClusterConnection(event.data.id,
             event.data.description,
-            event.data.settings)
+            event.data.settingsJsonObject)
           .pipe(catchError(err => {
             this.toastrService.danger(`Error message: ${err.message}`, 'Failed to update cluster connection', {
               duration: 6000,

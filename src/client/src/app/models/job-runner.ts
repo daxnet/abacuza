@@ -6,5 +6,6 @@ export class JobRunner {
     description: string;
     clusterType: string;
     payloadTemplate: string;
+    payloadTemplateJsonObject: any;
     binaryFiles: S3File[];
 }

@@ -22,9 +22,9 @@
             </div>
             <div class="form-group">
                 <label for="idSettings">Settings</label>
-                <textarea id="idSettings" rows="5" [(ngModel)]="clusterConnectionEntity.settings" nbInput fullWidth
-                    placeholder="Input connection settings in JSON format"></textarea>
+                <json-editor id="idSettings" [options]="editorOptions" [(ngModel)]="clusterConnectionEntity.settingsJsonObject"></json-editor>
             </div>
+
         </div>
     </nb-card-body>
     <nb-card-footer class="text-right">

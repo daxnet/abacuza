@@ -4,6 +4,7 @@ import { JobRunner } from 'app/models/job-runner';
 import { S3File } from 'app/models/s3-file';
 import { environment } from 'environments/environment';
 import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root',
@@ -15,7 +16,12 @@ export class JobRunnersService {
   public getAllJobRunners(): Observable<HttpResponse<JobRunner[]>> {
     return this.httpClient.get<JobRunner[]>(`${environment.jobServiceBaseUrl}api/job-runners`, {
       observe: 'response',
-    });
+    }).pipe(
+      map(response => {
+        response.body.forEach(r => r.payloadTemplateJsonObject = JSON.parse(r.payloadTemplate));
+        return response;
+      })
+    );
   }
 
   public createJobRunner(jr: JobRunner): Observable<string> {
@@ -29,7 +35,12 @@ export class JobRunnersService {
   public getJobRunnerById(id: string): Observable<HttpResponse<JobRunner>> {
     return this.httpClient.get<JobRunner>(`${environment.jobServiceBaseUrl}api/job-runners/${id}`, {
       observe: 'response',
-    });
+    }).pipe(
+      map(response => {
+        response.body.payloadTemplateJsonObject = JSON.parse(response.body.payloadTemplate);
+        return response;
+      })
+    );
   }
 
   public deleteJobRunner(id: string): Observable<any> {
@@ -53,6 +64,7 @@ export class JobRunnersService {
   }
 
   public updateJobRunner(id: string, entity: JobRunner): Observable<JobRunner> {
+    entity.payloadTemplate = JSON.stringify(entity.payloadTemplateJsonObject);
     return this.httpClient.patch<JobRunner>(`${environment.jobServiceBaseUrl}api/job-runners/${id}`,
     [
       {

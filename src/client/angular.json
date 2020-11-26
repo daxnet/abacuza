@@ -40,6 +40,7 @@
               "node_modules/pace-js/templates/pace-theme-flash.tmpl.css",
               "node_modules/leaflet/dist/leaflet.css",
               "node_modules/eva-icons/style/eva-icons.css",
+              "node_modules/jsoneditor/dist/jsoneditor.min.css",
               "src/app/@theme/styles/styles.scss"
             ],
             "scripts": [
