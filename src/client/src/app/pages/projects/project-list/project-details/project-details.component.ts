@@ -53,20 +53,20 @@ export class ProjectDetailsComponent implements OnInit, OnDestroy {
       edit: false,
       delete: false,
       custom: [
-        { 
-          name: 'viewLogs', 
-          title: '<i class="eva eva-file-text-outline" title="View logs"></i>'
+        {
+          name: 'viewLogs',
+          title: '<i class="eva eva-file-text-outline" title="View logs"></i>',
         },
         // { 
         //   name: 'ourCustomAction2', 
         //   title: '<i class="eva eva-github"></i>' 
         // },
       ],
-      position: 'right'
+      position: 'right',
     },
     mode: 'external',
     pager: {
-      perPage: 8
+      perPage: 8,
     },
   };
 
@@ -132,10 +132,10 @@ export class ProjectDetailsComponent implements OnInit, OnDestroy {
 
   private startTimer(): void {
     this.stopTimer();
-    this.timerId = setInterval(this.updateRevisions, 
-      5000, 
-      this.projectsService, 
-      this.projectEntity.id, 
+    this.timerId = setInterval(this.updateRevisions,
+      5000,
+      this.projectsService,
+      this.projectEntity.id,
       this.revisionsSource);
   }
 
@@ -239,7 +239,7 @@ export class ProjectDetailsComponent implements OnInit, OnDestroy {
   }
 
   onRevisionsCustomAction(event: any): void {
-    switch(event.action) {
+    switch (event.action) {
       case 'viewLogs':
         this.showLogs(event.data.id);
       break;

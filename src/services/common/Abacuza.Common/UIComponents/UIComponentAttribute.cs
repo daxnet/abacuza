@@ -7,6 +7,8 @@ namespace Abacuza.Common.UIComponents
     [AttributeUsage(AttributeTargets.Property, AllowMultiple = false, Inherited = true)]
     public abstract class UIComponentAttribute : Attribute
     {
+        #region Protected Constructors
+
         /// <summary>
         /// Initializes a new instance of the <c>UIAnnotation</c> class.
         /// </summary>
@@ -18,10 +20,24 @@ namespace Abacuza.Common.UIComponents
             Label = label;
         }
 
+        #endregion Protected Constructors
+
+        #region Public Properties
+
+        /// <summary>
+        /// Gets or sets the default value of the current UI component.
+        /// </summary>
+        public string DefaultValue { get; set; }
+
         /// <summary>
         /// Gets the label text of the UI component on the front-end page.
         /// </summary>
         public string Label { get; }
+
+        /// <summary>
+        /// Gets the name of the UI component.
+        /// </summary>
+        public string Name { get; }
 
         /// <summary>
         /// Gets or sets the ordinal of the component in its container.
@@ -33,9 +49,12 @@ namespace Abacuza.Common.UIComponents
         /// </summary>
         public string Tooltip { get; set; }
 
-        /// <summary>
-        /// Gets the name of the UI component.
-        /// </summary>
-        public string Name { get; }
+        #endregion Public Properties
+
+        #region Public Methods
+
+        public override string ToString() => Name;
+
+        #endregion Public Methods
     }
 }
