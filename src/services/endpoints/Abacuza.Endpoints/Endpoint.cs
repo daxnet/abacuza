@@ -38,7 +38,7 @@ namespace Abacuza.Endpoints
                                             let ordinal = uiComponentAttribute.GetType().GetProperty(nameof(UIComponentAttribute.Ordinal)).GetValue(uiComponentAttribute)
                                             let label = uiComponentAttribute.GetType().GetProperty(nameof(UIComponentAttribute.Label)).GetValue(uiComponentAttribute)
                                             orderby ordinal descending, label ascending
-                                            select new { EndpointPropertyName = p.Name, UIComponentAttribute = uiComponentAttribute };
+                                            select new { EndpointPropertyName = p.Name, EndpointPropertyType = p.PropertyType, UIComponentAttribute = uiComponentAttribute };
 
 
                 foreach(var attr in uiComponentAttributes)
@@ -57,6 +57,11 @@ namespace Abacuza.Endpoints
                     {
                         var optionValue = option.GetValue(attr.UIComponentAttribute);
                         properties.Add(option.Name, optionValue);
+                    }
+
+                    if (properties.ContainsKey("DefaultValue") && !string.IsNullOrEmpty(properties["DefaultValue"]?.ToString()))
+                    {
+                        properties.Add("DefaultValueObject", ConvertStringValueToObject(properties["DefaultValue"]?.ToString(), attr.EndpointPropertyType));
                     }
 
                     result.Add(properties);             
@@ -80,6 +85,18 @@ namespace Abacuza.Endpoints
         #endregion Private Properties
 
         #region Private Methods
+
+        private static object ConvertStringValueToObject(string stringValue, Type type) => type.Name switch
+        {
+            "Int32" => Convert.ToInt32(stringValue),
+            "Int16" => Convert.ToInt16(stringValue),
+            "Int64" => Convert.ToInt64(stringValue),
+            "Boolean" => Convert.ToBoolean(stringValue),
+            "Single" => Convert.ToSingle(stringValue),
+            "Double" => Convert.ToDouble(stringValue),
+            "String" => stringValue,
+            _ => stringValue
+        };
 
         private static string GetNormalizedAttributeName(Type attributeType)
         {

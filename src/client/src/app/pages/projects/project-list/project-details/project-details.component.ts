@@ -166,6 +166,8 @@ export class ProjectDetailsComponent implements OnInit, OnDestroy {
         const data = this.projectEntity.uiComponentData.find(d => d.name === e.name);
         if (data) {
           componentRef.instance.value = data.value;
+        } else if (e['defaultValueObject']) {
+          componentRef.instance.value = e['defaultValueObject'];
         }
 
         this.componentEventSubscriptions.push(componentRef.instance.modelChange.subscribe(event => {

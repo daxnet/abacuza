@@ -18,7 +18,7 @@ namespace Abacuza.Endpoints.Input
         /// Gets or sets a list of files, in particular, the files with CSV or TSV extensions.
         /// </summary>
         [FilePicker("fpFiles", 
-            "Files", 
+            "CSV/TSV Files", 
             AllowedExtensions = ".csv,.tsv", 
             AllowMultipleSelection = true, 
             Ordinal = 200)]
@@ -28,9 +28,9 @@ namespace Abacuza.Endpoints.Input
         /// Gets or sets the type of the separator of the row values.
         /// </summary>
         [DropDownBox("dropdownSeparator", 
-            "Separator", 
+            "Delimiter", 
             "Comma,Tab,Pipe,Space", 
-            Tooltip = "Choose the separator character.", 
+            Tooltip = "Choose the delimiter used for separating the values.", 
             Ordinal = 190,
             DefaultValue = "Comma")]
         public string SeparatorCharacter { get; set; }
@@ -39,7 +39,7 @@ namespace Abacuza.Endpoints.Input
         /// Gets or sets a <see cref="bool"/> value which indicates whether the CSV/TSV contains header record.
         /// </summary>
         [Checkbox("chkHasHeaderRecord", 
-            "Has Header Record", 
+            "Has header record", 
             Ordinal = 180, 
             Tooltip = "Whether the first line of the file is the file header.",
             DefaultValue = "true")]
@@ -49,7 +49,7 @@ namespace Abacuza.Endpoints.Input
         /// Gets or sets a <see cref="bool"/> value which indicates whether the schema should be inferred from the raw data.
         /// </summary>
         [Checkbox("chkInferSchema", 
-            "Infer Schema", 
+            "Infer schema", 
             Ordinal = 170, 
             Tooltip = "Whether the schema should be inferred.",
             DefaultValue = "true")]

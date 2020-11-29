@@ -1,9 +1,23 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿// ==============================================================
+//           _
+//     /\   | |
+//    /  \  | |__ __ _ ___ _ _ ______ _
+//   / /\ \ | '_ \ / _` |/ __| | | |_  / _` |
+//  / ____ \| |_) | (_| | (__| |_| |/ / (_| |
+// /_/    \_\_.__/ \__,_|\___|\__,_/___\__,_|
+//
+// Data Processing Platform
+// Copyright 2020 by daxnet. All rights reserved.
+// Licensed under LGPL-v3
+// ==============================================================
+
+using System;
 
 namespace Abacuza.Common.UIComponents
 {
+    /// <summary>
+    /// Represents that the derived classes are UI components.
+    /// </summary>
     [AttributeUsage(AttributeTargets.Property, AllowMultiple = false, Inherited = true)]
     public abstract class UIComponentAttribute : Attribute
     {
@@ -53,6 +67,10 @@ namespace Abacuza.Common.UIComponents
 
         #region Public Methods
 
+        /// <summary>
+        /// Gets the string representation of the current <c>UIComponentAttribute</c> instance.
+        /// </summary>
+        /// <returns>The string representation of the current instance.</returns>
         public override string ToString() => Name;
 
         #endregion Public Methods
