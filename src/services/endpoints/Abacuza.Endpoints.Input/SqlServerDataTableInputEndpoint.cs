@@ -9,7 +9,7 @@ namespace Abacuza.Endpoints.Input
     /// Represents the input endpoint that reads data from Microsoft SQL Server database.
     /// </summary>
     [Endpoint("endpoints.input.sqlserver", "Microsoft SQL Server Data Table", EndpointType.Input)]
-    public sealed class SqlServerInputEndpoint : Endpoint, IInputEndpoint
+    public sealed class SqlServerDataTableInputEndpoint : Endpoint, IInputEndpoint
     {
         [TextBox("txtConnectionURL", "Connection URL", Required = true, Ordinal = 100)]
         public string ConnectionUrl { get; set; }
