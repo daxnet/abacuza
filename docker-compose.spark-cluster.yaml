@@ -1,0 +1,257 @@
+version: '3.8'
+volumes:
+    postgres_data:
+    redis_data:
+    mongo_data:
+    s3_data:
+services:
+    abacuza-postgres:
+        image: daxnet/abacuza-postgres
+        environment:
+            - POSTGRES_USER=postgres
+            - POSTGRES_PASSWORD=postgres
+            - POSTGRES_DB=abacuza
+        volumes:
+            - postgres_data:/data:Z
+        ports:
+            - "5432:5432"
+    abacuza-redis:
+        image: daxnet/abacuza-redis
+        volumes:
+            - redis_data:/data:Z
+        ports:
+            - "6379:6379"
+    abacuza-mongo:
+        image: daxnet/abacuza-mongo
+        volumes:
+            - mongo_data:/data/db:Z
+        ports:
+            - "27017:27017"
+    abacuza-common-service:
+        image: daxnet/abacuza-common-service
+        ports:
+            - "9025:9025"
+        links:
+            - abacuza-minio
+        depends_on: 
+            - abacuza-minio
+        healthcheck:
+            test: ["CMD", "curl", "-f", "http://localhost:9025/api/healthcheck"]
+            interval: 20s
+            timeout: 10s
+            retries: 5
+            start_period: 40s
+        environment: 
+            - s3__endpoint=http://abacuza-minio:9000
+            - s3__accessKey=AKIAIOSFODNN7EXAMPLE
+            - s3__secretKey=wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY
+    abacuza-cluster-service:
+        image: daxnet/abacuza-cluster-service
+        ports:
+            - "9023:9023"
+        depends_on: 
+            - abacuza-mongo
+            - abacuza-redis
+        links: 
+            - abacuza-mongo
+            - abacuza-redis
+        healthcheck:
+            test: ["CMD", "curl", "-f", "http://localhost:9023/api/healthcheck"]
+            interval: 20s
+            timeout: 10s
+            retries: 5
+            start_period: 40s
+        environment: 
+            - mongo__connectionString=mongodb://abacuza-mongo:27017
+            - mongo__database=abacuza-clusters
+            - redis__connectionString=abacuza-redis:6379
+    abacuza-endpoint-service:
+        image: daxnet/abacuza-endpoint-service
+        ports:
+            - "9026:9026"
+        healthcheck:
+            test: ["CMD", "curl", "-f", "http://localhost:9026/api/healthcheck"]
+            interval: 20s
+            timeout: 10s
+            retries: 5
+            start_period: 40s
+    abacuza-project-service:
+        image: daxnet/abacuza-project-service
+        ports:
+            - "9027:9027"
+        depends_on: 
+            - abacuza-mongo
+            - abacuza-redis
+            - abacuza-job-service
+        links: 
+            - abacuza-mongo
+            - abacuza-redis
+            - abacuza-job-service
+        healthcheck:
+            test: ["CMD", "curl", "-f", "http://localhost:9027/api/healthcheck"]
+            interval: 20s
+            timeout: 10s
+            retries: 5
+            start_period: 40s
+        environment:
+            - mongo__connectionString=mongodb://abacuza-mongo:27017
+            - mongo__database=abacuza-projects
+            - redis__connectionString=abacuza-redis:6379
+            - services__jobsService__url=http://abacuza-job-service:9024
+            - services__jobsService__timeout=5m
+            - services__jobsService__retries=5
+            - options__maxReservedRevisions=24
+    abacuza-job-service:
+        image: daxnet/abacuza-job-service
+        ports:
+            - "9024:9024"
+        depends_on: 
+            - abacuza-mongo
+            - abacuza-postgres
+            - abacuza-redis
+        links:
+            - abacuza-mongo
+            - abacuza-postgres
+            - abacuza-redis
+        healthcheck:
+            test: ["CMD", "curl", "-f", "http://localhost:9024/api/healthcheck"]
+            interval: 20s
+            timeout: 10s
+            retries: 5
+            start_period: 40s
+        environment: 
+            - mongo__connectionString=mongodb://abacuza-mongo:27017
+            - mongo__database=abacuza-job-schedulers
+            - redis__connectionString=abacuza-redis:6379
+            - quartz__driverDelegateType=Quartz.Impl.AdoJobStore.PostgreSQLDelegate, Quartz
+            - quartz__dataSource__provider=Npgsql
+            - quartz__dataSource__connectionString=User ID=postgres;Password=postgres;Host=abacuza-postgres;Port=5432;Database=abacuza
+            - services__clusterService__url=http://abacuza-cluster-service:9023
+            - services__clusterService__timeout=3m
+            - services__clusterService__retries=5
+            - services__commonService__url=http://abacuza-common-service:9025
+            - services__commonService__timeout=1m
+            - services__commonService__retries=3
+        command: ["/wait-for-it.sh", "abacuza-postgres:5432", "--timeout=10", "--strict", "--", "dotnet", "Abacuza.Jobs.ApiService.dll"]
+    abacuza-minio:
+        image: minio/minio
+        volumes:
+            - s3_data:/data
+        ports:
+            - 9000:9000
+        environment:
+            - MINIO_ACCESS_KEY=AKIAIOSFODNN7EXAMPLE
+            - MINIO_SECRET_KEY=wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY
+        command: server /data
+        restart: always
+    abacuza-createbucket:
+        image: minio/mc
+        depends_on:
+            - abacuza-minio
+        entrypoint: |
+            /bin/sh -c ' 
+            for i in $$( seq 1 5 );do
+            /usr/bin/mc config host add abacuza http://abacuza-minio:9000 AKIAIOSFODNN7EXAMPLE wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY;
+            test=$$(/usr/bin/mc ls | grep data);
+            if [[ -z $$test ]]; then
+                /usr/bin/mc mb abacuza/data;
+                echo "Waiting for bucket to be created";
+                sleep 5;
+            else 
+                break;
+            fi; 
+            done;
+            if [[ -z $$test ]]; then exit -1; else exit 0; fi 
+            '
+    abacuza-livy:
+        image: daxnet/abacuza-livy-spark
+        depends_on: 
+            - abacuza-minio
+            - abacuza-spark-master
+        links: 
+            - abacuza-minio
+            - abacuza-spark-master
+        ports:
+            - 8998:8998
+            - 4040:4040
+        environment: 
+            - ABACUZA_SPARK_MASTER=spark://abacuza-spark-master:7077
+            - ABACUZA_AWS_ENDPOINT=http://abacuza-minio:9000
+            - ABACUZA_AWS_ACCESS_KEY=AKIAIOSFODNN7EXAMPLE
+            - ABACUZA_AWS_SECRET_KEY=wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY
+    abacuza-spark-master:
+        image: daxnet/abacuza-livy-spark
+        links: 
+            - abacuza-minio
+        depends_on: 
+            - abacuza-minio
+        ports: 
+            - 7077:7077
+            - 8080:8080
+        environment: 
+            - SPARK_NO_DAEMONIZE=true
+            - SPARK_MASTER_HOST=0.0.0.0
+            - SPARK_MASTER_PORT=7077
+            - SPARK_MASTER_WEBUI_PORT=8080
+            - ABACUZA_AWS_ENDPOINT=http://abacuza-minio:9000
+            - ABACUZA_AWS_ACCESS_KEY=AKIAIOSFODNN7EXAMPLE
+            - ABACUZA_AWS_SECRET_KEY=wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY
+        command: 
+            - dockerize
+            - -template
+            - /hadoop/etc/hadoop/hdfs-site.tmpl:/hadoop/etc/hadoop/hdfs-site.xml
+            - /spark/sbin/start-master.sh
+    abacuza-spark-worker:
+        image: daxnet/abacuza-livy-spark
+        links: 
+            - abacuza-minio
+            - abacuza-spark-master
+        depends_on: 
+            - abacuza-minio
+            - abacuza-spark-master
+        ports: 
+            - 8081:8080
+        environment: 
+            - SPARK_NO_DAEMONIZE=true
+            - SPARK_WORKER_OPTS=-Dspark.worker.cleanup.enabled=true -Dspark.worker.cleanup.interval=600 -Dspark.worker.cleanup.appDataTtl=86400
+            - SPARK_WORKER_WEBUI_PORT=8080
+            - SPARK_LOCAL_DIRS=/data/work/tmp
+            - ABACUZA_AWS_ENDPOINT=http://abacuza-minio:9000
+            - ABACUZA_AWS_ACCESS_KEY=AKIAIOSFODNN7EXAMPLE
+            - ABACUZA_AWS_SECRET_KEY=wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY
+        command: 
+            - dockerize
+            - -template
+            - /hadoop/etc/hadoop/hdfs-site.tmpl:/hadoop/etc/hadoop/hdfs-site.xml
+            - /spark/sbin/start-slave.sh
+            - --work-dir /data/work
+            - abacuza-spark-master:7077
+    abacuza-client:
+        image: daxnet/abacuza-client
+        depends_on:
+            - abacuza-cluster-service
+            - abacuza-job-service
+            - abacuza-common-service
+            - abacuza-endpoint-service
+        links:
+            - abacuza-cluster-service
+            - abacuza-job-service
+            - abacuza-common-service
+            - abacuza-endpoint-service
+    abacuza-nginx:
+        image: daxnet/abacuza-nginx
+        depends_on:
+            - abacuza-client
+            - abacuza-cluster-service
+            - abacuza-job-service
+            - abacuza-common-service
+            - abacuza-endpoint-service
+        links:
+            - abacuza-client
+            - abacuza-cluster-service
+            - abacuza-job-service
+            - abacuza-common-service
+            - abacuza-endpoint-service
+        ports:
+            - 9320:80
+        
