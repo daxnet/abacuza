@@ -7,7 +7,7 @@
 // /_/    \_\_.__/ \__,_|\___|\__,_/___\__,_|
 //
 // Data Processing Platform
-// Copyright 2020 by daxnet. All rights reserved.
+// Copyright 2020-2021 by daxnet. All rights reserved.
 // Licensed under LGPL-v3
 // ==============================================================
 

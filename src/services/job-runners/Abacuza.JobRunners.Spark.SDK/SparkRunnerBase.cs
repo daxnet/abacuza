@@ -7,13 +7,15 @@
 // /_/    \_\_.__/ \__,_|\___|\__,_/___\__,_|
 //
 // Data Processing Platform
-// Copyright 2020 by daxnet. All rights reserved.
+// Copyright 2020-2021 by daxnet. All rights reserved.
 // Licensed under LGPL-v3
 // ==============================================================
 
 using Abacuza.Endpoints;
 using Abacuza.Endpoints.Input;
+using Abacuza.Endpoints.Output;
 using Abacuza.JobRunners.Spark.SDK.InputReaders;
+using Abacuza.JobRunners.Spark.SDK.OutputWriters;
 using Microsoft.Spark;
 using Microsoft.Spark.Sql;
 using System;
@@ -41,6 +43,8 @@ namespace Abacuza.JobRunners.Spark.SDK
         private const string AppNameKey = "appname";
         private const string InputEndpointNameKey = "input_endpoint";
         private const string InputEndpointSettingsKey = "input_endpoint_settings";
+        private const string OutputEndpointNameKey = "output_endpoint";
+        private const string OutputEndpointSettingsKey = "output_endpoint_settings";
 
         private static readonly Lazy<IEnumerable<Type>> _inputEndpointTypes = new Lazy<IEnumerable<Type>>(() =>
             from p in typeof(EmptyInputEndpoint).Assembly.GetExportedTypes()
@@ -48,9 +52,21 @@ namespace Abacuza.JobRunners.Spark.SDK
             select p
         );
 
+        private static readonly Lazy<IEnumerable<Type>> _outputEndpointTypes = new Lazy<IEnumerable<Type>>(() =>
+            from p in typeof(EmptyOutputEndpoint).Assembly.GetExportedTypes()
+            where p.IsClass && !p.IsAbstract && typeof(IOutputEndpoint).IsAssignableFrom(p) && p.IsDefined(typeof(EndpointAttribute), false)
+            select p
+        );
+
         private static readonly Lazy<IEnumerable<Type>> _inputReaderTypes = new Lazy<IEnumerable<Type>>(() =>
             from p in typeof(IInputReader).Assembly.GetExportedTypes()
             where p.IsClass && !p.IsAbstract && typeof(IInputReader).IsAssignableFrom(p)
+            select p
+        );
+
+        private static readonly Lazy<IEnumerable<Type>> _outputWriterTypes = new Lazy<IEnumerable<Type>>(() =>
+            from p in typeof(IOutputEndpoint).Assembly.GetExportedTypes()
+            where p.IsClass && !p.IsAbstract && typeof(IOutputEndpoint).IsAssignableFrom(p)
             select p
         );
 
@@ -90,6 +106,20 @@ namespace Abacuza.JobRunners.Spark.SDK
 
             Console.WriteLine($"** Input Endpoint Settings: {inputEndpointSettings}");
 
+            if (!TryParseSingleValue(_args, OutputEndpointNameKey, out var outputEndpointName))
+            {
+                throw new SparkRunnerException("Output endpoint name is not specified in the argument list.");
+            }
+
+            Console.WriteLine($"** Output Endpoint Name: {outputEndpointName}");
+
+            if (!TryParseSingleValue(_args, OutputEndpointSettingsKey, out var outputEndpointSettings))
+            {
+                throw new SparkRunnerException("Output endpoint settings is not specified in the argument list.");
+            }
+
+            Console.WriteLine($"** Output Endpoint Settings: {outputEndpointSettings}");
+
             var builder = SparkSession.Builder();
             if (TryParseSingleValue(_args, AppNameKey, out var appName))
             {
@@ -106,7 +136,12 @@ namespace Abacuza.JobRunners.Spark.SDK
             var inputReader = CreateInputReader(inputEndpointName);
             var dataFrame = inputReader.ReadFrom(sparkSession, inputEndpoint);
 
-            RunInternal(sparkSession, dataFrame);
+            var dataFrameResult = RunInternal(sparkSession, dataFrame);
+
+            var outputEndpoint = CreateOutputEndpoint(outputEndpointName, outputEndpointSettings);
+            var outputWriter = CreateOutputWriter(outputEndpointName);
+            outputWriter.WriteTo(dataFrameResult, outputEndpoint);
+
         }
 
         #endregion Public Methods
@@ -118,7 +153,7 @@ namespace Abacuza.JobRunners.Spark.SDK
         /// </summary>
         /// <param name="sparkSession">The spark session.</param>
         /// <param name="dataFrame">The data frame.</param>
-        protected abstract void RunInternal(SparkSession sparkSession, DataFrame dataFrame);
+        protected abstract DataFrame RunInternal(SparkSession sparkSession, DataFrame dataFrame);
 
         #endregion Protected Methods
 
@@ -158,6 +193,42 @@ namespace Abacuza.JobRunners.Spark.SDK
             }
 
             return (IInputReader)Activator.CreateInstance(inputReaderType);
+        }
+
+        private static IOutputEndpoint CreateOutputEndpoint(string outputEndpointName, string outputEndpointSettings)
+        {
+            var outputEndpointType = _outputEndpointTypes.Value.FirstOrDefault(t => t.GetCustomAttribute<EndpointAttribute>().Name == outputEndpointName);
+            if (outputEndpointType == null)
+            {
+                throw new SparkRunnerException($"Can't find the output endpoint {outputEndpointName}.");
+            }
+
+            var outputEndpoint = (IOutputEndpoint)Activator.CreateInstance(outputEndpointType);
+            outputEndpoint.ApplySettings(outputEndpointSettings);
+
+            return outputEndpoint;
+        }
+
+        private static IOutputWriter CreateOutputWriter(string outputEndpointName)
+        {
+            var outputEndpointType = _outputEndpointTypes.Value.FirstOrDefault(t => t.GetCustomAttribute<EndpointAttribute>().Name == outputEndpointName);
+            if (outputEndpointType == null)
+            {
+                throw new SparkRunnerException($"Can't find the input endpoint {outputEndpointName}.");
+            }
+
+            var outputWriterType = (from type in _outputWriterTypes.Value
+                                   where type.BaseType?.IsGenericType ?? false &&
+                                   type.BaseType?.GetGenericTypeDefinition() == typeof(OutputWriter<>)
+                                   let genericArguments = type.BaseType?.GetGenericArguments()
+                                   where genericArguments?.Length == 1 && genericArguments[0] == outputEndpointType
+                                   select type).FirstOrDefault();
+            if (outputWriterType == null)
+            {
+                throw new SparkRunnerException($"Can't find the output writer for output endpoint {outputEndpointName}.");
+            }
+
+            return (IOutputWriter)Activator.CreateInstance(outputWriterType);
         }
 
         private static bool TryParseSingleValue(string[] args, string key, out string value)

@@ -11,13 +11,12 @@
 // Licensed under LGPL-v3
 // ==============================================================
 
-namespace Abacuza.Endpoints.Input
+namespace Abacuza.Endpoints
 {
-    [Endpoint("endpoints.input.empty",
-        "Empty",
-        EndpointType.Input,
-        Description = "The endpoint that doesn't read from any data source.")]
-    public sealed class EmptyInputEndpoint : Endpoint, IInputEndpoint
+    /// <summary>
+    /// Represents that the implemented classes are output endpoints.
+    /// </summary>
+    public interface IOutputEndpoint : IEndpoint
     {
     }
 }

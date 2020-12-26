@@ -12,9 +12,10 @@ namespace Abacuza.JobRunners.Spark
         {
         }
 
-        protected override void RunInternal(SparkSession sparkSession, DataFrame dataFrame)
+        protected override DataFrame RunInternal(SparkSession sparkSession, DataFrame dataFrame)
         {
-            dataFrame.Show();
+            // dataFrame.Show();
+            return dataFrame;
         }
     }
 }

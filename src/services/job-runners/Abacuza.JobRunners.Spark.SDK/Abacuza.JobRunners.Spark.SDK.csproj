@@ -13,6 +13,7 @@
   <ItemGroup>
     <ProjectReference Include="..\..\common\Abacuza.Common\Abacuza.Common.csproj" />
     <ProjectReference Include="..\..\endpoints\Abacuza.Endpoints.Input\Abacuza.Endpoints.Input.csproj" />
+    <ProjectReference Include="..\..\endpoints\Abacuza.Endpoints.Output\Abacuza.Endpoints.Output.csproj" />
     <ProjectReference Include="..\..\endpoints\Abacuza.Endpoints\Abacuza.Endpoints.csproj" />
   </ItemGroup>
 

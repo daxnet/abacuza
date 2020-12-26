@@ -89,7 +89,7 @@ namespace Abacuza.Endpoints.ApiService
             });
         }
 
-        private EndpointCollection DiscoverEndpoints()
+        private static EndpointCollection DiscoverEndpoints()
         {
             var pluginsDirectory = Path.Combine(AppContext.BaseDirectory, "plugins");
             var loaders = new List<PluginLoader>();

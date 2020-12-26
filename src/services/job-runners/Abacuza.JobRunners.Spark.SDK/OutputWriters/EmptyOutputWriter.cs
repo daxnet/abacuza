@@ -11,21 +11,23 @@
 // Licensed under LGPL-v3
 // ==============================================================
 
-namespace Abacuza.Projects.ApiService.Models
+using Abacuza.Endpoints.Output;
+using Microsoft.Spark.Sql;
+
+namespace Abacuza.JobRunners.Spark.SDK.OutputWriters
 {
     /// <summary>
-    /// Represents the state of a job that exactly matches the job status
-    /// defined in the Jobs API service.
+    /// Represents the output writer that doesn't write anything out.
     /// </summary>
-    internal enum JobState
+    public sealed class EmptyOutputWriter : OutputWriter<EmptyOutputEndpoint>
     {
-        Unknown,
-        Created,
-        Initializing,
-        Running,
-        Busy,
-        Completed,
-        Cancelled,
-        Failed
+        #region Protected Methods
+
+
+        protected override void WriteToInternal(DataFrame dataFrame, EmptyOutputEndpoint outputEndpoint)
+        {
+        }
+
+        #endregion Protected Methods
     }
 }
