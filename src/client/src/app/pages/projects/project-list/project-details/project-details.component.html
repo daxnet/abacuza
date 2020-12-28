@@ -18,6 +18,11 @@
                     <input type="text" id="idProjectInputEndpoint" #name [(ngModel)]="inputEndpointEntity.displayName"
                         nbInput fullWidth autofocus required placeholder="Input Endpoint" disabled>
                 </div>
+                <div *ngIf='outputEndpointEntity' class="form-group" fullWidth>
+                    <label for="idProjectOutputEndpoint">Output Endpoint</label>
+                    <input type="text" id="idProjectOutputEndpoint" #name [(ngModel)]="outputEndpointEntity.displayName"
+                        nbInput fullWidth autofocus required placeholder="Output Endpoint" disabled>
+                </div>
                 <div *ngIf='jobRunnerEntity' class="form-group" fullWidth>
                     <label for="idJobRunnerName">Job Runner</label>
                     <input type="text" id="idJobRunnerName" #name [(ngModel)]="jobRunnerEntity.name" nbInput fullWidth
@@ -26,10 +31,13 @@
             </div>
 
             <nb-tabset (changeTab)='onChangeTab($event)'>
-                <nb-tab tabTitle="Input" [active]='!isRevisionsTabActive'>
-                    <ng-template ngxUIComponentsHost></ng-template>
+                <nb-tab tabTitle="Input" [active]='selectedActiveTab === "Input"'>
+                    <ng-template ngxUIComponentsInputEndpointHost></ng-template>
                 </nb-tab>
-                <nb-tab tabTitle="Revisions" [active]='isRevisionsTabActive'>
+                <nb-tab tabTitle="Output" [active]='selectedActiveTab === "Output"'>
+                    <ng-template ngxUIComponentsOutputEndpointHost></ng-template>
+                </nb-tab>
+                <nb-tab tabTitle="Revisions" [active]='selectedActiveTab === "Revisions"'>
                     <ng2-smart-table [settings]="revisionsTableSettings" [source]="revisionsSource" (custom)='onRevisionsCustomAction($event)'>
                     </ng2-smart-table>
                 </nb-tab>

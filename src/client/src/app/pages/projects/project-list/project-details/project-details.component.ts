@@ -11,7 +11,8 @@ import { JobRunnersService } from 'app/services/job-runners.service';
 import { ProjectsService } from 'app/services/projects.service';
 import { TextMessageDialogService } from 'app/services/text-message-dialog.service';
 import { UIComponentBase } from 'app/ui-components/uicomponent-base';
-import { UIComponentsHostDirective } from 'app/ui-components/uicomponents-host.directive';
+import { UIComponentsInputEndpointHostDirective } from 'app/ui-components/uicomponents-inputendpoint-host.directive';
+import { UIComponentsOutputEndpointHostDirective } from 'app/ui-components/uicomponents-outputendpoint-host.directive';
 import { UIComponentsProviderService } from 'app/ui-components/uicomponents-provider.service';
 import { LocalDataSource } from 'ng2-smart-table';
 import { Subscription, throwError } from 'rxjs';
@@ -24,7 +25,8 @@ import { catchError } from 'rxjs/operators';
 })
 export class ProjectDetailsComponent implements OnInit, OnDestroy {
 
-  @ViewChild(UIComponentsHostDirective, { static: true }) ngxUIComponentsHost: UIComponentsHostDirective;
+  @ViewChild(UIComponentsInputEndpointHostDirective, { static: true }) ngxUIComponentsInputEndpointHost: UIComponentsInputEndpointHostDirective;
+  @ViewChild(UIComponentsOutputEndpointHostDirective, { static: true }) ngxUIComponentsOutputEndpointHost: UIComponentsOutputEndpointHostDirective;
 
   revisionsTableSettings = {
     columns: {
@@ -73,10 +75,11 @@ export class ProjectDetailsComponent implements OnInit, OnDestroy {
   timerId: any = null;
   projectEntity: Project;
   inputEndpointEntity: Endpoint;
+  outputEndpointEntity: Endpoint;
   jobRunnerEntity: JobRunner;
   updatingProject: { description: string } = <any>{};
   revisionsSource: LocalDataSource = new LocalDataSource();
-  isRevisionsTabActive: boolean = false;
+  selectedActiveTab: string = 'Input';
 
   private componentEventSubscriptions: Subscription[] = [];
 
@@ -113,7 +116,16 @@ export class ProjectDetailsComponent implements OnInit, OnDestroy {
             }))
             .subscribe(ep => {
               this.inputEndpointEntity = ep.body;
-              this.loadInputEndpointUIComponents(this.inputEndpointEntity);
+              this.loadEndpointUIComponents(this.inputEndpointEntity, this.ngxUIComponentsInputEndpointHost);
+            });
+          this.endpointsService.getEndpointByName(this.projectEntity.outputEndpointName)
+            .pipe(catchError(err => {
+              this.toastrService.danger(err.message, 'Failed to retrieve endpoint information');
+              return throwError;
+            }))
+            .subscribe(ep => {
+              this.outputEndpointEntity = ep.body;
+              this.loadEndpointUIComponents(this.outputEndpointEntity, this.ngxUIComponentsOutputEndpointHost);
             });
           this.jobRunnersService.getJobRunnerById(this.projectEntity.jobRunnerId)
             .pipe(catchError(err => {
@@ -152,10 +164,10 @@ export class ProjectDetailsComponent implements OnInit, OnDestroy {
       });
   }
 
-  private loadInputEndpointUIComponents(inputEndpoint: Endpoint): void {
-    const viewContainerRef = this.ngxUIComponentsHost.viewContainerRef;
+  private loadEndpointUIComponents(endpoint: Endpoint, directive: UIComponentsInputEndpointHostDirective | UIComponentsOutputEndpointHostDirective ): void {
+    const viewContainerRef = directive.viewContainerRef;
     viewContainerRef.clear();
-    inputEndpoint.configurationUIElements.forEach(e => {
+    endpoint.configurationUIElements.forEach(e => {
       const name = e['_type'];
       const item = this.componentsProvider.getRegisteredUIComponents().find(x => x.name === name);
       if (item) {
@@ -227,13 +239,13 @@ export class ProjectDetailsComponent implements OnInit, OnDestroy {
           })
       });
 
-    this.isRevisionsTabActive = true;
+    this.selectedActiveTab = 'Revisions';
     this.startTimer();
   }
 
   onChangeTab(event: { tabTitle: string; }): void {
-    this.isRevisionsTabActive = event.tabTitle === 'Revisions';
-    if (this.isRevisionsTabActive) {
+    this.selectedActiveTab = event.tabTitle;
+    if (this.selectedActiveTab === 'Revision') {
       this.startTimer();
     } else {
       this.stopTimer();

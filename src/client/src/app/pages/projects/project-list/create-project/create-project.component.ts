@@ -12,6 +12,7 @@ import { Project } from 'app/models/project';
 export class CreateProjectComponent implements OnInit {
 
   @Input() inputEndpoints: Endpoint[];
+  @Input() outputEndpoints: Endpoint[];
   @Input() jobRunners: JobRunner[];
   @Input() projectEntity: Project;
 

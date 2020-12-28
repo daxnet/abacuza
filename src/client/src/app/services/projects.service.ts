@@ -29,6 +29,7 @@ export class ProjectsService {
       name: project.name,
       description: project.description,
       inputEndpointName: project.inputEndpointName,
+      outputEndpointName: project.outputEndpointName,
       jobRunnerId: project.jobRunnerId,
     });
   }
@@ -64,6 +65,16 @@ export class ProjectsService {
         op: 'replace',
         path: '/inputEndpointSettings',
         value: entity.inputEndpointSettings,
+      },
+      {
+        op: 'replace',
+        path: '/outputEndpointName',
+        value: entity.outputEndpointName,
+      },
+      {
+        op: 'replace',
+        path: '/outputEndpointSettings',
+        value: entity.outputEndpointSettings,
       },
     ], {
       observe: 'body',

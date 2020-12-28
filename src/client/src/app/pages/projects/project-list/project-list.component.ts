@@ -50,6 +50,10 @@ export class ProjectListComponent implements OnInit {
         title: 'Input Endpoint',
         type: 'text',
       },
+      outputEndpointName: {
+        title: 'Output Endpoint',
+        type: 'text',
+      },
       dateCreated: {
         title: 'Date Created',
         type: 'custom',
@@ -64,6 +68,7 @@ export class ProjectListComponent implements OnInit {
 
   source: LocalDataSource = new LocalDataSource();
   inputEndpoints: Endpoint[] = [];
+  outputEndpoints: Endpoint[] = [];
   jobRunners: JobRunner[] = [];
 
   constructor(private projectsService: ProjectsService,
@@ -90,6 +95,11 @@ export class ProjectListComponent implements OnInit {
       .subscribe(res => {
         this.inputEndpoints = res.body;
       });
+    
+    this.endpointsService.getAvailableEndpoints('output')
+      .subscribe(res => {
+        this.outputEndpoints = res.body;
+      });
 
     this.jobRunnersService.getAllJobRunners()
       .subscribe(res => {
@@ -101,6 +111,7 @@ export class ProjectListComponent implements OnInit {
     this.dialogService.open(CreateProjectComponent, {
       context: {
         inputEndpoints: this.inputEndpoints,
+        outputEndpoints: this.outputEndpoints,
         jobRunners: this.jobRunners,
         projectEntity: new Project(),
       },

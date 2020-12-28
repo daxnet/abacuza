@@ -28,6 +28,11 @@ namespace Abacuza.Projects.ApiService.Models
 
         public string InputEndpointSettings { get; set; }
 
+        [Required]
+        public string OutputEndpointName { get; set; }
+
+        public string OutputEndpointSettings { get; set; }
+
         public override string ToString() => Name;
     }
 }

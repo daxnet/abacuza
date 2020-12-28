@@ -8,5 +8,8 @@ export class Project {
     inputEndpointName: string;
     inputEndpointDisplayName: string;
     inputEndpointSettings: string;
+    outputEndpointName: string;
+    outputEndpointDisplayName: string;
+    outputEndpointSettings: string;
     uiComponentData: any;
 }

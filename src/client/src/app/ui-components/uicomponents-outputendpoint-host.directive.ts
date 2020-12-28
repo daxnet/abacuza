@@ -1,9 +1,9 @@
 import { Directive, ViewContainerRef } from '@angular/core';
 
 @Directive({
-  selector: '[ngxUIComponentsHost]',
+  selector: '[ngxUIComponentsOutputEndpointHost]',
 })
-export class UIComponentsHostDirective {
+export class UIComponentsOutputEndpointHostDirective {
 
   constructor(public viewContainerRef: ViewContainerRef) { }
 

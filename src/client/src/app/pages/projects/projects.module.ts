@@ -9,8 +9,8 @@ import { Ng2SmartTableModule } from 'ng2-smart-table';
 import { ProjectsRoutingModule } from './projects-routing.module';
 import { CreateProjectComponent } from './project-list/create-project/create-project.component';
 import { ProjectDetailsComponent } from './project-list/project-details/project-details.component';
-import { UIComponentsHostDirective } from 'app/ui-components/uicomponents-host.directive';
-import { FileListComponent } from 'app/components/file-list/file-list.component';
+import { UIComponentsInputEndpointHostDirective } from 'app/ui-components/uicomponents-inputendpoint-host.directive';
+import { UIComponentsOutputEndpointHostDirective } from 'app/ui-components/uicomponents-outputendpoint-host.directive';
 import { SharedModule } from 'app/shared/shared.module';
 import { NbEvaIconsModule } from '@nebular/eva-icons';
 import { ThemeModule } from 'app/@theme/theme.module';
@@ -21,7 +21,8 @@ import { ThemeModule } from 'app/@theme/theme.module';
     ProjectListComponent,
     CreateProjectComponent,
     ProjectDetailsComponent,
-    UIComponentsHostDirective,],
+    UIComponentsInputEndpointHostDirective,
+    UIComponentsOutputEndpointHostDirective,],
   imports: [
     FormsModule,
     CommonModule,
