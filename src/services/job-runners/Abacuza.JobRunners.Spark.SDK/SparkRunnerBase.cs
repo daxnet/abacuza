@@ -18,6 +18,7 @@ using Abacuza.JobRunners.Spark.SDK.InputReaders;
 using Abacuza.JobRunners.Spark.SDK.OutputWriters;
 using Microsoft.Spark;
 using Microsoft.Spark.Sql;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -45,6 +46,7 @@ namespace Abacuza.JobRunners.Spark.SDK
         private const string InputEndpointSettingsKey = "input_endpoint_settings";
         private const string OutputEndpointNameKey = "output_endpoint";
         private const string OutputEndpointSettingsKey = "output_endpoint_settings";
+        private const string ProjectContextKey = "project_context";
 
         private static readonly Lazy<IEnumerable<Type>> _inputEndpointTypes = new Lazy<IEnumerable<Type>>(() =>
             from p in typeof(EmptyInputEndpoint).Assembly.GetExportedTypes()
@@ -65,8 +67,8 @@ namespace Abacuza.JobRunners.Spark.SDK
         );
 
         private static readonly Lazy<IEnumerable<Type>> _outputWriterTypes = new Lazy<IEnumerable<Type>>(() =>
-            from p in typeof(IOutputEndpoint).Assembly.GetExportedTypes()
-            where p.IsClass && !p.IsAbstract && typeof(IOutputEndpoint).IsAssignableFrom(p)
+            from p in typeof(IOutputWriter).Assembly.GetExportedTypes()
+            where p.IsClass && !p.IsAbstract && typeof(IOutputWriter).IsAssignableFrom(p)
             select p
         );
 
@@ -97,28 +99,37 @@ namespace Abacuza.JobRunners.Spark.SDK
                 throw new SparkRunnerException("Input endpoint name is not specified in the argument list.");
             }
 
-            Console.WriteLine($"** Input Endpoint Name: {inputEndpointName}");
+            Console.WriteLine($"**** Input Endpoint Name: {inputEndpointName}");
 
             if (!TryParseSingleValue(_args, InputEndpointSettingsKey, out var inputEndpointSettings))
             {
                 throw new SparkRunnerException("Input endpoint settings is not specified in the argument list.");
             }
 
-            Console.WriteLine($"** Input Endpoint Settings: {inputEndpointSettings}");
+            Console.WriteLine($"**** Input Endpoint Settings: {inputEndpointSettings}");
 
             if (!TryParseSingleValue(_args, OutputEndpointNameKey, out var outputEndpointName))
             {
                 throw new SparkRunnerException("Output endpoint name is not specified in the argument list.");
             }
 
-            Console.WriteLine($"** Output Endpoint Name: {outputEndpointName}");
+            Console.WriteLine($"**** Output Endpoint Name: {outputEndpointName}");
 
             if (!TryParseSingleValue(_args, OutputEndpointSettingsKey, out var outputEndpointSettings))
             {
                 throw new SparkRunnerException("Output endpoint settings is not specified in the argument list.");
             }
 
-            Console.WriteLine($"** Output Endpoint Settings: {outputEndpointSettings}");
+            Console.WriteLine($"**** Output Endpoint Settings: {outputEndpointSettings}");
+
+            if (!TryParseSingleValue(_args, ProjectContextKey, out var projectContextValue))
+            {
+                throw new SparkRunnerException("Project context value is not specified in the argument list.");
+            }
+
+            Console.WriteLine($"**** Project Context: {projectContextValue}");
+
+            var projectContext = JsonConvert.DeserializeObject<ProjectContext>(projectContextValue);
 
             var builder = SparkSession.Builder();
             if (TryParseSingleValue(_args, AppNameKey, out var appName))
@@ -134,13 +145,13 @@ namespace Abacuza.JobRunners.Spark.SDK
             var sparkSession = builder.GetOrCreate();
             var inputEndpoint = CreateInputEndpoint(inputEndpointName, inputEndpointSettings);
             var inputReader = CreateInputReader(inputEndpointName);
-            var dataFrame = inputReader.ReadFrom(sparkSession, inputEndpoint);
+            var dataFrame = inputReader.ReadFrom(sparkSession, inputEndpoint, projectContext);
 
             var dataFrameResult = RunInternal(sparkSession, dataFrame);
 
             var outputEndpoint = CreateOutputEndpoint(outputEndpointName, outputEndpointSettings);
             var outputWriter = CreateOutputWriter(outputEndpointName);
-            outputWriter.WriteTo(dataFrameResult, outputEndpoint);
+            outputWriter.WriteTo(dataFrameResult, outputEndpoint, projectContext);
 
         }
 

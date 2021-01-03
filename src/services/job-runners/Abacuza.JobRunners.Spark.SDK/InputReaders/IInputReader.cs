@@ -31,8 +31,9 @@ namespace Abacuza.JobRunners.Spark.SDK.InputReaders
         /// <param name="sparkSession">The <see cref="SparkSession"/> which creates the <see cref="DataFrame"/>.</param>
         /// <param name="inputEndpoint">The <see cref="IInputEndpoint"/> instance which provides the information
         /// of the input data sets.</param>
+        /// <param name="context">The data that contains project and revision information.</param>
         /// <returns>The <see cref="DataFrame"/> for data processing.</returns>
-        DataFrame ReadFrom(SparkSession sparkSession, IInputEndpoint inputEndpoint);
+        DataFrame ReadFrom(SparkSession sparkSession, IInputEndpoint inputEndpoint, ProjectContext context);
 
         #endregion Public Methods
     }

@@ -32,11 +32,12 @@ namespace Abacuza.JobRunners.Spark.SDK.InputReaders
         /// <param name="sparkSession">The <see cref="T:Microsoft.Spark.Sql.SparkSession" /> which creates the <see cref="T:Microsoft.Spark.Sql.DataFrame" />.</param>
         /// <param name="inputEndpoint">The <see cref="T:Abacuza.Endpoints.IInputEndpoint" /> instance which provides the information
         /// of the input data sets.</param>
+        /// <param name="projectContext">The data that contains project and revision information.</param>
         /// <returns>
         /// The <see cref="T:Microsoft.Spark.Sql.DataFrame" /> for data processing.
         /// </returns>
         /// <exception cref="SparkRunnerException">No files could be read by the JsonFileInputReader</exception>
-        protected override DataFrame ReadFromInternal(SparkSession sparkSession, JsonInputEndpoint inputEndpoint)
+        protected override DataFrame ReadFromInternal(SparkSession sparkSession, JsonInputEndpoint inputEndpoint, ProjectContext projectContext)
         {
             var jsonFiles = inputEndpoint
                 .Files

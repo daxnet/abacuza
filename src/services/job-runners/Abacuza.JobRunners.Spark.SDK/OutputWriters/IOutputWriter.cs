@@ -8,6 +8,6 @@ namespace Abacuza.JobRunners.Spark.SDK.OutputWriters
 {
     internal interface IOutputWriter
     {
-        void WriteTo(DataFrame dataFrame, IOutputEndpoint outputEndpoint);
+        void WriteTo(DataFrame dataFrame, IOutputEndpoint outputEndpoint, ProjectContext projectContext);
     }
 }

@@ -1,8 +1,19 @@
-﻿using Abacuza.Common.Models;
+﻿// ==============================================================
+//           _
+//     /\   | |
+//    /  \  | |__ __ _ ___ _ _ ______ _
+//   / /\ \ | '_ \ / _` |/ __| | | |_  / _` |
+//  / ____ \| |_) | (_| | (__| |_| |/ / (_| |
+// /_/    \_\_.__/ \__,_|\___|\__,_/___\__,_|
+//
+// Data Processing Platform
+// Copyright 2020-2021 by daxnet. All rights reserved.
+// Licensed under LGPL-v3
+// ==============================================================
+
+using Abacuza.Common.Models;
 using Abacuza.Common.UIComponents;
-using System;
 using System.Collections.Generic;
-using System.Text;
 
 namespace Abacuza.Endpoints.Input
 {
@@ -12,45 +23,26 @@ namespace Abacuza.Endpoints.Input
     /// <remarks>For possible options please refer to https://spark.apache.org/docs/latest/api/java/org/apache/spark/sql/DataFrameReader.html
     /// </remarks>
     [Endpoint("endpoints.input.csv", "CSV/TSV Files", EndpointType.Input)]
-    public sealed class CsvInputEndpoint : Endpoint, IInputEndpoint
+    public sealed class CsvInputEndpoint : CsvEndpoint, IInputEndpoint
     {
+        #region Public Properties
+
         /// <summary>
         /// Gets or sets a list of files, in particular, the files with CSV or TSV extensions.
         /// </summary>
-        [FilePicker("fpFiles", 
-            "CSV/TSV Files", 
-            AllowedExtensions = ".csv,.tsv", 
-            AllowMultipleSelection = true, 
-            Ordinal = 200)]
+        [FilePicker("fpFiles",
+            "CSV/TSV Files",
+            AllowedExtensions = ".csv,.tsv",
+            AllowMultipleSelection = true,
+            Ordinal = 500)]
         public List<S3File> Files { get; set; }
-
-        /// <summary>
-        /// Gets or sets the type of the separator of the row values.
-        /// </summary>
-        [DropDownBox("dropdownSeparator", 
-            "Delimiter", 
-            "Comma,Tab,Pipe,Space", 
-            Tooltip = "Choose the delimiter used for separating the values.", 
-            Ordinal = 190,
-            DefaultValue = "Comma")]
-        public string SeparatorCharacter { get; set; }
-
-        /// <summary>
-        /// Gets or sets a <see cref="bool"/> value which indicates whether the CSV/TSV contains header record.
-        /// </summary>
-        [Checkbox("chkHasHeaderRecord", 
-            "Has header record", 
-            Ordinal = 180, 
-            Tooltip = "Whether the first line of the file is the file header.",
-            DefaultValue = "true")]
-        public bool HasHeaderRecord { get; set; }
 
         /// <summary>
         /// Gets or sets a <see cref="bool"/> value which indicates whether the schema should be inferred from the raw data.
         /// </summary>
-        [Checkbox("chkInferSchema", 
-            "Infer schema", 
-            Ordinal = 170, 
+        [Checkbox("chkInferSchema",
+            "Infer schema",
+            Ordinal = 186,
             Tooltip = "Whether the schema should be inferred.",
             DefaultValue = "true")]
         public bool InferSchema { get; set; }
@@ -64,5 +56,7 @@ namespace Abacuza.Endpoints.Input
             Tooltip = "Whether a record can span multiple lines.",
             DefaultValue = "false")]
         public bool Multiline { get; set; }
+
+        #endregion Public Properties
     }
 }

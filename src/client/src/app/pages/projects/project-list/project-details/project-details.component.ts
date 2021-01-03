@@ -103,9 +103,14 @@ export class ProjectDetailsComponent implements OnInit, OnDestroy {
         }))
         .subscribe(res => {
           this.projectEntity = res.body;
-          this.projectEntity.uiComponentData = this.projectEntity.inputEndpointSettings
+          this.projectEntity.inputEndpointUIComponentData = this.projectEntity.inputEndpointSettings
             ?
             JSON.parse(this.projectEntity.inputEndpointSettings)
+            :
+            [];
+          this.projectEntity.outputEndpointUIComponentData = this.projectEntity.outputEndpointSettings
+            ?
+            JSON.parse(this.projectEntity.outputEndpointSettings)
             :
             [];
           this.updatingProject.description = this.projectEntity.description;
@@ -116,7 +121,10 @@ export class ProjectDetailsComponent implements OnInit, OnDestroy {
             }))
             .subscribe(ep => {
               this.inputEndpointEntity = ep.body;
-              this.loadEndpointUIComponents(this.inputEndpointEntity, this.ngxUIComponentsInputEndpointHost);
+              this.loadEndpointUIComponents(
+                this.inputEndpointEntity, 
+                this.ngxUIComponentsInputEndpointHost, 
+                (projEntity) => projEntity.inputEndpointUIComponentData);
             });
           this.endpointsService.getEndpointByName(this.projectEntity.outputEndpointName)
             .pipe(catchError(err => {
@@ -125,7 +133,10 @@ export class ProjectDetailsComponent implements OnInit, OnDestroy {
             }))
             .subscribe(ep => {
               this.outputEndpointEntity = ep.body;
-              this.loadEndpointUIComponents(this.outputEndpointEntity, this.ngxUIComponentsOutputEndpointHost);
+              this.loadEndpointUIComponents(
+                this.outputEndpointEntity, 
+                this.ngxUIComponentsOutputEndpointHost,
+                (projEntity) => projEntity.outputEndpointUIComponentData);
             });
           this.jobRunnersService.getJobRunnerById(this.projectEntity.jobRunnerId)
             .pipe(catchError(err => {
@@ -164,7 +175,10 @@ export class ProjectDetailsComponent implements OnInit, OnDestroy {
       });
   }
 
-  private loadEndpointUIComponents(endpoint: Endpoint, directive: UIComponentsInputEndpointHostDirective | UIComponentsOutputEndpointHostDirective ): void {
+  private loadEndpointUIComponents(
+      endpoint: Endpoint, 
+      directive: UIComponentsInputEndpointHostDirective | UIComponentsOutputEndpointHostDirective,
+      uiComponentDataFunc: (projectEntity: Project) => any): void {
     const viewContainerRef = directive.viewContainerRef;
     viewContainerRef.clear();
     endpoint.configurationUIElements.forEach(e => {
@@ -175,7 +189,7 @@ export class ProjectDetailsComponent implements OnInit, OnDestroy {
         const componentRef = viewContainerRef.createComponent<UIComponentBase>(componentFactory);
         componentRef.instance.attributes = e;
         componentRef.instance.attributes.contextualEntityId = this.projectEntity.id;
-        const data = this.projectEntity.uiComponentData.find(d => d.name === e.name);
+        const data = uiComponentDataFunc(this.projectEntity).find(d => d.name === e.name);
         if (data) {
           componentRef.instance.value = data.value;
         } else if (e['defaultValueObject']) {
@@ -183,9 +197,9 @@ export class ProjectDetailsComponent implements OnInit, OnDestroy {
         }
 
         this.componentEventSubscriptions.push(componentRef.instance.modelChange.subscribe(event => {
-          const uiComponentData = this.projectEntity.uiComponentData.find(d => d.name === event.component);
+          const uiComponentData = uiComponentDataFunc(this.projectEntity).find(d => d.name === event.component);
           if (!uiComponentData) {
-            this.projectEntity.uiComponentData.push({
+            uiComponentDataFunc(this.projectEntity).push({
               name: event.component,
               value: event.data,
             });
@@ -202,8 +216,12 @@ export class ProjectDetailsComponent implements OnInit, OnDestroy {
   }
 
   save(): void {
-    if (this.projectEntity.uiComponentData) {
-      this.projectEntity.inputEndpointSettings = JSON.stringify(this.projectEntity.uiComponentData);
+    if (this.projectEntity.inputEndpointUIComponentData) {
+      this.projectEntity.inputEndpointSettings = JSON.stringify(this.projectEntity.inputEndpointUIComponentData);
+    }
+
+    if (this.projectEntity.outputEndpointUIComponentData) {
+      this.projectEntity.outputEndpointSettings = JSON.stringify(this.projectEntity.outputEndpointUIComponentData);
     }
 
     this.projectsService.updateProject(this.projectEntity.id, this.projectEntity)
@@ -218,8 +236,12 @@ export class ProjectDetailsComponent implements OnInit, OnDestroy {
 
   submit(): void {
     // firstly save the current project.
-    if (this.projectEntity.uiComponentData) {
-      this.projectEntity.inputEndpointSettings = JSON.stringify(this.projectEntity.uiComponentData);
+    if (this.projectEntity.inputEndpointUIComponentData) {
+      this.projectEntity.inputEndpointSettings = JSON.stringify(this.projectEntity.inputEndpointUIComponentData);
+    }
+
+    if (this.projectEntity.outputEndpointUIComponentData) {
+      this.projectEntity.outputEndpointSettings = JSON.stringify(this.projectEntity.outputEndpointUIComponentData);
     }
 
     this.projectsService.updateProject(this.projectEntity.id, this.projectEntity)
@@ -245,7 +267,7 @@ export class ProjectDetailsComponent implements OnInit, OnDestroy {
 
   onChangeTab(event: { tabTitle: string; }): void {
     this.selectedActiveTab = event.tabTitle;
-    if (this.selectedActiveTab === 'Revision') {
+    if (this.selectedActiveTab === 'Revisions') {
       this.startTimer();
     } else {
       this.stopTimer();

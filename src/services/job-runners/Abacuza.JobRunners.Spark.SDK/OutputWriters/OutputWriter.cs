@@ -31,7 +31,8 @@ namespace Abacuza.JobRunners.Spark.SDK.OutputWriters
         /// </summary>
         /// <param name="dataFrame">The <see cref="DataFrame"/> to be written to the output endpoint.</param>
         /// <param name="outputEndpoint">The output endpoint.</param>
-        public void WriteTo(DataFrame dataFrame, IOutputEndpoint outputEndpoint)
+        /// <param name="projectContext">The data that contains project and revision information.</param>
+        public void WriteTo(DataFrame dataFrame, IOutputEndpoint outputEndpoint, ProjectContext projectContext)
         {
             if (dataFrame == null)
             {
@@ -43,9 +44,14 @@ namespace Abacuza.JobRunners.Spark.SDK.OutputWriters
                 throw new ArgumentNullException(nameof(outputEndpoint));
             }
 
+            if (projectContext == null)
+            {
+                throw new ArgumentNullException(nameof(projectContext));
+            }
+
             if (outputEndpoint is TEndpoint endPoint)
             {
-                WriteToInternal(dataFrame, endPoint);
+                WriteToInternal(dataFrame, endPoint, projectContext);
             }
         }
 
@@ -53,7 +59,7 @@ namespace Abacuza.JobRunners.Spark.SDK.OutputWriters
 
         #region Protected Methods
 
-        protected abstract void WriteToInternal(DataFrame dataFrame, TEndpoint outputEndpoint);
+        protected abstract void WriteToInternal(DataFrame dataFrame, TEndpoint outputEndpoint, ProjectContext projectContext);
 
         #endregion Protected Methods
     }

@@ -33,8 +33,9 @@ namespace Abacuza.JobRunners.Spark.SDK.InputReaders
         /// <param name="sparkSession">The <see cref="SparkSession"/> which creates the <see cref="DataFrame"/>.</param>
         /// <param name="inputEndpoint">The <see cref="IInputEndpoint"/> instance which provides the information
         /// of the input data sets.</param>
+        /// <param name="projectContext">The data that contains project and revision information.</param>
         /// <returns>The <see cref="DataFrame"/> for data processing.</returns>
-        public DataFrame ReadFrom(SparkSession sparkSession, IInputEndpoint inputEndpoint)
+        public DataFrame ReadFrom(SparkSession sparkSession, IInputEndpoint inputEndpoint, ProjectContext projectContext)
         {
             if (sparkSession == null)
             {
@@ -46,9 +47,14 @@ namespace Abacuza.JobRunners.Spark.SDK.InputReaders
                 throw new ArgumentNullException(nameof(inputEndpoint));
             }
 
+            if (projectContext == null)
+            {
+                throw new ArgumentNullException(nameof(projectContext));
+            }
+
             if (inputEndpoint is TEndpoint endPoint)
             {
-                return ReadFromInternal(sparkSession, endPoint);
+                return ReadFromInternal(sparkSession, endPoint, projectContext);
             }
 
             throw new InputReaderException($"Input endpoint {inputEndpoint.GetType().FullName} can't be converted to type {typeof(TEndpoint).FullName}");
@@ -65,8 +71,9 @@ namespace Abacuza.JobRunners.Spark.SDK.InputReaders
         /// <param name="sparkSession">The <see cref="SparkSession"/> which creates the <see cref="DataFrame"/>.</param>
         /// <param name="inputEndpoint">The <see cref="IInputEndpoint"/> instance which provides the information
         /// of the input data sets.</param>
+        /// <param name="projectContext">The data that contains project and revision information.</param>
         /// <returns>The <see cref="DataFrame"/> for data processing.</returns>
-        protected abstract DataFrame ReadFromInternal(SparkSession sparkSession, TEndpoint inputEndpoint);
+        protected abstract DataFrame ReadFromInternal(SparkSession sparkSession, TEndpoint inputEndpoint, ProjectContext projectContext);
 
         #endregion Protected Methods
     }

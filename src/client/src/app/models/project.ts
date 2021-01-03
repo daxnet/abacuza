@@ -11,5 +11,6 @@ export class Project {
     outputEndpointName: string;
     outputEndpointDisplayName: string;
     outputEndpointSettings: string;
-    uiComponentData: any;
+    inputEndpointUIComponentData: any;
+    outputEndpointUIComponentData: any;
 }

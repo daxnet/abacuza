@@ -24,7 +24,7 @@ namespace Abacuza.JobRunners.Spark.SDK.OutputWriters
         #region Protected Methods
 
 
-        protected override void WriteToInternal(DataFrame dataFrame, EmptyOutputEndpoint outputEndpoint)
+        protected override void WriteToInternal(DataFrame dataFrame, EmptyOutputEndpoint outputEndpoint, ProjectContext projectContext)
         {
         }
 

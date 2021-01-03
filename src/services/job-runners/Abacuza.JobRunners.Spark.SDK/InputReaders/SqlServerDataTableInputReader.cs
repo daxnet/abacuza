@@ -14,7 +14,7 @@ namespace Abacuza.JobRunners.Spark.SDK.InputReaders
     /// </remarks>
     public sealed class SqlServerDataTableInputReader : InputReader<SqlServerDataTableInputEndpoint>
     {
-        protected override DataFrame ReadFromInternal(SparkSession sparkSession, SqlServerDataTableInputEndpoint inputEndpoint)
+        protected override DataFrame ReadFromInternal(SparkSession sparkSession, SqlServerDataTableInputEndpoint inputEndpoint, ProjectContext projectContext)
         {
             return sparkSession.Read()
                 .Format("jdbc")

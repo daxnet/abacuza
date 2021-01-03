@@ -44,11 +44,11 @@ namespace Abacuza.Projects.ApiService.Controllers
         private readonly IConfiguration _configuration;
         private readonly int maxReservedRevisions;
 
-        private readonly static IEnumerable<Func<string, ProjectEntity, JobRunner, string>> PayloadTemplateFuncs
-             = new List<Func<string, ProjectEntity, JobRunner, string>>
+        private readonly static IEnumerable<Func<string, ProjectEntity, Guid, JobRunner, string>> PayloadTemplateFuncs
+             = new List<Func<string, ProjectEntity, Guid, JobRunner, string>>
              {
                  // replace binary file names defined in the job runner.
-                 (input, project, jobRunner) =>
+                 (input, project, revisionId, jobRunner) =>
                  {
                      var regex = new Regex(@"\${jr:binaries:(?<filename>[\w\._-]+)}");
                      var matches = regex.Matches(input);
@@ -66,12 +66,35 @@ namespace Abacuza.Projects.ApiService.Controllers
                  },
 
                  // replace the input endpoint name.
-                 (input, project, jobRunner) =>
+                 (input, project, revisionId, jobRunner) =>
                     input.Replace("${proj:input-endpoint}", $"input_endpoint:{project.InputEndpointName}"),
 
                  // replace the input endpoint settings.
-                 (input, project, jobRunner) =>
-                    input.Replace("${proj:input-endpoint-settings}", $"input_endpoint_settings:{project.InputEndpointSettings.Replace("\"", "\\\"").Replace("\r\n", "")}")
+                 (input, project, revisionId, jobRunner) =>
+                    input.Replace("${proj:input-endpoint-settings}", $"input_endpoint_settings:{project.InputEndpointSettings.Replace("\"", "\\\"").Replace("\r\n", "")}"),
+
+                 // replace the output endpoint name.
+                 (input, project, revisionId, jobRunner) =>
+                    input.Replace("${proj:output-endpoint}", $"output_endpoint:{project.OutputEndpointName}"),
+
+                 // replace the output endpoint settings.
+                 (input, project, revisionId, jobRunner) =>
+                    input.Replace("${proj:output-endpoint-settings}", $"output_endpoint_settings:{project.OutputEndpointSettings.Replace("\"", "\\\"").Replace("\r\n", "")}"),
+
+                 // replace the project context.
+                 (input, project, revisionId, jobRunner) =>
+                 {
+                     var projectContext = new
+                     {
+                         projectId = project.Id,
+                         projectName = project.Name,
+                         projectCreationDate = project.DateCreated,
+                         RevisionId = revisionId
+                     };
+
+                     return input.Replace("${proj:context}",
+                         $"project_context:{JsonConvert.SerializeObject(projectContext, Formatting.None).Replace("\"", "\\\"").Replace("\r\n", "")}");
+                 }
              };
 
         #endregion Private Fields
@@ -122,8 +145,11 @@ namespace Abacuza.Projects.ApiService.Controllers
                 return NotFound($"Project {projectId} doesn't exist.");
             }
 
+            // Set the revision id.
+            var revisionId = Guid.NewGuid();
             var revision = new RevisionEntity
             {
+                Id = revisionId,
                 ProjectId = projectId,
                 CreatedDate = DateTime.UtcNow
             };
@@ -135,7 +161,7 @@ namespace Abacuza.Projects.ApiService.Controllers
             // then normalize the payload.
             foreach (var payloadTemplateFunc in PayloadTemplateFuncs)
             {
-                payload = payloadTemplateFunc(payload, project, jobRunner);
+                payload = payloadTemplateFunc(payload, project, revisionId, jobRunner);
             }
 
             // and then create the job and get the job submission name.
