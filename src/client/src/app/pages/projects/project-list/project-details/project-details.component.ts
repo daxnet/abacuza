@@ -218,6 +218,8 @@ export class ProjectDetailsComponent implements OnInit, OnDestroy {
   save(): void {
     if (this.projectEntity.inputEndpointUIComponentData) {
       this.projectEntity.inputEndpointSettings = JSON.stringify(this.projectEntity.inputEndpointUIComponentData);
+      console.log(this.projectEntity.inputEndpointUIComponentData);
+      console.log(this.projectEntity.inputEndpointSettings);
     }
 
     if (this.projectEntity.outputEndpointUIComponentData) {

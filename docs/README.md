@@ -4,3 +4,4 @@ Abacuza is a light weight and easy-to-use data processing platform that is desig
 ## Table of Contents
 - [Architecture](en-us/architecture.md)
 - Basic Concepts
+    - [Clusters](en-us/basic-concepts/clusters.md)

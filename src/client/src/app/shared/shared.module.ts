@@ -7,6 +7,7 @@ import { CheckBoxComponent } from 'app/ui-components/check-box.component';
 import { DropDownBoxComponent } from 'app/ui-components/drop-down-box.component';
 import { FilePickerComponent } from 'app/ui-components/file-picker.component';
 import { TextAreaComponent } from 'app/ui-components/text-area.component';
+import { JsonTextAreaComponent } from 'app/ui-components/json-text-area.component';
 import { TextBoxComponent } from 'app/ui-components/text-box.component';
 import { Ng2SmartTableModule } from 'ng2-smart-table';
 import { NbEvaIconsModule } from '@nebular/eva-icons';
@@ -16,6 +17,7 @@ import { SmartTableDateCellRenderComponent } from 'app/components/smart-table-da
 import { SmartTableJobStatusRenderComponent } from 'app/components/smart-table-job-status-render/smart-table-job-status-render.component';
 import { TextMessageDialogComponent } from 'app/services/text-message-dialog/text-message-dialog.component';
 import { ThemeModule } from 'app/@theme/theme.module';
+import { NgJsonEditorModule } from 'ang-jsoneditor';
 
 
 
@@ -27,6 +29,7 @@ import { ThemeModule } from 'app/@theme/theme.module';
     FileUploadComponent,
     CheckBoxComponent,
     TextAreaComponent,
+    JsonTextAreaComponent,
     DropDownBoxComponent,
     TextBoxComponent,
     FilePickerComponent,
@@ -36,6 +39,7 @@ import { ThemeModule } from 'app/@theme/theme.module';
     CommonModule,
     FormsModule,
     ThemeModule,
+    NgJsonEditorModule,
     Ng2SmartTableModule,
     NbEvaIconsModule,
     NbIconModule,
@@ -58,6 +62,7 @@ import { ThemeModule } from 'app/@theme/theme.module';
     FileUploadComponent,
     CheckBoxComponent,
     TextAreaComponent,
+    JsonTextAreaComponent,
     DropDownBoxComponent,
     TextBoxComponent,
     FilePickerComponent,

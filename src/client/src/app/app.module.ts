@@ -26,6 +26,7 @@ import { SharedModule } from './shared/shared.module';
 import { TextMessageDialogComponent } from './services/text-message-dialog/text-message-dialog.component';
 import { TextMessageDialogService } from './services/text-message-dialog.service';
 import { NgJsonEditorModule } from 'ang-jsoneditor';
+import { JsonTextAreaComponent } from './ui-components/json-text-area.component';
 
 @NgModule({
   declarations: [
@@ -50,6 +51,7 @@ import { NgJsonEditorModule } from 'ang-jsoneditor';
     FileUploadComponent,
     CheckBoxComponent,
     TextAreaComponent,
+    JsonTextAreaComponent,
     DropDownBoxComponent,
     TextBoxComponent,
     FilePickerComponent,
