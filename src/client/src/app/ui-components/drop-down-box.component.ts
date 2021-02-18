@@ -11,6 +11,7 @@ export class DropDownBoxComponent implements UIComponentBase, OnInit {
 
   @Input() attributes: any;
   @Input() value: any;
+  @Input() id: string;
   @Output() modelChange: EventEmitter<ComponentEvent> = new EventEmitter<ComponentEvent>();
 
   constructor() { }
@@ -20,6 +21,6 @@ export class DropDownBoxComponent implements UIComponentBase, OnInit {
   }
 
   onSelectionChanged(event): void {
-    this.modelChange.emit(new ComponentEvent(this.attributes.name, event));
+    this.modelChange.emit(new ComponentEvent(this.id, event));
   }
 }

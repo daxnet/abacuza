@@ -15,13 +15,15 @@
                 </div>
                 <div *ngIf='inputEndpointEntity' class="form-group" fullWidth>
                     <label for="idProjectInputEndpoint">Input Endpoint</label>
-                    <input type="text" id="idProjectInputEndpoint" #name [(ngModel)]="inputEndpointEntity.displayName"
-                        nbInput fullWidth autofocus required placeholder="Input Endpoint" disabled>
+                    <nb-select id="idProjectInputEndpoint" [(selected)]="projectEntity.inputEndpointName" (selectedChange)="onInputEndpointSelectedChange($event)" fullWidth placeholder="Choose the input endpoint">
+                        <nb-option *ngFor='let ie of inputEndpoints' [value]="ie.name">{{ie.displayName}}</nb-option>
+                    </nb-select>
                 </div>
                 <div *ngIf='outputEndpointEntity' class="form-group" fullWidth>
                     <label for="idProjectOutputEndpoint">Output Endpoint</label>
-                    <input type="text" id="idProjectOutputEndpoint" #name [(ngModel)]="outputEndpointEntity.displayName"
-                        nbInput fullWidth autofocus required placeholder="Output Endpoint" disabled>
+                    <nb-select id="idProjectOutputEndpoint" [(selected)]="projectEntity.outputEndpointName" (selectedChange)="onOutputEndpointSelectedChange($event)" fullWidth placeholder="Choose the input endpoint">
+                        <nb-option *ngFor='let ie of outputEndpoints' [value]="ie.name">{{ie.displayName}}</nb-option>
+                    </nb-select>
                 </div>
                 <div *ngIf='jobRunnerEntity' class="form-group" fullWidth>
                     <label for="idJobRunnerName">Job Runner</label>

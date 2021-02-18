@@ -12,6 +12,7 @@ export class JsonTextAreaComponent implements UIComponentBase, OnInit {
 
   @Input() attributes: any;
   @Input() value: any;
+  @Input() id: string;
   @Output() modelChange: EventEmitter<ComponentEvent> = new EventEmitter<ComponentEvent>();
 
   editorOptions: JsonEditorOptions;
@@ -27,13 +28,7 @@ export class JsonTextAreaComponent implements UIComponentBase, OnInit {
   }
 
   func(event): void {
-    //if (event.target && event.target.value) {
-      console.log(this.value);
-      this.modelChange.emit(new ComponentEvent(this.attributes.name, this.value));
-    //}
+    console.log(this.value);
+    this.modelChange.emit(new ComponentEvent(this.id, this.value));
   }
-
-  // func2(event): void {
-  //   console.log(event);
-  // }
 }

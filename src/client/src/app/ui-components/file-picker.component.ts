@@ -11,6 +11,7 @@ export class FilePickerComponent implements UIComponentBase, OnInit {
 
   @Input() attributes: any;
   @Input() value: any;
+  @Input() id: string;
   @Output() modelChange: EventEmitter<ComponentEvent> = new EventEmitter<ComponentEvent>();
 
   s3Key: string;
@@ -22,6 +23,6 @@ export class FilePickerComponent implements UIComponentBase, OnInit {
   }
 
   onFilesChangedCompleted(event: any): void {
-    this.modelChange.emit(new ComponentEvent(this.attributes.name, event));
+    this.modelChange.emit(new ComponentEvent(this.id, event));
   }
 }

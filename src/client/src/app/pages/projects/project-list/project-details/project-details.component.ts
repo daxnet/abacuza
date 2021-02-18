@@ -77,6 +77,8 @@ export class ProjectDetailsComponent implements OnInit, OnDestroy {
   inputEndpointEntity: Endpoint;
   outputEndpointEntity: Endpoint;
   jobRunnerEntity: JobRunner;
+  inputEndpoints: Endpoint[];
+  outputEndpoints: Endpoint[];
   updatingProject: { description: string } = <any>{};
   revisionsSource: LocalDataSource = new LocalDataSource();
   selectedActiveTab: string = 'Input';
@@ -96,6 +98,19 @@ export class ProjectDetailsComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.activatedRoute.params.subscribe(params => {
+      this.endpointsService.getAvailableEndpoints('input')
+        .pipe(catchError(err => {
+          this.toastrService.danger(err.message, 'Failed to retrieve input endpoint list.');
+          return throwError(err.message);
+        }))
+        .subscribe(res => this.inputEndpoints = res.body);
+      this.endpointsService.getAvailableEndpoints('output')
+        .pipe(catchError(err => {
+          this.toastrService.danger(err.message, 'Failed to retrieve output endpoint list.');
+          return throwError(err.message);
+        }))
+        .subscribe(res => this.outputEndpoints = res.body);
+
       this.projectsService.getProjectById(params.id)
         .pipe(catchError(err => {
           this.toastrService.danger(err.message, 'Failed to retrieve project information');
@@ -183,13 +198,15 @@ export class ProjectDetailsComponent implements OnInit, OnDestroy {
     viewContainerRef.clear();
     endpoint.configurationUIElements.forEach(e => {
       const name = e['_type'];
+      const id = e['_endpoint'] + '.' + e['name'];
       const item = this.componentsProvider.getRegisteredUIComponents().find(x => x.name === name);
       if (item) {
         const componentFactory = this.componentFactoryResolver.resolveComponentFactory(item.component);
         const componentRef = viewContainerRef.createComponent<UIComponentBase>(componentFactory);
         componentRef.instance.attributes = e;
+        componentRef.instance.id = id;
         componentRef.instance.attributes.contextualEntityId = this.projectEntity.id;
-        const data = uiComponentDataFunc(this.projectEntity).find(d => d.name === e.name);
+        const data = uiComponentDataFunc(this.projectEntity).find(d => d.id === id);
         if (data) {
           componentRef.instance.value = data.value;
         } else if (e['defaultValueObject']) {
@@ -197,10 +214,10 @@ export class ProjectDetailsComponent implements OnInit, OnDestroy {
         }
 
         this.componentEventSubscriptions.push(componentRef.instance.modelChange.subscribe(event => {
-          const uiComponentData = uiComponentDataFunc(this.projectEntity).find(d => d.name === event.component);
+          const uiComponentData = uiComponentDataFunc(this.projectEntity).find(d => d.id === event.component);
           if (!uiComponentData) {
             uiComponentDataFunc(this.projectEntity).push({
-              name: event.component,
+              id: event.component,
               value: event.data,
             });
           } else {
@@ -282,6 +299,36 @@ export class ProjectDetailsComponent implements OnInit, OnDestroy {
         this.showLogs(event.data.id);
       break;
     }
+  }
+
+  onInputEndpointSelectedChange(event: any): void {
+    this.endpointsService.getEndpointByName(event)
+      .pipe(catchError(err => {
+        this.toastrService.danger(err.message, 'Failed to retrieve endpoint information');
+        return throwError;
+      }))
+      .subscribe(ep => {
+        this.inputEndpointEntity = ep.body;
+        this.loadEndpointUIComponents(
+          this.inputEndpointEntity, 
+          this.ngxUIComponentsInputEndpointHost, 
+          (projEntity) => projEntity.inputEndpointUIComponentData);
+      });
+  }
+
+  onOutputEndpointSelectedChange(event: any): void {
+    this.endpointsService.getEndpointByName(event)
+        .pipe(catchError(err => {
+          this.toastrService.danger(err.message, 'Failed to retrieve endpoint information');
+          return throwError;
+        }))
+        .subscribe(ep => {
+          this.outputEndpointEntity = ep.body;
+          this.loadEndpointUIComponents(
+            this.outputEndpointEntity, 
+            this.ngxUIComponentsOutputEndpointHost,
+            (projEntity) => projEntity.outputEndpointUIComponentData);
+        });
   }
 
   showLogs(revisionId: string): void {

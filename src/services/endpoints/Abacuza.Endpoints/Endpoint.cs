@@ -46,7 +46,8 @@ namespace Abacuza.Endpoints
                     var properties = new Dictionary<string, object>
                     {
                         { "_type", GetNormalizedAttributeName(attr.UIComponentAttribute.GetType()) },
-                        { "_property", attr.EndpointPropertyName }
+                        { "_property", attr.EndpointPropertyName },
+                        { "_endpoint", this.Name }
                     };
 
                     var options = from p in attr.UIComponentAttribute.GetType().GetProperties(BindingFlags.Public | BindingFlags.Instance)
@@ -108,7 +109,8 @@ namespace Abacuza.Endpoints
             var settingsArray = JArray.Parse(settings);
             foreach(var jobj in settingsArray)
             {
-                var name = jobj["name"].ToObject<string>();
+                var id = jobj["id"].ToObject<string>();
+                var name = id.Substring(id.LastIndexOf('.') + 1, id.Length - id.LastIndexOf('.') - 1);
                 var value = jobj["value"].ToObject<object>();
                 var property = (from p in this.GetType().GetProperties(BindingFlags.Public | BindingFlags.Instance)
                                 where p.CanWrite && p.GetCustomAttributes().Any(a => a.GetType().IsSubclassOf(typeof(UIComponentAttribute)))

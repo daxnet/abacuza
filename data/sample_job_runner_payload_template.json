@@ -1,0 +1,13 @@
+{
+    "file": "${jr:binaries:microsoft-spark-3-0_2.12-1.0.0.jar}",
+    "className": "org.apache.spark.deploy.dotnet.DotnetRunner",
+    "args": [
+      "${jr:binaries:Abacuza.JobRunners.Spark.Sample.202101312.zip}",
+      "Abacuza.JobRunners.Spark.Sample",
+      "${proj:input-endpoint}",
+      "${proj:input-endpoint-settings}",
+      "${proj:output-endpoint}",
+      "${proj:output-endpoint-settings}",
+      "${proj:context}"
+    ]
+  }

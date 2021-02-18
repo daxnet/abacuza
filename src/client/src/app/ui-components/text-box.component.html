@@ -1,5 +1,5 @@
 <div class="form-group">
-    <label [for]="attributes.name">{{attributes.label}}</label>
-    <input *ngIf='attributes.tooltip' [(ngModel)]='value' [nbTooltip]='attributes.tooltip' nbTooltipPlacement="bottom" type="text" [id]="attributes.name" nbInput fullWidth (blur)='onBlur($event)'>
-    <input *ngIf='!attributes.tooltip' [(ngModel)]='value' type="text" [id]="attributes.name" nbInput fullWidth (blur)='onBlur($event)'>
+    <label [for]="id">{{attributes.label}}</label>
+    <input *ngIf='attributes.tooltip' [(ngModel)]='value' [nbTooltip]='attributes.tooltip' nbTooltipPlacement="bottom" type="text" [id]="id" nbInput fullWidth (blur)='onBlur($event)'>
+    <input *ngIf='!attributes.tooltip' [(ngModel)]='value' type="text" [id]="id" nbInput fullWidth (blur)='onBlur($event)'>
 </div>

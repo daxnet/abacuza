@@ -1,5 +1,5 @@
 <div class="form-group">
-    <label [for]="attributes.name">{{attributes.label}}</label>
-    <textarea *ngIf='attributes.tooltip' [(ngModel)]='value' [nbTooltip]='attributes.tooltip' nbTooltipPlacement="bottom" [id]="attributes.name" [rows]='attributes.minLines === 0 ? 5 : attributes.minLines' (blur)='onBlur($event)' nbInput fullWidth></textarea>
-    <textarea *ngIf='!attributes.tooltip' [(ngModel)]='value' [id]="attributes.name" [rows]='attributes.minLines === 0 ? 5 : attributes.minLines' (blur)='onBlur($event)' nbInput fullWidth></textarea>
+    <label [for]="id">{{attributes.label}}</label>
+    <textarea *ngIf='attributes.tooltip' [(ngModel)]='value' [nbTooltip]='attributes.tooltip' nbTooltipPlacement="bottom" [id]="id" [rows]='attributes.minLines === 0 ? 5 : attributes.minLines' (blur)='onBlur($event)' nbInput fullWidth></textarea>
+    <textarea *ngIf='!attributes.tooltip' [(ngModel)]='value' [id]="id" [rows]='attributes.minLines === 0 ? 5 : attributes.minLines' (blur)='onBlur($event)' nbInput fullWidth></textarea>
 </div>

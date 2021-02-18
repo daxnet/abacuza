@@ -11,6 +11,7 @@ export class CheckBoxComponent implements UIComponentBase, OnInit {
 
   @Input() attributes: any;
   @Input() value: any;
+  @Input() id: string;
   @Output() modelChange: EventEmitter<ComponentEvent> = new EventEmitter<ComponentEvent>();
 
   constructor() { }
@@ -19,6 +20,6 @@ export class CheckBoxComponent implements UIComponentBase, OnInit {
   }
 
   checkChanged(event): void {
-    this.modelChange.emit(new ComponentEvent(this.attributes.name, event.target.checked));
+    this.modelChange.emit(new ComponentEvent(this.id, event.target.checked));
   }
 }

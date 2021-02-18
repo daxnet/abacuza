@@ -11,6 +11,7 @@ export class TextBoxComponent implements UIComponentBase, OnInit {
 
   @Input() attributes: any;
   @Input() value: any;
+  @Input() id: string;
   @Output() modelChange: EventEmitter<ComponentEvent> = new EventEmitter<ComponentEvent>();
 
   constructor() { }
@@ -19,6 +20,6 @@ export class TextBoxComponent implements UIComponentBase, OnInit {
   }
 
   onBlur(event): void {
-    this.modelChange.emit(new ComponentEvent(this.attributes.name, event.target.value));
+    this.modelChange.emit(new ComponentEvent(this.id, event.target.value));
   }
 }
