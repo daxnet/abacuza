@@ -1,4 +1,17 @@
-﻿using Abacuza.Common.DataAccess;
+﻿// ==============================================================
+//           _
+//     /\   | |
+//    /  \  | |__ __ _ ___ _ _ ______ _
+//   / /\ \ | '_ \ / _` |/ __| | | |_  / _` |
+//  / ____ \| |_) | (_| | (__| |_| |/ / (_| |
+// /_/    \_\_.__/ \__,_|\___|\__,_/___\__,_|
+//
+// Data Processing Platform
+// Copyright 2020-2021 by daxnet. All rights reserved.
+// Licensed under LGPL-v3
+// ==============================================================
+
+using Abacuza.Common.DataAccess;
 using Abacuza.Common.Models;
 using Abacuza.Jobs.ApiService.Models;
 using Abacuza.Jobs.ApiService.Services;
@@ -166,6 +179,7 @@ namespace Abacuza.Jobs.ApiService.Controllers
 
             return Ok(entity);
         }
+
         [HttpPatch("{id}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
