@@ -26,7 +26,7 @@ export class JobRunnerDetailsComponent implements OnInit {
     private router: Router,
     private clustersService: ClustersService,
     private jobRunnerService: JobRunnersService,
-    private toastrService: NbToastrService) { 
+    private toastrService: NbToastrService) {
       this.editorOptions = new JsonEditorOptions();
       this.editorOptions.mode = 'code';
       this.editorOptions.mainMenuBar = false;
@@ -90,7 +90,7 @@ export class JobRunnerDetailsComponent implements OnInit {
       }))
       .subscribe(() => {
         this.toastrService.success('Binary file deleted successfully.', 'Success');
-      })
+      });
     }
   }
 }

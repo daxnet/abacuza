@@ -19,7 +19,7 @@ export class ClusterConnectionsService {
       map(response => {
         response.body.forEach(r => r.settingsJsonObject = JSON.parse(r.settings));
         return response;
-      })
+      },)
     );
   }
 

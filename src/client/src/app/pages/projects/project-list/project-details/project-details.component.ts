@@ -25,8 +25,11 @@ import { catchError } from 'rxjs/operators';
 })
 export class ProjectDetailsComponent implements OnInit, OnDestroy {
 
-  @ViewChild(UIComponentsInputEndpointHostDirective, { static: true }) ngxUIComponentsInputEndpointHost: UIComponentsInputEndpointHostDirective;
-  @ViewChild(UIComponentsOutputEndpointHostDirective, { static: true }) ngxUIComponentsOutputEndpointHost: UIComponentsOutputEndpointHostDirective;
+  @ViewChild(UIComponentsInputEndpointHostDirective, { static: true })
+  ngxUIComponentsInputEndpointHost: UIComponentsInputEndpointHostDirective;
+
+  @ViewChild(UIComponentsOutputEndpointHostDirective, { static: true })
+  ngxUIComponentsOutputEndpointHost: UIComponentsOutputEndpointHostDirective;
 
   revisionsTableSettings = {
     columns: {
@@ -44,11 +47,6 @@ export class ProjectDetailsComponent implements OnInit, OnDestroy {
         type: 'custom',
         renderComponent: SmartTableJobStatusRenderComponent,
       },
-      // jobCancelledDate: {
-      //   title: 'Cancelled At',
-      //   type: 'custom',
-      //   renderComponent: SmartTableDateCellRenderComponent,
-      // },
     },
     actions: {
       add: false,
@@ -59,10 +57,6 @@ export class ProjectDetailsComponent implements OnInit, OnDestroy {
           name: 'viewLogs',
           title: '<i class="eva eva-file-text-outline" title="View logs"></i>',
         },
-        // { 
-        //   name: 'ourCustomAction2', 
-        //   title: '<i class="eva eva-github"></i>' 
-        // },
       ],
       position: 'right',
     },
@@ -137,8 +131,8 @@ export class ProjectDetailsComponent implements OnInit, OnDestroy {
             .subscribe(ep => {
               this.inputEndpointEntity = ep.body;
               this.loadEndpointUIComponents(
-                this.inputEndpointEntity, 
-                this.ngxUIComponentsInputEndpointHost, 
+                this.inputEndpointEntity,
+                this.ngxUIComponentsInputEndpointHost,
                 (projEntity) => projEntity.inputEndpointUIComponentData);
             });
           this.endpointsService.getEndpointByName(this.projectEntity.outputEndpointName)
@@ -149,7 +143,7 @@ export class ProjectDetailsComponent implements OnInit, OnDestroy {
             .subscribe(ep => {
               this.outputEndpointEntity = ep.body;
               this.loadEndpointUIComponents(
-                this.outputEndpointEntity, 
+                this.outputEndpointEntity,
                 this.ngxUIComponentsOutputEndpointHost,
                 (projEntity) => projEntity.outputEndpointUIComponentData);
             });
@@ -191,7 +185,7 @@ export class ProjectDetailsComponent implements OnInit, OnDestroy {
   }
 
   private loadEndpointUIComponents(
-      endpoint: Endpoint, 
+      endpoint: Endpoint,
       directive: UIComponentsInputEndpointHostDirective | UIComponentsOutputEndpointHostDirective,
       uiComponentDataFunc: (projectEntity: Project) => any): void {
     const viewContainerRef = directive.viewContainerRef;
@@ -235,8 +229,6 @@ export class ProjectDetailsComponent implements OnInit, OnDestroy {
   save(): void {
     if (this.projectEntity.inputEndpointUIComponentData) {
       this.projectEntity.inputEndpointSettings = JSON.stringify(this.projectEntity.inputEndpointUIComponentData);
-      console.log(this.projectEntity.inputEndpointUIComponentData);
-      console.log(this.projectEntity.inputEndpointSettings);
     }
 
     if (this.projectEntity.outputEndpointUIComponentData) {
@@ -277,7 +269,7 @@ export class ProjectDetailsComponent implements OnInit, OnDestroy {
           }))
           .subscribe(revisionId => {
             this.toastrService.success(`Revision created with ID: ${revisionId}`, 'Success');
-          })
+          });
       });
 
     this.selectedActiveTab = 'Revisions';
@@ -310,8 +302,8 @@ export class ProjectDetailsComponent implements OnInit, OnDestroy {
       .subscribe(ep => {
         this.inputEndpointEntity = ep.body;
         this.loadEndpointUIComponents(
-          this.inputEndpointEntity, 
-          this.ngxUIComponentsInputEndpointHost, 
+          this.inputEndpointEntity,
+          this.ngxUIComponentsInputEndpointHost,
           (projEntity) => projEntity.inputEndpointUIComponentData);
       });
   }
@@ -325,7 +317,7 @@ export class ProjectDetailsComponent implements OnInit, OnDestroy {
         .subscribe(ep => {
           this.outputEndpointEntity = ep.body;
           this.loadEndpointUIComponents(
-            this.outputEndpointEntity, 
+            this.outputEndpointEntity,
             this.ngxUIComponentsOutputEndpointHost,
             (projEntity) => projEntity.outputEndpointUIComponentData);
         });

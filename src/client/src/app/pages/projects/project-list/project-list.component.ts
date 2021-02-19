@@ -95,7 +95,7 @@ export class ProjectListComponent implements OnInit {
       .subscribe(res => {
         this.inputEndpoints = res.body;
       });
-    
+
     this.endpointsService.getAvailableEndpoints('output')
       .subscribe(res => {
         this.outputEndpoints = res.body;

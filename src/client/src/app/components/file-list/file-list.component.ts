@@ -86,7 +86,7 @@ export class FileListComponent implements OnInit {
             if (!this.initFiles.find(f => f.bucket === file.bucket && f.file === file.file && f.key === file.key)) {
               this.initFiles.push(file);
             }
-          })
+          });
           this.source.load(this.initFiles);
           this.source.refresh();
           this.onFilesChangedCompleted.emit(this.initFiles);
@@ -100,7 +100,8 @@ export class FileListComponent implements OnInit {
         if (dr && dr === CommonDialogResult.Yes) {
           const s3File: S3File = event.data;
           this.onFileDeleted.emit(event.data);
-          var idx = this.initFiles.findIndex(f => f.bucket === s3File.bucket && f.file === s3File.file && f.key === s3File.key);
+          const idx = this.initFiles.findIndex(f =>
+            f.bucket === s3File.bucket && f.file === s3File.file && f.key === s3File.key);
           if (idx > -1) {
             this.initFiles.splice(idx, 1);
           }

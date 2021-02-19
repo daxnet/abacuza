@@ -44,7 +44,7 @@ import { JsonTextAreaComponent } from './ui-components/json-text-area.component'
     ThemeModule.forRoot(),
   ],
   bootstrap: [AppComponent],
-  providers: [CommonDialogService, FileUploadService, TextMessageDialogService,],
+  providers: [CommonDialogService, FileUploadService, TextMessageDialogService],
   entryComponents: [
     CommonDialogComponent,
     TextMessageDialogComponent,

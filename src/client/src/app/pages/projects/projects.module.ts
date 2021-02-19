@@ -3,7 +3,16 @@ import { CommonModule } from '@angular/common';
 import { ProjectListComponent } from './project-list/project-list.component';
 import { ProjectsComponent } from './projects.component';
 import { FormsModule } from '@angular/forms';
-import { NbButtonModule, NbCardModule, NbCheckboxModule, NbIconModule, NbInputModule, NbProgressBarModule, NbSelectModule, NbTabsetModule, NbToastrModule, NbTooltipModule } from '@nebular/theme';
+import { NbButtonModule,
+  NbCardModule,
+  NbCheckboxModule,
+  NbIconModule,
+  NbInputModule,
+  NbProgressBarModule,
+  NbSelectModule,
+  NbTabsetModule,
+  NbToastrModule,
+  NbTooltipModule } from '@nebular/theme';
 import { JobsRoutingModule } from '../jobs/jobs-routing.module';
 import { Ng2SmartTableModule } from 'ng2-smart-table';
 import { ProjectsRoutingModule } from './projects-routing.module';
@@ -22,7 +31,7 @@ import { ThemeModule } from 'app/@theme/theme.module';
     CreateProjectComponent,
     ProjectDetailsComponent,
     UIComponentsInputEndpointHostDirective,
-    UIComponentsOutputEndpointHostDirective,],
+    UIComponentsOutputEndpointHostDirective],
   imports: [
     FormsModule,
     CommonModule,
