@@ -14,7 +14,8 @@
 namespace Abacuza.Endpoints
 {
     /// <summary>
-    /// Represents that the implemented classes are output endpoints.
+    /// Represents that the implemented classes are output endpoints that
+    /// contain the connection information to the external data stores.
     /// </summary>
     public interface IOutputEndpoint : IEndpoint
     {

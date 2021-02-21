@@ -21,6 +21,7 @@ using Microsoft.Spark.Sql;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Reflection;
 
@@ -49,27 +50,31 @@ namespace Abacuza.JobRunners.Spark.SDK
         private const string ProjectContextKey = "project_context";
 
         private static readonly Lazy<IEnumerable<Type>> _inputEndpointTypes = new Lazy<IEnumerable<Type>>(() =>
-            from p in typeof(EmptyInputEndpoint).Assembly.GetExportedTypes()
-            where p.IsClass && !p.IsAbstract && typeof(IInputEndpoint).IsAssignableFrom(p) && p.IsDefined(typeof(EndpointAttribute), false)
-            select p
+            //from p in typeof(EmptyInputEndpoint).Assembly.GetExportedTypes()
+            //where p.IsClass && !p.IsAbstract && typeof(IInputEndpoint).IsAssignableFrom(p) && p.IsDefined(typeof(EndpointAttribute), false)
+            //select p
+            DiscoverDerivedTypes<IInputEndpoint>(typeof(EndpointAttribute))
         );
 
         private static readonly Lazy<IEnumerable<Type>> _outputEndpointTypes = new Lazy<IEnumerable<Type>>(() =>
-            from p in typeof(EmptyOutputEndpoint).Assembly.GetExportedTypes()
-            where p.IsClass && !p.IsAbstract && typeof(IOutputEndpoint).IsAssignableFrom(p) && p.IsDefined(typeof(EndpointAttribute), false)
-            select p
+            //from p in typeof(EmptyOutputEndpoint).Assembly.GetExportedTypes()
+            //where p.IsClass && !p.IsAbstract && typeof(IOutputEndpoint).IsAssignableFrom(p) && p.IsDefined(typeof(EndpointAttribute), false)
+            //select p
+            DiscoverDerivedTypes<IOutputEndpoint>(typeof(EndpointAttribute))
         );
 
         private static readonly Lazy<IEnumerable<Type>> _inputReaderTypes = new Lazy<IEnumerable<Type>>(() =>
-            from p in typeof(IInputReader).Assembly.GetExportedTypes()
-            where p.IsClass && !p.IsAbstract && typeof(IInputReader).IsAssignableFrom(p)
-            select p
+            //from p in typeof(IInputReader).Assembly.GetExportedTypes()
+            //where p.IsClass && !p.IsAbstract && typeof(IInputReader).IsAssignableFrom(p)
+            //select p
+            DiscoverDerivedTypes<IInputReader>()
         );
 
         private static readonly Lazy<IEnumerable<Type>> _outputWriterTypes = new Lazy<IEnumerable<Type>>(() =>
-            from p in typeof(IOutputWriter).Assembly.GetExportedTypes()
-            where p.IsClass && !p.IsAbstract && typeof(IOutputWriter).IsAssignableFrom(p)
-            select p
+            //from p in typeof(IOutputWriter).Assembly.GetExportedTypes()
+            //where p.IsClass && !p.IsAbstract && typeof(IOutputWriter).IsAssignableFrom(p)
+            //select p
+            DiscoverDerivedTypes<IOutputWriter>()
         );
 
         #endregion Private Fields
@@ -169,6 +174,41 @@ namespace Abacuza.JobRunners.Spark.SDK
         #endregion Protected Methods
 
         #region Private Methods
+
+        private static IEnumerable<Type> DiscoverDerivedTypes<T>(Type attributeType = null)
+        {
+            var types = new List<Type>();
+            var path = Path.GetDirectoryName(typeof(SparkRunnerBase).Assembly.Location);
+            Console.WriteLine($"*** Discovering Path: {path}");
+            var assemblyFiles = Directory.EnumerateFiles(path, "*.dll", SearchOption.AllDirectories);
+            foreach (var assemblyFile in assemblyFiles)
+            {
+                if (Path.GetFileName(assemblyFile).StartsWith("System"))
+                {
+                    continue;
+                }
+
+                try
+                {
+                    var assembly = Assembly.LoadFrom(assemblyFile);
+                    var query = from p in assembly.GetExportedTypes()
+                                where p.IsClass && !p.IsAbstract && typeof(T).IsAssignableFrom(p)
+                                select p;
+                    if (attributeType != null)
+                    {
+                        query = query.Where(p => p.IsDefined(attributeType, false));
+                    }
+
+                    types.AddRange(query);
+                }
+                catch
+                {
+
+                }
+            }
+
+            return types;
+        }
 
         private static IInputEndpoint CreateInputEndpoint(string inputEndpointName, string inputEndpointSettings)
         {

@@ -53,7 +53,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Abacuza.JobRunners.Spark.SD
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Abacuza.JobRunners.Spark.Sample", "job-runners\Abacuza.JobRunners.Spark.Sample\Abacuza.JobRunners.Spark.Sample.csproj", "{C7423EF1-EC2B-4179-AA6E-B92241C70822}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Abacuza.Endpoints.Output", "endpoints\Abacuza.Endpoints.Output\Abacuza.Endpoints.Output.csproj", "{8364BF4A-3326-40EE-A25B-61082B1DF853}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Abacuza.Endpoints.Output", "endpoints\Abacuza.Endpoints.Output\Abacuza.Endpoints.Output.csproj", "{8364BF4A-3326-40EE-A25B-61082B1DF853}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Abacuza.JobRunners.Spark.SDK.IO", "job-runners\Abacuza.JobRunners.Spark.SDK.IO\Abacuza.JobRunners.Spark.SDK.IO.csproj", "{C851CD28-986B-47F1-AC4B-1025392C80C3}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -269,6 +271,18 @@ Global
 		{8364BF4A-3326-40EE-A25B-61082B1DF853}.Release|x64.Build.0 = Release|Any CPU
 		{8364BF4A-3326-40EE-A25B-61082B1DF853}.Release|x86.ActiveCfg = Release|Any CPU
 		{8364BF4A-3326-40EE-A25B-61082B1DF853}.Release|x86.Build.0 = Release|Any CPU
+		{C851CD28-986B-47F1-AC4B-1025392C80C3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C851CD28-986B-47F1-AC4B-1025392C80C3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C851CD28-986B-47F1-AC4B-1025392C80C3}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{C851CD28-986B-47F1-AC4B-1025392C80C3}.Debug|x64.Build.0 = Debug|Any CPU
+		{C851CD28-986B-47F1-AC4B-1025392C80C3}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{C851CD28-986B-47F1-AC4B-1025392C80C3}.Debug|x86.Build.0 = Debug|Any CPU
+		{C851CD28-986B-47F1-AC4B-1025392C80C3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C851CD28-986B-47F1-AC4B-1025392C80C3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C851CD28-986B-47F1-AC4B-1025392C80C3}.Release|x64.ActiveCfg = Release|Any CPU
+		{C851CD28-986B-47F1-AC4B-1025392C80C3}.Release|x64.Build.0 = Release|Any CPU
+		{C851CD28-986B-47F1-AC4B-1025392C80C3}.Release|x86.ActiveCfg = Release|Any CPU
+		{C851CD28-986B-47F1-AC4B-1025392C80C3}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -291,6 +305,7 @@ Global
 		{A843C980-4075-4596-9F71-7D890AD216C9} = {757F3BA8-A0EB-454C-8C04-37CE22C1D30F}
 		{C7423EF1-EC2B-4179-AA6E-B92241C70822} = {757F3BA8-A0EB-454C-8C04-37CE22C1D30F}
 		{8364BF4A-3326-40EE-A25B-61082B1DF853} = {3E0E2EDE-2055-4D03-A348-BB37A4BE904F}
+		{C851CD28-986B-47F1-AC4B-1025392C80C3} = {757F3BA8-A0EB-454C-8C04-37CE22C1D30F}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {37762C87-D4E9-4C03-9476-E519F44ED3D1}

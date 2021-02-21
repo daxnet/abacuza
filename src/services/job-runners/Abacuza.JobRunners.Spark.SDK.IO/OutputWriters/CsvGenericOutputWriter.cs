@@ -1,11 +1,12 @@
 ﻿using Abacuza.Endpoints;
 using Abacuza.Endpoints.Output;
+using Abacuza.JobRunners.Spark.SDK.OutputWriters;
 using Microsoft.Spark.Sql;
 using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace Abacuza.JobRunners.Spark.SDK.OutputWriters
+namespace Abacuza.JobRunners.Spark.SDK.IO.OutputWriters
 {
     public class CsvGenericOutputWriter : OutputWriter<CsvGenericOutputEndpoint>
     {

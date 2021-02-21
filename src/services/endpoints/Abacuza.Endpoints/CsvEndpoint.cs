@@ -49,7 +49,7 @@ namespace Abacuza.Endpoints
 
         [Checkbox("chkHeader",
                     "Header",
-                    DefaultValue = "false",
+                    DefaultValue = "true",
                     Ordinal = 187,
                     Tooltip = "Specifies whether the first line is for the names of columns.")]
         public bool Header { get; set; }

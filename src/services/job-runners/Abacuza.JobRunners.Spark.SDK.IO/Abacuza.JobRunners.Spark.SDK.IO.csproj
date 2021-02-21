@@ -1,0 +1,15 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <AssemblyVersion>0.999.0</AssemblyVersion>
+    <FileVersion>0.999.0</FileVersion>
+    <TargetFramework>netstandard2.1</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\endpoints\Abacuza.Endpoints.Input\Abacuza.Endpoints.Input.csproj" />
+    <ProjectReference Include="..\..\endpoints\Abacuza.Endpoints.Output\Abacuza.Endpoints.Output.csproj" />
+    <ProjectReference Include="..\Abacuza.JobRunners.Spark.SDK\Abacuza.JobRunners.Spark.SDK.csproj" />
+  </ItemGroup>
+
+</Project>

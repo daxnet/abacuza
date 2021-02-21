@@ -12,11 +12,13 @@
 // ==============================================================
 
 using Abacuza.Endpoints.Input;
+using Abacuza.JobRunners.Spark.SDK;
+using Abacuza.JobRunners.Spark.SDK.InputReaders;
 using Microsoft.Spark.Sql;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Abacuza.JobRunners.Spark.SDK.InputReaders
+namespace Abacuza.JobRunners.Spark.SDK.IO.InputReaders
 {
     /// <summary>
     /// Represents the input reader that reads CSV files from the input endpoint.

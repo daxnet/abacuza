@@ -14,11 +14,9 @@
 namespace Abacuza.Endpoints
 {
     /// <summary>
-    /// Represents that the implemented classes are input endpoints.
+    /// Represents that the implemented classes are input endpoints that contain
+    /// the connection information to the external data sources.
     /// </summary>
-    /// <remarks>This is only a type placeholder for describing
-    /// that the implemented classes are input endpoints, no special
-    /// members in this interface.</remarks>
     public interface IInputEndpoint : IEndpoint
     {
     }

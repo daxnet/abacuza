@@ -20,13 +20,31 @@ using System.Reflection;
 
 namespace Abacuza.Endpoints
 {
+    /// <summary>
+    /// Represents the base class for endpoints.
+    /// </summary>
+    /// <seealso cref="Abacuza.Endpoints.IEndpoint" />
     public abstract class Endpoint : IEndpoint
     {
+
         #region Public Properties
 
+        /// <summary>
+        /// Gets or sets the additional options.
+        /// </summary>
+        /// <value>
+        /// The additional options.
+        /// </value>
         [TextArea("additionalOptions", "Additional options", Ordinal = -1)]
         public string AdditionalOptions { get; set; }
 
+        /// <summary>
+        /// Gets the configuration UI elements that provide the UI capabilities for users
+        /// to configure the endpoint.
+        /// </summary>
+        /// <value>
+        /// The configuration UI elements.
+        /// </value>
         public IEnumerable<IEnumerable<KeyValuePair<string, object>>> ConfigurationUIElements
         {
             get
@@ -72,10 +90,38 @@ namespace Abacuza.Endpoints
             }
         }
 
+        /// <summary>
+        /// Gets the description of the endpoint.
+        /// </summary>
+        /// <value>
+        /// The description of the endpoint.
+        /// </value>
         public string Description => EndpointAttribute?.Description;
+
+        /// <summary>
+        /// Gets the display name of the endpoint.
+        /// </summary>
+        /// <value>
+        /// The display name of the endpoint.
+        /// </value>
         public string DisplayName => EndpointAttribute?.DisplayName;
+
+        /// <summary>
+        /// Gets the name of the endpoint.
+        /// </summary>
+        /// <value>
+        /// The name of the endpoint.
+        /// </value>
         public string Name => EndpointAttribute?.Name;
+
+        /// <summary>
+        /// Gets the endpoint type.
+        /// </summary>
+        /// <value>
+        /// The type of the endpoint.
+        /// </value>
         public EndpointType Type => EndpointAttribute?.Type ?? EndpointType.None;
+
         #endregion Public Properties
 
         #region Private Properties
@@ -85,29 +131,16 @@ namespace Abacuza.Endpoints
 
         #endregion Private Properties
 
-        #region Private Methods
+        #region Public Methods
 
-        private static object ConvertStringValueToObject(string stringValue, Type type) => type.Name switch
-        {
-            "Int32" => Convert.ToInt32(stringValue),
-            "Int16" => Convert.ToInt16(stringValue),
-            "Int64" => Convert.ToInt64(stringValue),
-            "Boolean" => Convert.ToBoolean(stringValue),
-            "Single" => Convert.ToSingle(stringValue),
-            "Double" => Convert.ToDouble(stringValue),
-            "String" => stringValue,
-            _ => stringValue
-        };
-
-        private static string GetNormalizedAttributeName(Type attributeType)
-        {
-            return attributeType.Name.Remove(attributeType.Name.IndexOf("Attribute"));
-        }
-
+        /// <summary>
+        /// Applies the specified JSON setting value to the current endpoint.
+        /// </summary>
+        /// <param name="settings">The JSON setting to be applied to the current endpoint.</param>
         public void ApplySettings(string settings)
         {
             var settingsArray = JArray.Parse(settings);
-            foreach(var jobj in settingsArray)
+            foreach (var jobj in settingsArray)
             {
                 var id = jobj["id"].ToObject<string>();
                 var name = id.Substring(id.LastIndexOf('.') + 1, id.Length - id.LastIndexOf('.') - 1);
@@ -132,12 +165,29 @@ namespace Abacuza.Endpoints
             }
         }
 
-        #endregion Private Methods
-
-        #region Public Methods
-
         public override string ToString() => Name;
 
         #endregion Public Methods
+
+        #region Private Methods
+
+        private static object ConvertStringValueToObject(string stringValue, Type type) => type.Name switch
+        {
+            "Int32" => Convert.ToInt32(stringValue),
+            "Int16" => Convert.ToInt16(stringValue),
+            "Int64" => Convert.ToInt64(stringValue),
+            "Boolean" => Convert.ToBoolean(stringValue),
+            "Single" => Convert.ToSingle(stringValue),
+            "Double" => Convert.ToDouble(stringValue),
+            "String" => stringValue,
+            _ => stringValue
+        };
+
+        private static string GetNormalizedAttributeName(Type attributeType)
+        {
+            return attributeType.Name.Remove(attributeType.Name.IndexOf("Attribute"));
+        }
+
+        #endregion Private Methods
     }
 }

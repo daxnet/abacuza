@@ -1,10 +1,12 @@
 ﻿using Abacuza.Endpoints.Input;
+using Abacuza.JobRunners.Spark.SDK;
+using Abacuza.JobRunners.Spark.SDK.InputReaders;
 using Microsoft.Spark.Sql;
 using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace Abacuza.JobRunners.Spark.SDK.InputReaders
+namespace Abacuza.JobRunners.Spark.SDK.IO.InputReaders
 {
     /// <summary>
     /// Represents the input reader that reads data from Microsoft SQL Server.
@@ -14,7 +16,9 @@ namespace Abacuza.JobRunners.Spark.SDK.InputReaders
     /// </remarks>
     public sealed class SqlServerDataTableInputReader : InputReader<SqlServerDataTableInputEndpoint>
     {
-        protected override DataFrame ReadFromInternal(SparkSession sparkSession, SqlServerDataTableInputEndpoint inputEndpoint, ProjectContext projectContext)
+        protected override DataFrame ReadFromInternal(SparkSession sparkSession, 
+            SqlServerDataTableInputEndpoint inputEndpoint, 
+            ProjectContext projectContext)
         {
             return sparkSession.Read()
                 .Format("jdbc")

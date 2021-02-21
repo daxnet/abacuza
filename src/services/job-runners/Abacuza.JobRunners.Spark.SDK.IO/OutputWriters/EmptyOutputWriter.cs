@@ -12,9 +12,10 @@
 // ==============================================================
 
 using Abacuza.Endpoints.Output;
+using Abacuza.JobRunners.Spark.SDK.OutputWriters;
 using Microsoft.Spark.Sql;
 
-namespace Abacuza.JobRunners.Spark.SDK.OutputWriters
+namespace Abacuza.JobRunners.Spark.SDK.IO.OutputWriters
 {
     /// <summary>
     /// Represents the output writer that doesn't write anything out.
