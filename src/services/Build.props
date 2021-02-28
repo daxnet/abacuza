@@ -1,0 +1,7 @@
+<Project>
+  <PropertyGroup>
+    <AbacuzaPackageVersion>0.999.0-dev</AbacuzaPackageVersion>
+    <AbacuzaAssemblyVersion>0.999.0.0</AbacuzaAssemblyVersion>
+    <AbacuzaAssemblyFileVersion>0.999.0.0</AbacuzaAssemblyFileVersion>
+  </PropertyGroup>
+</Project>

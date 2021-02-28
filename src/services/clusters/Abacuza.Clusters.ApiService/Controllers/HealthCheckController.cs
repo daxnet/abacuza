@@ -19,7 +19,7 @@ namespace Abacuza.Clusters.ApiService.Controllers
         public IActionResult Get()
             => Ok(new
             {
-                version = Assembly.GetExecutingAssembly().GetName().Version.ToString()
+                version = Assembly.GetExecutingAssembly().GetName().Version!.ToString()
             });
     }
 }

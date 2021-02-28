@@ -16,7 +16,7 @@ namespace Abacuza.Clusters.ApiService.Models
         /// <summary>
         /// Gets or sets the local ID of the job.
         /// </summary>
-        public string LocalJobId { get; set; }
+        public string LocalJobId { get; set; } = string.Empty;
 
         /// <summary>
         /// Gets or sets the job state.
@@ -39,6 +39,6 @@ namespace Abacuza.Clusters.ApiService.Models
         /// Gets or sets the error message whether indicates the error
         /// when retrieving the job status.
         /// </summary>
-        public string ErrorMessage { get; set; }
+        public string? ErrorMessage { get; set; }
     }
 }

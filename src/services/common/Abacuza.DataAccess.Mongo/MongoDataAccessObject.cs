@@ -52,7 +52,7 @@ namespace Abacuza.DataAccess.Mongo
         public async Task<IEnumerable<TObject>> GetAllAsync<TObject>() where TObject : IEntity
             => await FindBySpecificationAsync<TObject>(_ => true);
 
-        public async Task<TObject> GetByIdAsync<TObject>(Guid id) where TObject : IEntity
+        public async Task<TObject?> GetByIdAsync<TObject>(Guid id) where TObject : IEntity
             => (await FindBySpecificationAsync<TObject>(x => x.Id.Equals(id))).FirstOrDefault();
 
         public async Task UpdateByIdAsync<TObject>(Guid id, TObject entity)
@@ -98,10 +98,10 @@ namespace Abacuza.DataAccess.Mongo
                 {
                     if (typeof(TObject).IsInterface && typeof(TObject).Name.StartsWith("I"))
                     {
-                        return typeof(TObject).Name.Substring(1).Pluralize();
+                        return typeof(TObject).Name[1..].Pluralize()!;
                     }
 
-                    name = typeof(TObject).Name.Pluralize();
+                    name = typeof(TObject).Name.Pluralize()!;
                 }
 
                 _normalizedCollectionNames[typeof(TObject)] = name;

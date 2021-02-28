@@ -46,13 +46,16 @@ namespace Abacuza.Clusters.ApiService.Controllers
             foreach (var clusterConnectionEntity in clusterConnectionEntities)
             {
                 var clusterConnection = clusterConnectionEntity.Create(clusterImplementation.ConnectionType);
-                var state = await clusterImplementation.GetStateAsync(clusterConnection);
-
-                _logger.LogDebug($"Cluster connection: {clusterConnectionEntity.Name}, State: {state}");
-
-                if (state == ClusterState.Online)
+                if (clusterConnection != null)
                 {
-                    availableClusters.Add((clusterImplementation, clusterConnection));
+                    var state = await clusterImplementation.GetStateAsync(clusterConnection);
+
+                    _logger.LogDebug($"Cluster connection: {clusterConnectionEntity.Name}, State: {state}");
+
+                    if (state == ClusterState.Online)
+                    {
+                        availableClusters.Add((clusterImplementation, clusterConnection));
+                    }
                 }
             }
 
@@ -124,28 +127,31 @@ namespace Abacuza.Clusters.ApiService.Controllers
                 }
 
                 var connection = clusterConnectionEntity.Create(cluster.ConnectionType);
-                foreach (var localJobId in requestItem.LocalJobIdentifiers)
+                if (connection != null)
                 {
-                    var responseItem = new GetJobStatusesResponseItem
+                    foreach (var localJobId in requestItem.LocalJobIdentifiers)
                     {
-                        ConnectionId = requestItem.ConnectionId,
-                        LocalJobId = localJobId
-                    };
+                        var responseItem = new GetJobStatusesResponseItem
+                        {
+                            ConnectionId = requestItem.ConnectionId,
+                            LocalJobId = localJobId
+                        };
 
-                    try
-                    {
-                        var localJob = await cluster.GetJobAsync(connection, localJobId);
-                        responseItem.Succeeded = true;
-                        responseItem.State = localJob.State;
-                        responseItem.Logs = localJob.Logs;
-                    }
-                    catch (Exception ex)
-                    {
-                        responseItem.Succeeded = false;
-                        responseItem.ErrorMessage = ex.ToString();
-                    }
+                        try
+                        {
+                            var localJob = await cluster.GetJobAsync(connection, localJobId);
+                            responseItem.Succeeded = true;
+                            responseItem.State = localJob.State;
+                            responseItem.Logs = localJob.Logs;
+                        }
+                        catch (Exception ex)
+                        {
+                            responseItem.Succeeded = false;
+                            responseItem.ErrorMessage = ex.ToString();
+                        }
 
-                    response.Add(responseItem);
+                        response.Add(responseItem);
+                    }
                 }
             }
 

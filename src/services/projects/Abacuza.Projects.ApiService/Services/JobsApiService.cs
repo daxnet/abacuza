@@ -8,7 +8,7 @@
 //
 // Data Processing Platform
 // Copyright 2020-2021 by daxnet. All rights reserved.
-// Licensed under LGPL-v3
+// Apache License Version 2.0
 // ==============================================================
 
 using Abacuza.Common;
@@ -49,7 +49,7 @@ namespace Abacuza.Projects.ApiService.Services
 
         #region Internal Methods
 
-        internal async Task<IEnumerable<string>> GetJobLogsBySubmissionName(string submissionName, CancellationToken cancellationToken = default)
+        internal async Task<IEnumerable<string>?> GetJobLogsBySubmissionName(string submissionName, CancellationToken cancellationToken = default)
         {
             var url = new Uri(_jobsApiBaseUri, $"api/jobs/submissions/{submissionName}");
             using var responseMessage = await _httpClient.GetAsync(url, cancellationToken);
@@ -58,7 +58,7 @@ namespace Abacuza.Projects.ApiService.Services
             {
                 var result = await responseMessage.Content.ReadAsStringAsync(cancellationToken);
                 var responseObject = JObject.Parse(result);
-                var logs = responseObject["logs"].ToObject<List<string>>();
+                var logs = responseObject["logs"]?.ToObject<List<string>>();
                 return logs;
             }
             catch(Exception ex)
@@ -78,18 +78,18 @@ namespace Abacuza.Projects.ApiService.Services
             var binaries = jsonObj["binaryFiles"]?.ToObject<List<S3File>>();
             var jobRunner = new JobRunner
             (
-                Guid.Parse(jsonObj["id"]?.Value<string>()),
-                jsonObj["name"]?.Value<string>(),
-                jsonObj["description"]?.Value<string>(),
-                jsonObj["clusterType"]?.Value<string>(),
-                jsonObj["payloadTemplate"]?.Value<string>(),
+                Guid.Parse(jsonObj["id"]!.Value<string>()),
+                jsonObj["name"]!.Value<string>(),
+                jsonObj["description"]!.Value<string>(),
+                jsonObj["clusterType"]!.Value<string>(),
+                jsonObj["payloadTemplate"]!.Value<string>(),
                 binaries
             );
 
             return jobRunner;
         }
 
-        internal async Task<IEnumerable<Job>> GetJobsBySubmissionNames(IEnumerable<string> submissionNames, CancellationToken cancellationToken = default)
+        internal async Task<IEnumerable<Job>> GetJobsBySubmissionNames(IEnumerable<string?> submissionNames, CancellationToken cancellationToken = default)
         {
             var url = new Uri(_jobsApiBaseUri, "api/jobs/submissions");
             var payload = JsonConvert.SerializeObject(submissionNames);

@@ -19,7 +19,7 @@ namespace Abacuza.JobSchedulers.Models
         public IJob NewJob(TriggerFiredBundle bundle, IScheduler scheduler)
         {
             var jobDetail = bundle.JobDetail;
-            return (IJob)_serviceProvider.GetService(jobDetail.JobType);
+            return (IJob)_serviceProvider.GetService(jobDetail.JobType)!;
         }
 
         public void ReturnJob(IJob job)

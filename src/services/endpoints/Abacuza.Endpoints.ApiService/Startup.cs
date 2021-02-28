@@ -115,8 +115,11 @@ namespace Abacuza.Endpoints.ApiService
                 foreach (var endpointType in types
                     .Where(t => typeof(IEndpoint).IsAssignableFrom(t) && !t.IsAbstract))
                 {
-                    var endpoint = (IEndpoint)Activator.CreateInstance(endpointType);
-                    endpoints.Add(endpoint);
+                    var endpoint = (IEndpoint?)Activator.CreateInstance(endpointType);
+                    if (endpoint != null)
+                    {
+                        endpoints.Add(endpoint);
+                    }
                 }
             }
 

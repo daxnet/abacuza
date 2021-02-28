@@ -45,12 +45,12 @@ namespace Abacuza.Clusters.ApiService.Models
         /// Gets or sets the type of the cluster that the current cluster connection entity is used for.
         /// </summary>
         [Required]
-        public string ClusterType { get; set; }
+        public string ClusterType { get; set; } = string.Empty;
 
         /// <summary>
         /// Gets or sets the description of the cluster connection entity.
         /// </summary>
-        public string Description { get; set; }
+        public string? Description { get; set; }
 
         /// <summary>
         /// Gets or sets the id of the cluster connection entity.
@@ -61,11 +61,11 @@ namespace Abacuza.Clusters.ApiService.Models
         /// Gets or sets the name of the cluster connection entity.
         /// </summary>
         [Required]
-        public string Name { get; set; }
+        public string Name { get; set; } = string.Empty;
         /// <summary>
         /// Gets or sets a JSON serialized string of the cluster connection.
         /// </summary>
-        public string Settings { get; set; }
+        public string? Settings { get; set; }
 
         public TClusterConnection Create<TClusterConnection>()
             where TClusterConnection : IClusterConnection, new()
@@ -78,20 +78,33 @@ namespace Abacuza.Clusters.ApiService.Models
                 Id = Id
             };
 
-            result.DeserializeConfiguration(Settings);
+            if (!string.IsNullOrEmpty(Settings))
+            {
+                result.DeserializeConfiguration(Settings);
+            }
+
             return result;
         }
 
-        public IClusterConnection Create(Type clusterConnectionType)
+        public IClusterConnection? Create(Type clusterConnectionType)
         {
-            var result = (IClusterConnection)Activator.CreateInstance(clusterConnectionType);
-            result.ClusterType = ClusterType;
-            result.Description = Description;
-            result.Name = Name;
-            result.Id = Id;
-            result.DeserializeConfiguration(Settings);
+            var result = (IClusterConnection?)Activator.CreateInstance(clusterConnectionType);
+            if (result != null)
+            {
+                result.ClusterType = ClusterType;
+                result.Description = Description;
+                result.Name = Name;
+                result.Id = Id;
 
-            return result;
+                if (!string.IsNullOrEmpty(Settings))
+                {
+                    result.DeserializeConfiguration(Settings);
+                }
+
+                return result;
+            }
+
+            return null;
         }
 
         public override string ToString() => Name;

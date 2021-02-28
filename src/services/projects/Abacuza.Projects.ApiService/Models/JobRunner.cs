@@ -8,7 +8,7 @@
 //
 // Data Processing Platform
 // Copyright 2020-2021 by daxnet. All rights reserved.
-// Licensed under LGPL-v3
+// Apache License Version 2.0
 // ==============================================================
 
 using Abacuza.Common.Models;
@@ -25,5 +25,5 @@ namespace Abacuza.Projects.ApiService.Models
         string Description,
         string ClusterType,
         string PayloadTemplate,
-        IEnumerable<S3File> BinaryFiles);
+        IEnumerable<S3File>? BinaryFiles);
 }

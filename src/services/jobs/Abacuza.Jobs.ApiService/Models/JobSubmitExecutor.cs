@@ -8,7 +8,7 @@
 //
 // Data Processing Platform
 // Copyright 2020-2021 by daxnet. All rights reserved.
-// Licensed under LGPL-v3
+// Apache License Version 2.0
 // ==============================================================
 
 using Abacuza.Common.DataAccess;
@@ -39,8 +39,14 @@ namespace Abacuza.JobSchedulers.Models
         public async Task Execute(IJobExecutionContext context)
         {
             var jobName = context?.JobDetail?.Key?.Name;
+            
+            if (string.IsNullOrEmpty(jobName))
+            {
+                _logger.LogError("No name defined on the JobDetail.");
+                return;
+            }
 
-            if (!context.MergedJobDataMap.ContainsKey("clusterType"))
+            if (!context?.MergedJobDataMap.ContainsKey("clusterType") ?? true)
             {
                 _logger.LogError($"Failed to start the job, the clusterType is not specified in the job data. Execution ID: {jobName}");
                 return;
@@ -48,11 +54,11 @@ namespace Abacuza.JobSchedulers.Models
 
             try
             {
-                var clusterType = context.MergedJobDataMap["clusterType"].ToString();
+                var clusterType = context?.MergedJobDataMap["clusterType"].ToString()!;
                 IDictionary<string, object> properties;
-                if (context.MergedJobDataMap.ContainsKey("properties"))
+                if (context?.MergedJobDataMap.ContainsKey("properties") ?? false)
                 {
-                    properties = context.MergedJobDataMap["properties"] as IDictionary<string, object>;
+                    properties = context.MergedJobDataMap["properties"] as IDictionary<string, object> ?? new Dictionary<string, object>();
                 }
                 else
                 {
@@ -61,7 +67,7 @@ namespace Abacuza.JobSchedulers.Models
 
                 _logger.LogInformation($"Submitting job, Execution ID: {jobName}, Cluster Type: {clusterType}");
 
-                var jobEntity = await _clusterService.SubmitJobAsync(clusterType, properties, context.CancellationToken);
+                var jobEntity = await _clusterService.SubmitJobAsync(clusterType, properties, context?.CancellationToken ?? default);
 
                 if (jobEntity.State == JobState.Created)
                 {

@@ -15,7 +15,7 @@ namespace Abacuza.Clusters.Common
         /// <typeparam name="T">The type of the cluster connection.</typeparam>
         /// <param name="clusterConnection">The cluster connection.</param>
         /// <returns>The generic typed cluster connection instance.</returns>
-        public static T As<T>(this IClusterConnection clusterConnection)
+        public static T? As<T>(this IClusterConnection clusterConnection)
             where T : class, IClusterConnection => clusterConnection is T result ? result : null;
     }
 }

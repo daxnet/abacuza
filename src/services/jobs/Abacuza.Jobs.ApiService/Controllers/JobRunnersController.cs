@@ -8,7 +8,7 @@
 //
 // Data Processing Platform
 // Copyright 2020-2021 by daxnet. All rights reserved.
-// Licensed under LGPL-v3
+// Apache License Version 2.0
 // ==============================================================
 
 using Abacuza.Common.DataAccess;
@@ -113,7 +113,7 @@ namespace Abacuza.Jobs.ApiService.Controllers
             var denormalizedFile = HttpUtility.UrlDecode(file);
 
             var s3File = new S3File(denormalizedBucket, denormalizedKey, denormalizedFile);
-            var existingFile = updatingEntity.BinaryFiles?.FirstOrDefault(f => f.Equals(s3File));
+            var existingFile = updatingEntity.BinaryFiles.FirstOrDefault(f => f.Equals(s3File));
             if (existingFile == null)
             {
                 return BadRequest($"The specified file doesn't exist in the binary files list of the given job runner.");

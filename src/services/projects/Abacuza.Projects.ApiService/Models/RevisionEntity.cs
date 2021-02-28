@@ -8,7 +8,7 @@
 //
 // Data Processing Platform
 // Copyright 2020-2021 by daxnet. All rights reserved.
-// Licensed under LGPL-v3
+// Apache License Version 2.0
 // ==============================================================
 
 using Abacuza.Common;
@@ -35,7 +35,7 @@ namespace Abacuza.Projects.ApiService.Models
         /// <summary>
         /// Gets or sets the name of the job submission.
         /// </summary>
-        public string JobSubmissionName { get; set; }
+        public string? JobSubmissionName { get; set; }
 
         /// <summary>
         /// Gets or sets the id of the project to which the current revision

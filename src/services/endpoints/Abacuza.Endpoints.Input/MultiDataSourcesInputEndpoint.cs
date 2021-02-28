@@ -8,7 +8,7 @@
 //
 // Data Processing Platform
 // Copyright 2020-2021 by daxnet. All rights reserved.
-// Licensed under LGPL-v3
+// Apache License Version 2.0
 // ==============================================================
 
 using Abacuza.Common.UIComponents;
@@ -28,7 +28,7 @@ namespace Abacuza.Endpoints.Input
         /// Gets or sets the JSON text that contains the settings of multiple data sources.
         /// </summary>
         [JsonTextArea("txtDataSourceSettings", "Data source settings")]
-        public string Json { get; set; }
+        public string? Json { get; set; }
 
         #endregion Public Properties
     }

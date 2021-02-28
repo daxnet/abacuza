@@ -1,6 +1,18 @@
-﻿using System;
+﻿// ==============================================================
+//           _
+//     /\   | |
+//    /  \  | |__ __ _ ___ _ _ ______ _
+//   / /\ \ | '_ \ / _` |/ __| | | |_  / _` |
+//  / ____ \| |_) | (_| | (__| |_| |/ / (_| |
+// /_/    \_\_.__/ \__,_|\___|\__,_/___\__,_|
+//
+// Data Processing Platform
+// Copyright 2020-2021 by daxnet. All rights reserved.
+// Apache License Version 2.0
+// ==============================================================
+
+using System;
 using System.Collections.Generic;
-using System.Text;
 
 namespace Abacuza.Clusters.Common
 {
@@ -10,16 +22,17 @@ namespace Abacuza.Clusters.Common
     /// </summary>
     public class ClusterJob
     {
-        public ClusterJob()
-        {
+        #region Public Constructors
 
-        }
+        public ClusterJob() => LocalJobId = string.Empty;
 
         public ClusterJob(Guid connectionId, string localJobId)
         {
             ConnectionId = connectionId;
             LocalJobId = localJobId;
         }
+
+        #endregion Public Constructors
 
         #region Public Properties
 
@@ -31,6 +44,12 @@ namespace Abacuza.Clusters.Common
         /// </value>
         public Guid ConnectionId { get; set; }
 
+        /// <summary>
+        /// Gets the identifier.
+        /// </summary>
+        /// <value>
+        /// The identifier.
+        /// </value>
         public string Id => $"{ConnectionId}.{LocalJobId}";
 
         /// <summary>
@@ -42,18 +61,17 @@ namespace Abacuza.Clusters.Common
         /// </value>
         public string LocalJobId { get; set; }
 
+        public List<string> Logs { get; set; } = new List<string>();
+
         /// <summary>
         /// Gets or sets the name of the current job.
         /// </summary>
         /// <value>
         /// The name.
         /// </value>
-        public string Name { get; set; }
+        public string? Name { get; set; }
 
         public ClusterJobState State { get; set; }
-
-        public List<string> Logs { get; set; } = new List<string>();
-
 
         #endregion Public Properties
 
@@ -74,7 +92,5 @@ namespace Abacuza.Clusters.Common
         public override string ToString() => Id;
 
         #endregion Public Methods
-
-
     }
 }

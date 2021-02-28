@@ -14,14 +14,6 @@ namespace Abacuza.Common.DataAccess
         /// <summary>
         /// Initializes a new instance of the <see cref="StorageModelAttribute"/> class.
         /// </summary>
-        public StorageModelAttribute()
-        {
-
-        }
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="StorageModelAttribute"/> class.
-        /// </summary>
         /// <param name="tableName">Name of the table that the decorated class will be mapped to.</param>
         public StorageModelAttribute(string tableName)
         {

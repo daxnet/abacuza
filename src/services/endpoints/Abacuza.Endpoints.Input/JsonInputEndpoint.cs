@@ -13,6 +13,6 @@ namespace Abacuza.Endpoints.Input
     public sealed class JsonInputEndpoint : Endpoint, IInputEndpoint
     {
         [FilePicker("fpJsonFiles", "JSON Files", AllowedExtensions = ".json", AllowMultipleSelection = true, Tooltip = "Choose JSON files.")]
-        public List<S3File> Files { get; set; }
+        public List<S3File>? Files { get; set; }
     }
 }

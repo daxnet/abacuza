@@ -8,7 +8,7 @@
 //
 // Data Processing Platform
 // Copyright 2020-2021 by daxnet. All rights reserved.
-// Licensed under LGPL-v3
+// Apache License Version 2.0
 // ==============================================================
 
 using System;
@@ -32,6 +32,6 @@ namespace Abacuza.Projects.ApiService.Models
         /// <summary>
         /// Gets the name of the job status.
         /// </summary>
-        public string JobStatusName => Enum.GetName(typeof(JobState), State);
+        public string? JobStatusName => Enum.GetName(typeof(JobState), State);
     }
 }

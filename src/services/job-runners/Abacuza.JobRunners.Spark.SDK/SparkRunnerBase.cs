@@ -8,7 +8,7 @@
 //
 // Data Processing Platform
 // Copyright 2020-2021 by daxnet. All rights reserved.
-// Licensed under LGPL-v3
+// Apache License Version 2.0
 // ==============================================================
 
 using Abacuza.Endpoints;
@@ -175,7 +175,7 @@ namespace Abacuza.JobRunners.Spark.SDK
 
         #region Private Methods
 
-        private static IEnumerable<Type> DiscoverDerivedTypes<T>(Type attributeType = null)
+        private static IEnumerable<Type> DiscoverDerivedTypes<T>(Type? attributeType = null)
         {
             var types = new List<Type>();
             var path = Path.GetDirectoryName(typeof(SparkRunnerBase).Assembly.Location);
@@ -292,11 +292,11 @@ namespace Abacuza.JobRunners.Spark.SDK
                 return true;
             }
 
-            value = null;
+            value = string.Empty;
             return false;
         }
 
-        private static bool TryParseSparkConfig(string[] args, out SparkConf conf)
+        private static bool TryParseSparkConfig(string[] args, out SparkConf? conf)
         {
             var configEntries = args.Where(a => a.StartsWith("config:", StringComparison.InvariantCultureIgnoreCase))
                 .Select(a =>

@@ -18,7 +18,7 @@ namespace Abacuza.Common
         /// <summary>
         /// The <see cref="PagedResult"/> instance which represents the empty value.
         /// </summary>
-        public static readonly PagedResult<T> Empty = new PagedResult<T>(null, 0, 0, 0, 0);
+        public static readonly PagedResult<T> Empty = new PagedResult<T>(new List<T>(), 0, 0, 0, 0);
         #endregion
 
         #region Ctor        
@@ -32,11 +32,7 @@ namespace Abacuza.Common
         /// <param name="totalPages">The total pages.</param>
         public PagedResult(IEnumerable<T> source, int pageNumber, int pageSize, long totalRecords, long totalPages)
         {
-            if (source != null)
-            {
-                this._entities.AddRange(source);
-            }
-
+            this._entities.AddRange(source);
             this.PageNumber = pageNumber;
             this.PageSize = pageSize;
             this.TotalRecords = totalRecords;
