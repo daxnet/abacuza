@@ -13,6 +13,7 @@ using System.Threading.Tasks;
 
 namespace Abacuza.Clusters.Tests
 {
+#nullable disable
     public class ClusterConnectionsControllerTests
     {
         private IDataAccessObject _dao;

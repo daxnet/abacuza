@@ -8,7 +8,7 @@
 //
 // Data Processing Platform
 // Copyright 2020-2021 by daxnet. All rights reserved.
-// Licensed under LGPL-v3
+// Apache License Version 2.0
 // ==============================================================
 
 using Abacuza.Common.UIComponents;
@@ -36,7 +36,7 @@ namespace Abacuza.Endpoints
         /// The additional options.
         /// </value>
         [TextArea("additionalOptions", "Additional options", Ordinal = -1)]
-        public string AdditionalOptions { get; set; }
+        public string? AdditionalOptions { get; set; }
 
         /// <summary>
         /// Gets the configuration UI elements that provide the UI capabilities for users
@@ -59,7 +59,7 @@ namespace Abacuza.Endpoints
                                             select new { EndpointPropertyName = p.Name, EndpointPropertyType = p.PropertyType, UIComponentAttribute = uiComponentAttribute };
 
 
-                foreach(var attr in uiComponentAttributes)
+                foreach (var attr in uiComponentAttributes)
                 {
                     var properties = new Dictionary<string, object>
                     {
@@ -80,10 +80,14 @@ namespace Abacuza.Endpoints
 
                     if (properties.ContainsKey("DefaultValue") && !string.IsNullOrEmpty(properties["DefaultValue"]?.ToString()))
                     {
-                        properties.Add("DefaultValueObject", ConvertStringValueToObject(properties["DefaultValue"]?.ToString(), attr.EndpointPropertyType));
+                        var objValue = ConvertStringValueToObject(properties["DefaultValue"]?.ToString(), attr.EndpointPropertyType);
+                        if (objValue != null)
+                        {
+                            properties.Add("DefaultValueObject", objValue);
+                        }
                     }
 
-                    result.Add(properties);             
+                    result.Add(properties);
                 }
 
                 return result;
@@ -96,7 +100,7 @@ namespace Abacuza.Endpoints
         /// <value>
         /// The description of the endpoint.
         /// </value>
-        public string Description => EndpointAttribute?.Description;
+        public string? Description => EndpointAttribute?.Description;
 
         /// <summary>
         /// Gets the display name of the endpoint.
@@ -104,7 +108,7 @@ namespace Abacuza.Endpoints
         /// <value>
         /// The display name of the endpoint.
         /// </value>
-        public string DisplayName => EndpointAttribute?.DisplayName;
+        public string DisplayName => EndpointAttribute?.DisplayName ?? throw new ArgumentException("DisplayName is not defined on the EndpointAttribute decoration.");
 
         /// <summary>
         /// Gets the name of the endpoint.
@@ -112,7 +116,7 @@ namespace Abacuza.Endpoints
         /// <value>
         /// The name of the endpoint.
         /// </value>
-        public string Name => EndpointAttribute?.Name;
+        public string Name => EndpointAttribute?.Name ?? throw new ArgumentException("Name is not defined on the EndpointAttribute decoration.");
 
         /// <summary>
         /// Gets the endpoint type.
@@ -126,7 +130,7 @@ namespace Abacuza.Endpoints
 
         #region Private Properties
 
-        private EndpointAttribute EndpointAttribute => this.GetType().IsDefined(typeof(EndpointAttribute), true) ?
+        private EndpointAttribute? EndpointAttribute => this.GetType().IsDefined(typeof(EndpointAttribute), true) ?
                 this.GetType().GetCustomAttribute<EndpointAttribute>() : null;
 
         #endregion Private Properties
@@ -142,9 +146,9 @@ namespace Abacuza.Endpoints
             var settingsArray = JArray.Parse(settings);
             foreach (var jobj in settingsArray)
             {
-                var id = jobj["id"].ToObject<string>();
+                var id = jobj["id"]!.ToObject<string>()!;
                 var name = id.Substring(id.LastIndexOf('.') + 1, id.Length - id.LastIndexOf('.') - 1);
-                var value = jobj["value"].ToObject<object>();
+                var value = jobj["value"]!.ToObject<object>();
                 var property = (from p in this.GetType().GetProperties(BindingFlags.Public | BindingFlags.Instance)
                                 where p.CanWrite && p.GetCustomAttributes().Any(a => a.GetType().IsSubclassOf(typeof(UIComponentAttribute)))
                                 let uiComponentAttribute = p.GetCustomAttributes().First(a => a.GetType().IsSubclassOf(typeof(UIComponentAttribute))) as UIComponentAttribute
@@ -171,7 +175,7 @@ namespace Abacuza.Endpoints
 
         #region Private Methods
 
-        private static object ConvertStringValueToObject(string stringValue, Type type) => type.Name switch
+        private static object? ConvertStringValueToObject(string? stringValue, Type type) => type.Name switch
         {
             "Int32" => Convert.ToInt32(stringValue),
             "Int16" => Convert.ToInt16(stringValue),
@@ -189,5 +193,6 @@ namespace Abacuza.Endpoints
         }
 
         #endregion Private Methods
+
     }
 }

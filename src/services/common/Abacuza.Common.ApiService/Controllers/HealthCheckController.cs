@@ -8,7 +8,7 @@
 //
 // Data Processing Platform
 // Copyright 2020-2021 by daxnet. All rights reserved.
-// Licensed under LGPL-v3
+// Apache License Version 2.0
 // ==============================================================
 
 using Microsoft.AspNetCore.Mvc;
@@ -26,7 +26,7 @@ namespace Abacuza.Common.ApiService.Controllers
         public IActionResult Get()
             => Ok(new
             {
-                version = Assembly.GetExecutingAssembly().GetName().Version.ToString()
+                version = Assembly.GetExecutingAssembly().GetName().Version!.ToString()
             });
 
         #endregion Public Methods

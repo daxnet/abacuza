@@ -76,7 +76,7 @@ namespace Abacuza.Projects.ApiService
             var mongoDatabase = Configuration["mongo:database"];
             var wrapperDao = new MongoDataAccessObject(new MongoUrl(mongoConnectionString), mongoDatabase);
 
-            services.AddTransient<IDataAccessObject>(sp => new DistributedCachedDataAccessObject(sp.GetService<IDistributedCache>(), wrapperDao));
+            services.AddTransient<IDataAccessObject>(sp => new DistributedCachedDataAccessObject(sp.GetService<IDistributedCache>()!, wrapperDao));
         }
 
         private static NewtonsoftJsonPatchInputFormatter GetJsonPatchInputFormatter()

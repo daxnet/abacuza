@@ -28,7 +28,7 @@ namespace Abacuza.Clusters.Common
         /// <value>
         /// The description of the connection.
         /// </value>
-        string Description { get; set; }
+        string? Description { get; set; }
 
         /// <summary>
         /// Gets or sets the type of the cluster for which the current connection is used.

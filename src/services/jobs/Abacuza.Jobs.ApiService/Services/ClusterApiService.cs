@@ -62,15 +62,15 @@ namespace Abacuza.JobSchedulers.Services
                 var failedClusterJob = JObject.Parse(await responseMessage.Content.ReadAsStringAsync(cancellationToken));
                 var failedJobEntity = new JobEntity
                 {
-                    ConnectionId = Guid.Parse(failedClusterJob["connectionId"]?.Value<string>()),
-                    LocalJobId = failedClusterJob["localJobId"]?.Value<string>(),
-                    Name = failedClusterJob["name"]?.Value<string>(),
+                    ConnectionId = Guid.Parse(failedClusterJob["connectionId"]!.Value<string>()),
+                    LocalJobId = failedClusterJob["localJobId"]!.Value<string>(),
+                    Name = failedClusterJob["name"]!.Value<string>(),
                     State = JobState.Failed,
                     CreatedDate = DateTime.UtcNow,
                     FailedDate = DateTime.UtcNow,
                     Traceability = JobTraceability.Tracked,
                     TracingFailures = 0,
-                    Logs = failedClusterJob["logs"]?.ToObject<List<string>>()
+                    Logs = failedClusterJob["logs"]!.ToObject<List<string>>()!
                 };
 
                 _logger.LogError(string.Join(Environment.NewLine, failedJobEntity.Logs.ToArray()));
@@ -80,9 +80,9 @@ namespace Abacuza.JobSchedulers.Services
             var jsonObj = JObject.Parse(await responseMessage.Content.ReadAsStringAsync(cancellationToken));
             var jobEntity = new JobEntity
             {
-                ConnectionId = Guid.Parse(jsonObj["connectionId"]?.Value<string>()),
-                LocalJobId = jsonObj["localJobId"]?.Value<string>(),
-                Name = jsonObj["name"]?.Value<string>(),
+                ConnectionId = Guid.Parse(jsonObj["connectionId"]!.Value<string>()),
+                LocalJobId = jsonObj["localJobId"]!.Value<string>(),
+                Name = jsonObj["name"]!.Value<string>(),
                 State = JobState.Created,
                 CreatedDate = DateTime.UtcNow,
                 Traceability = JobTraceability.Tracked,
@@ -114,11 +114,11 @@ namespace Abacuza.JobSchedulers.Services
             {
                 jobStatusEntities.Add(new JobStatusEntity
                 {
-                    ConnectionId = Guid.Parse(item["connectionId"].Value<string>()),
-                    LocalJobId = item["localJobId"].Value<string>(),
-                    State = (JobState)item["state"].Value<int>(),
-                    Logs = item["logs"].ToObject<List<string>>(),
-                    Succeeded = item["succeeded"].Value<bool>()
+                    ConnectionId = Guid.Parse(item["connectionId"]!.Value<string>()),
+                    LocalJobId = item["localJobId"]!.Value<string>(),
+                    State = (JobState)item["state"]!.Value<int>(),
+                    Logs = item["logs"]!.ToObject<List<string>>()!,
+                    Succeeded = item["succeeded"]!.Value<bool>()
                 });
             }
 

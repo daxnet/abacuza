@@ -18,7 +18,7 @@ namespace Abacuza.Clusters.Common
         /// <value>
         /// The description.
         /// </value>
-        string Description { get; }
+        string? Description { get; }
 
         /// <summary>
         /// Gets the identifier of the current cluster.

@@ -8,7 +8,7 @@
 //                                           
 // Data Processing Platform
 // Copyright 2020-2021 by daxnet. All rights reserved.
-// Licensed under LGPL-v3
+// Apache License Version 2.0
 // ==============================================================
 
 using System;
@@ -30,7 +30,7 @@ namespace Abacuza.Common.Utilities
         /// <param name="word">The word to be pluralized.</param>
         /// <param name="inputIsKnownToBeSingular">Indicates whether the input is known to be singular.</param>
         /// <returns>The pluralized word.</returns>
-        public static string Pluralize(this string word, bool inputIsKnownToBeSingular = true)
+        public static string? Pluralize(this string word, bool inputIsKnownToBeSingular = true)
         {
             return Vocabularies.Default.Pluralize(word, inputIsKnownToBeSingular);
         }

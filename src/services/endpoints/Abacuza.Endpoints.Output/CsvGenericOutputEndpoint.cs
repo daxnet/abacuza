@@ -16,6 +16,6 @@ namespace Abacuza.Endpoints.Output
             Required = true, 
             Ordinal = 500, 
             Tooltip = "The output path.")]
-        public string Path { get; set; }
+        public string? Path { get; set; }
     }
 }

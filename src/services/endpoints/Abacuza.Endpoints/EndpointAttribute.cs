@@ -8,7 +8,7 @@
 //
 // Data Processing Platform
 // Copyright 2020-2021 by daxnet. All rights reserved.
-// Licensed under LGPL-v3
+// Apache License Version 2.0
 // ==============================================================
 
 using System;
@@ -43,7 +43,7 @@ namespace Abacuza.Endpoints
         /// <summary>
         /// Gets or sets the description of the current endpoint.
         /// </summary>
-        public string Description { get; set; }
+        public string? Description { get; set; }
 
         /// <summary>
         /// Gets the display name of the current endpoint.

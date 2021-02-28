@@ -47,7 +47,7 @@ namespace Abacuza.DataAccess.DistributedCached
 
         public Task<IEnumerable<TObject>> GetAllAsync<TObject>() where TObject : IEntity => _wrappedDao.GetAllAsync<TObject>();
 
-        public async Task<TObject> GetByIdAsync<TObject>(Guid id) where TObject : IEntity
+        public async Task<TObject?> GetByIdAsync<TObject>(Guid id) where TObject : IEntity
         {
             var resultBinary = await _cache.GetAsync(id.ToString());
             if (resultBinary != null)

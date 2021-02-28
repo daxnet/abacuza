@@ -7,7 +7,7 @@ namespace Abacuza.Clusters.Common
     [AttributeUsage(AttributeTargets.Class, AllowMultiple = false, Inherited = false)]
     public sealed class ClusterAttribute : Attribute
     {
-        public ClusterAttribute(string id, string type, string name, Type connectionType = null)
+        public ClusterAttribute(string id, string type, string name, Type? connectionType = null)
         {
             this.Id = Guid.Parse(id);
             this.Type = type;
@@ -21,8 +21,8 @@ namespace Abacuza.Clusters.Common
 
         public string Name { get; }
 
-        public Type ConnectionType { get; }
+        public Type? ConnectionType { get; }
 
-        public string Description { get; set; }
+        public string? Description { get; set; }
     }
 }

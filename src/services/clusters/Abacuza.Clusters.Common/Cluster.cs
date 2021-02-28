@@ -8,7 +8,7 @@
 //
 // Data Processing Platform
 // Copyright 2020-2021 by daxnet. All rights reserved.
-// Licensed under LGPL-v3
+// Apache License Version 2.0
 // ==============================================================
 
 using System;
@@ -21,21 +21,36 @@ namespace Abacuza.Clusters.Common
 {
     public abstract class Cluster : ICluster
     {
+
         #region Public Properties
 
-        public Type ConnectionType => this.ClusterAttribute?.ConnectionType;
-        public string Description => this.ClusterAttribute?.Description;
-        public Guid Id => this.ClusterAttribute?.Id ?? Guid.Empty;
+        public Type ConnectionType => this.ClusterAttribute?.ConnectionType ?? throw new ArgumentException($"{nameof(ConnectionType)} must be defined on the ClusterAttribute decoration.");
 
-        public string Name => this.ClusterAttribute?.Name;
+        public string? Description => this.ClusterAttribute?.Description;
 
-        public string Type => this.ClusterAttribute?.Type;
+        public Guid Id => this.ClusterAttribute?.Id ?? throw new ArgumentException($"{nameof(Id)} must be defined on the ClusterAttribute decoration.");
+
+        public string Name => this.ClusterAttribute?.Name ?? throw new ArgumentException($"{nameof(Name)} must be defined on the ClusterAttribute decoration.");
+
+        public string Type => this.ClusterAttribute?.Type ?? throw new ArgumentException($"{nameof(Type)} must be defined on the ClusterAttribute decoration.");
+
         #endregion Public Properties
 
         #region Private Properties
 
-        private ClusterAttribute ClusterAttribute => this.GetType().IsDefined(typeof(ClusterAttribute), true) ?
-                this.GetType().GetCustomAttribute<ClusterAttribute>() : null;
+        private ClusterAttribute? ClusterAttribute => 
+            this.GetType().IsDefined(typeof(ClusterAttribute), true) ?
+            this.GetType().GetCustomAttribute<ClusterAttribute>() : null;
+
+        #endregion Private Properties
+
+        #region Public Methods
+
+        public void Dispose()
+        {
+            Dispose(disposing: true);
+            GC.SuppressFinalize(this);
+        }
 
         /// <summary>
         /// Determines whether the specified <see cref="System.Object" />, is equal to this instance.
@@ -60,25 +75,13 @@ namespace Abacuza.Clusters.Common
         /// </returns>
         public override int GetHashCode()
         {
-            int hashCode = -678952093;
-            hashCode = hashCode * -1521134295 + Id.GetHashCode();
-            hashCode = hashCode * -1521134295 + EqualityComparer<string>.Default.GetHashCode(Name);
-            hashCode = hashCode * -1521134295 + EqualityComparer<string>.Default.GetHashCode(Type);
-            return hashCode;
+            return HashCode.Combine(Id, Name, Type);
         }
-
-        #endregion Private Properties
-
-        #region Public Methods
-
-        public void Dispose()
-        {
-            // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
-            Dispose(disposing: true);
-            GC.SuppressFinalize(this);
-        }
+        public abstract Task<ClusterJob> GetJobAsync(IClusterConnection connection, string localJobId, CancellationToken cancellation = default);
 
         public abstract Task<ClusterState> GetStateAsync(IClusterConnection connection, CancellationToken cancellationToken = default);
+
+        public abstract Task<ClusterJob> SubmitJobAsync(IClusterConnection connection, IEnumerable<KeyValuePair<string, object>> properties, CancellationToken cancellationToken = default);
 
         /// <summary>
         /// Converts to string.
@@ -88,20 +91,12 @@ namespace Abacuza.Clusters.Common
         /// </returns>
         public override string ToString() => this.Name;
 
+        #endregion Public Methods
+
+        #region Protected Methods
+
         protected virtual void Dispose(bool disposing) { }
 
-        public abstract Task<ClusterJob> SubmitJobAsync(IClusterConnection connection, IEnumerable<KeyValuePair<string, object>> properties, CancellationToken cancellationToken = default);
-
-        public abstract Task<ClusterJob> GetJobAsync(IClusterConnection connection, string localJobId, CancellationToken cancellation = default);
-
-
-
-        // // TODO: override finalizer only if 'Dispose(bool disposing)' has code to free unmanaged resources
-        // ~Cluster()
-        // {
-        //     // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
-        //     Dispose(disposing: false);
-        // }
-        #endregion Public Methods
+        #endregion Protected Methods
     }
 }

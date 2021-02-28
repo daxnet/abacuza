@@ -8,7 +8,7 @@
 //
 // Data Processing Platform
 // Copyright 2020-2021 by daxnet. All rights reserved.
-// Licensed under LGPL-v3
+// Apache License Version 2.0
 // ==============================================================
 
 using System;
@@ -41,17 +41,17 @@ namespace Abacuza.Common.UIComponents
         /// <summary>
         /// Gets or sets the default value of the current UI component.
         /// </summary>
-        public string DefaultValue { get; set; }
+        public string? DefaultValue { get; set; }
 
         /// <summary>
         /// Gets the label text of the UI component on the front-end page.
         /// </summary>
-        public string Label { get; }
+        public string? Label { get; }
 
         /// <summary>
         /// Gets the name of the UI component.
         /// </summary>
-        public string Name { get; }
+        public string? Name { get; }
 
         /// <summary>
         /// Gets or sets the ordinal of the component in its container.
@@ -61,7 +61,7 @@ namespace Abacuza.Common.UIComponents
         /// <summary>
         /// Gets or sets the tooltip of the component.
         /// </summary>
-        public string Tooltip { get; set; }
+        public string? Tooltip { get; set; }
 
         #endregion Public Properties
 
@@ -71,7 +71,7 @@ namespace Abacuza.Common.UIComponents
         /// Gets the string representation of the current <c>UIComponentAttribute</c> instance.
         /// </summary>
         /// <returns>The string representation of the current instance.</returns>
-        public override string ToString() => Name;
+        public override string ToString() => Name ?? base.ToString();
 
         #endregion Public Methods
     }

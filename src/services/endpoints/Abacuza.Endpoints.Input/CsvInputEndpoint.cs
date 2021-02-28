@@ -8,7 +8,7 @@
 //
 // Data Processing Platform
 // Copyright 2020-2021 by daxnet. All rights reserved.
-// Licensed under LGPL-v3
+// Apache License Version 2.0
 // ==============================================================
 
 using Abacuza.Common.Models;
@@ -35,7 +35,7 @@ namespace Abacuza.Endpoints.Input
             AllowedExtensions = ".csv,.tsv",
             AllowMultipleSelection = true,
             Ordinal = 500)]
-        public List<S3File> Files { get; set; }
+        public List<S3File>? Files { get; set; }
 
         /// <summary>
         /// Gets or sets a <see cref="bool"/> value which indicates whether the schema should be inferred from the raw data.

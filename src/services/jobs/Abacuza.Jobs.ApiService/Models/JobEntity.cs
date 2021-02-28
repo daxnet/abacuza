@@ -8,7 +8,7 @@
 //
 // Data Processing Platform
 // Copyright 2020-2021 by daxnet. All rights reserved.
-// Licensed under LGPL-v3
+// Apache License Version 2.0
 // ==============================================================
 
 using Abacuza.Common;
@@ -43,17 +43,17 @@ namespace Abacuza.JobSchedulers.Models
         /// Gets or sets the job id that is specific to the cluster on which
         /// the job was run.
         /// </summary>
-        public string LocalJobId { get; set; }
+        public string LocalJobId { get; set; } = string.Empty;
 
         public List<string> Logs { get; set; } = new List<string>();
-        public string Name { get; set; }
+        public string Name { get; set; } = string.Empty;
         public JobState State { get; set; }
 
         /// <summary>
         /// Gets or sets the name of the job submission, this is usually
         /// the name of the job executor that submits the job.
         /// </summary>
-        public string SubmissionName { get; set; }
+        public string SubmissionName { get; set; } = string.Empty;
 
         public JobTraceability? Traceability { get; set; }
 

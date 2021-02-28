@@ -75,7 +75,7 @@ namespace Abacuza.Common.Utilities
         /// <param name="word">Word to be pluralized</param>
         /// <param name="inputIsKnownToBeSingular">Normally you call Pluralize on singular words; but if you're unsure call it with false</param>
         /// <returns></returns>
-        public string Pluralize(string word, bool inputIsKnownToBeSingular = true)
+        public string? Pluralize(string word, bool inputIsKnownToBeSingular = true)
         {
             var result = ApplyRules(_plurals, word);
 
@@ -96,7 +96,7 @@ namespace Abacuza.Common.Utilities
         /// <param name="word">Word to be singularized</param>
         /// <param name="inputIsKnownToBePlural">Normally you call Singularize on plural words; but if you're unsure call it with false</param>
         /// <returns></returns>
-        public string Singularize(string word, bool inputIsKnownToBePlural = true)
+        public string? Singularize(string word, bool inputIsKnownToBePlural = true)
         {
             var result = ApplyRules(_singulars, word);
 
@@ -112,11 +112,8 @@ namespace Abacuza.Common.Utilities
             return result ?? word;
         }
 
-        private string ApplyRules(IList<Rule> rules, string word)
+        private string? ApplyRules(IList<Rule> rules, string? word)
         {
-            if (word == null)
-                return null;
-
             if (IsUncountable(word))
                 return word;
 
@@ -126,12 +123,13 @@ namespace Abacuza.Common.Utilities
                 if ((result = rules[i].Apply(word)) != null)
                     break;
             }
+
             return result;
         }
 
-        private bool IsUncountable(string word)
+        private bool IsUncountable(string? word)
         {
-            return _uncountables.Contains(word.ToLower());
+            return !string.IsNullOrEmpty(word) && _uncountables.Contains(word.ToLower());
         }
 
         private class Rule
@@ -145,7 +143,7 @@ namespace Abacuza.Common.Utilities
                 _replacement = replacement;
             }
 
-            public string Apply(string word)
+            public string? Apply(string? word)
             {
                 if (!_regex.IsMatch(word))
                     return null;
@@ -158,8 +156,7 @@ namespace Abacuza.Common.Utilities
         {
             static RegexOptionsUtil()
             {
-                RegexOptions compiled;
-                Compiled = Enum.TryParse("Compiled", out compiled) ? compiled : RegexOptions.None;
+                Compiled = Enum.TryParse("Compiled", out RegexOptions compiled) ? compiled : RegexOptions.None;
             }
 
             public static RegexOptions Compiled { get; private set; }

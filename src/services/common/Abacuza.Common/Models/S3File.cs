@@ -8,7 +8,7 @@
 //
 // Data Processing Platform
 // Copyright 2020-2021 by daxnet. All rights reserved.
-// Licensed under LGPL-v3
+// Apache License Version 2.0
 // ==============================================================
 
 using System;
@@ -27,11 +27,11 @@ namespace Abacuza.Common.Models
             File = file;
         }
 
-        public string Bucket { get; set; }
+        public string? Bucket { get; set; }
 
-        public string Key { get; set; }
+        public string? Key { get; set; }
 
-        public string File { get; set; }
+        public string? File { get; set; }
 
         public override bool Equals(object obj)
         {
@@ -47,7 +47,5 @@ namespace Abacuza.Common.Models
         }
 
         public override string ToString() => $"s3a://{Bucket}/{Key}/{File}";
-
-
     }
 }

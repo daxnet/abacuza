@@ -61,8 +61,13 @@ namespace Abacuza.Clusters.ApiService.Controllers
             }
 
             var clusterConnection = connectionEntity.Create(clusterImplementation.ConnectionType);
-            var clusterState = await clusterImplementation.GetStateAsync(clusterConnection);
-            return Ok(clusterState);
+            if (clusterConnection != null)
+            {
+                var clusterState = await clusterImplementation.GetStateAsync(clusterConnection);
+                return Ok(clusterState);
+            }
+
+            return BadRequest($"Cannot create the cluster connection by type {clusterImplementation.ConnectionType}");
         }
     }
 }

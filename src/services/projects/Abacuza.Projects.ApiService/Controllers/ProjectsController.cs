@@ -8,7 +8,7 @@
 //
 // Data Processing Platform
 // Copyright 2020-2021 by daxnet. All rights reserved.
-// Licensed under LGPL-v3
+// Apache License Version 2.0
 // ==============================================================
 
 using Abacuza.Common.DataAccess;
@@ -55,7 +55,7 @@ namespace Abacuza.Projects.ApiService.Controllers
                      foreach (Match m in matches)
                      {
                          var matchedFileName = m.Groups["filename"].Value;
-                         var s3File = jobRunner.BinaryFiles.FirstOrDefault(f => f.File == matchedFileName);
+                         var s3File = jobRunner.BinaryFiles?.FirstOrDefault(f => f.File == matchedFileName);
                          if (s3File != null)
                          {
                              input = input.Replace(m.Value, s3File.ToString());
@@ -71,7 +71,7 @@ namespace Abacuza.Projects.ApiService.Controllers
 
                  // replace the input endpoint settings.
                  (input, project, revisionId, jobRunner) =>
-                    input.Replace("${proj:input-endpoint-settings}", $"input_endpoint_settings:{project.InputEndpointSettings.Replace("\"", "\\\"").Replace("\r\n", "")}"),
+                    input.Replace("${proj:input-endpoint-settings}", $"input_endpoint_settings:{project.InputEndpointSettings?.Replace("\"", "\\\"").Replace("\r\n", "")}"),
 
                  // replace the output endpoint name.
                  (input, project, revisionId, jobRunner) =>
@@ -79,7 +79,7 @@ namespace Abacuza.Projects.ApiService.Controllers
 
                  // replace the output endpoint settings.
                  (input, project, revisionId, jobRunner) =>
-                    input.Replace("${proj:output-endpoint-settings}", $"output_endpoint_settings:{project.OutputEndpointSettings.Replace("\"", "\\\"").Replace("\r\n", "")}"),
+                    input.Replace("${proj:output-endpoint-settings}", $"output_endpoint_settings:{project.OutputEndpointSettings?.Replace("\"", "\\\"").Replace("\r\n", "")}"),
 
                  // replace the project context.
                  (input, project, revisionId, jobRunner) =>
@@ -244,27 +244,32 @@ namespace Abacuza.Projects.ApiService.Controllers
             if (jobInfo)
             {
                 var jobSubmissionNames = revisions.Select(r => r.JobSubmissionName).Where(n => !string.IsNullOrEmpty(n));
-                var jobs = await _jobsApiService.GetJobsBySubmissionNames(jobSubmissionNames);
-                var revisionsWithJobs = from revision in revisions
-                                        join j in jobs on revision.JobSubmissionName equals j.SubmissionName into g
-                                        from job in g.DefaultIfEmpty()
-                                        select new
-                                        {
-                                            revision.Id,
-                                            revision.ProjectId,
-                                            revision.JobSubmissionName,
-                                            revision.CreatedDate,
-                                            JobCancelledDate = job?.CancelledDate,
-                                            JobCompletedDate = job?.CompletedDate,
-                                            JobConnectionId = job?.ConnectionId,
-                                            JobCreatedDate = job?.CreatedDate,
-                                            JobFailedDate = job?.FailedDate,
-                                            JobId = job?.Id,
-                                            JobStatusName = job?.JobStatusName ?? Enum.GetName(JobState.Created),
-                                            JobName = job?.Name,
-                                            JobState = job?.State ?? JobState.Created,
-                                        };
-                return Ok(revisionsWithJobs);
+                if (jobSubmissionNames != null)
+                {
+                    var jobs = await _jobsApiService.GetJobsBySubmissionNames(jobSubmissionNames);
+                    var revisionsWithJobs = from revision in revisions
+                                            join j in jobs on revision.JobSubmissionName equals j.SubmissionName into g
+                                            from job in g.DefaultIfEmpty()
+                                            select new
+                                            {
+                                                revision.Id,
+                                                revision.ProjectId,
+                                                revision.JobSubmissionName,
+                                                revision.CreatedDate,
+                                                JobCancelledDate = job?.CancelledDate,
+                                                JobCompletedDate = job?.CompletedDate,
+                                                JobConnectionId = job?.ConnectionId,
+                                                JobCreatedDate = job?.CreatedDate,
+                                                JobFailedDate = job?.FailedDate,
+                                                JobId = job?.Id,
+                                                JobStatusName = job?.JobStatusName ?? Enum.GetName(JobState.Created),
+                                                JobName = job?.Name,
+                                                JobState = job?.State ?? JobState.Created,
+                                            };
+                    return Ok(revisionsWithJobs);
+                }
+
+                return BadRequest("The revision doesn't have any job submissions.");
             }
             else
             {

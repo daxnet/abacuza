@@ -1,0 +1,11 @@
+<Project>
+  <Import Project="Build.props" />
+  <PropertyGroup>
+    <SignAssembly>true</SignAssembly>
+    <AssemblyVersion>$(AbacuzaAssemblyVersion)</AssemblyVersion>
+    <FileVersion>$(AbacuzaAssemblyFileVersion)</FileVersion>
+    <AssemblyOriginatorKeyFile>$(MSBuildThisFileDirectory)keys\AbacuzaKey.snk</AssemblyOriginatorKeyFile>
+    <LangVersion>9.0</LangVersion>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+</Project>

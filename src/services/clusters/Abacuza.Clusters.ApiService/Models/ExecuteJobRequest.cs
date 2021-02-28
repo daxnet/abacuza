@@ -15,7 +15,7 @@ namespace Abacuza.Clusters.ApiService.Models
         }
 
         [Required]
-        public string ClusterType { get; set; }
+        public string ClusterType { get; set; } = string.Empty;
 
         public Dictionary<string, object> Properties { get; set; }
     }

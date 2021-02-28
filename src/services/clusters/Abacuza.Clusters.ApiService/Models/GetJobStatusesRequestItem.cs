@@ -23,6 +23,6 @@ namespace Abacuza.Clusters.ApiService.Models
         /// they were running.
         /// </summary>
         [Required]
-        public string[] LocalJobIdentifiers { get; set; }
+        public string[] LocalJobIdentifiers { get; set; } = Array.Empty<string>();
     }
 }

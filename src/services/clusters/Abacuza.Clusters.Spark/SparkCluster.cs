@@ -24,7 +24,9 @@ namespace Abacuza.Clusters.Spark
         {
             try
             {
-                var connectionInformation = connection.As<SparkClusterConnection>();
+                var connectionInformation = connection.As<SparkClusterConnection>()
+                    ??
+                throw new ArgumentException($"Current connection type {connection.GetType().Name} cannot be converted into {typeof(SparkClusterConnection).Name}");
                 using var responseMessage = await _httpClient.GetAsync(connectionInformation.BaseUrl, cancellationToken);
                 responseMessage.EnsureSuccessStatusCode();
 
@@ -38,7 +40,9 @@ namespace Abacuza.Clusters.Spark
 
         public override async Task<ClusterJob> SubmitJobAsync(IClusterConnection connection, IEnumerable<KeyValuePair<string, object>> properties, CancellationToken cancellationToken = default)
         {
-            var connectionInformation = connection.As<SparkClusterConnection>();
+            var connectionInformation = connection.As<SparkClusterConnection>()
+                ??
+                throw new InvalidCastException($"Current connection type {connection.GetType().Name} cannot be converted into {typeof(SparkClusterConnection).Name}");
 
             dynamic payload = new ExpandoObject();
             foreach (var kvp in properties)
@@ -63,7 +67,7 @@ namespace Abacuza.Clusters.Spark
             {
                 var responseJson = await responseMessage.Content.ReadAsStringAsync();
                 var responseObj = JObject.Parse(responseJson);
-                var sparkBatchId = responseObj["id"].Value<int>();
+                var sparkBatchId = responseObj["id"]?.Value<int>();
                 var sparkBatchName = responseObj["name"]?.Value<string>();
               
                 return new ClusterJob
@@ -83,7 +87,10 @@ namespace Abacuza.Clusters.Spark
 
         public override async Task<ClusterJob> GetJobAsync(IClusterConnection connection, string localJobId, CancellationToken cancellationToken = default)
         {
-            var connectionInformation = connection.As<SparkClusterConnection>();
+            var connectionInformation = connection.As<SparkClusterConnection>() 
+                ?? 
+                throw new InvalidCastException($"Current connection type {connection.GetType().Name} cannot be converted into {typeof(SparkClusterConnection).Name}");
+
             var retrieveBatchUrl = BuildEndpointUrl(connectionInformation.BaseUrl, $"batches/{localJobId}");
             HttpResponseMessage responseMessage;
             using (responseMessage = await _httpClient.GetAsync(retrieveBatchUrl, cancellationToken))
@@ -126,7 +133,7 @@ namespace Abacuza.Clusters.Spark
         private static Uri BuildEndpointUrl(string baseUrl, string relativeUrl)
             => new Uri(new Uri(baseUrl), relativeUrl);
 
-        private static ClusterJobState ConvertToJobState(string jobStateValue) => jobStateValue?.ToLower() switch
+        private static ClusterJobState ConvertToJobState(string? jobStateValue) => jobStateValue?.ToLower() switch
         {
             "not_started" => ClusterJobState.Created,
             "starting" => ClusterJobState.Initializing,

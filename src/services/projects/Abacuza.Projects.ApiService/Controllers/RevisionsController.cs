@@ -47,7 +47,12 @@ namespace Abacuza.Projects.ApiService.Controllers
                 return NotFound($"The revision {id} doesn't exist.");
             }
 
-            return Ok(await _jobsApiService.GetJobLogsBySubmissionName(revision.JobSubmissionName));
+            if (!string.IsNullOrEmpty(revision.JobSubmissionName))
+            {
+                return Ok(await _jobsApiService.GetJobLogsBySubmissionName(revision.JobSubmissionName));
+            }
+
+            return BadRequest($"Revision {id} doesn't have a job submission name.");
         }
     }
 }

@@ -8,7 +8,7 @@
 //
 // Data Processing Platform
 // Copyright 2020-2021 by daxnet. All rights reserved.
-// Licensed under LGPL-v3
+// Apache License Version 2.0
 // ==============================================================
 
 using Abacuza.Clusters.ApiService.Models;
@@ -72,7 +72,7 @@ namespace Abacuza.Clusters.ApiService
             var mongoDatabase = Configuration["mongo:database"];
             var wrapperDao = new MongoDataAccessObject(new MongoUrl(mongoConnectionString), mongoDatabase);
 
-            services.AddTransient<IDataAccessObject>(sp => new DistributedCachedDataAccessObject(sp.GetService<IDistributedCache>(), wrapperDao));
+            services.AddTransient<IDataAccessObject>(sp => new DistributedCachedDataAccessObject(sp.GetService<IDistributedCache>()!, wrapperDao));
 
             services.AddControllers(options =>
             {
@@ -169,8 +169,11 @@ namespace Abacuza.Clusters.ApiService
                     .Where(t => typeof(ICluster).IsAssignableFrom(t) && !t.IsAbstract))
                 {
                     // This assumes the implementation of IPlugin has a parameterless constructor
-                    var cluster = (ICluster)Activator.CreateInstance(clusterType);
-                    clusterImplementations.Add(cluster);
+                    var cluster = (ICluster?)Activator.CreateInstance(clusterType);
+                    if (cluster != null)
+                    {
+                        clusterImplementations.Add(cluster);
+                    }
                 }
             }
 

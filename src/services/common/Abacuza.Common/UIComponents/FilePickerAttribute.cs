@@ -8,7 +8,7 @@
 //
 // Data Processing Platform
 // Copyright 2020-2021 by daxnet. All rights reserved.
-// Licensed under LGPL-v3
+// Apache License Version 2.0
 // ==============================================================
 
 using System.Collections.Generic;
@@ -49,7 +49,7 @@ namespace Abacuza.Common.UIComponents
         /// The allowed extensions.
         /// </value>
         /// <remarks>For example: .csv,.tsv</remarks>
-        public string AllowedExtensions { get; set; }
+        public string? AllowedExtensions { get; set; }
 
         /// <summary>
         /// Gets or sets a value indicating whether the File Uploader can upload multiple

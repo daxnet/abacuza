@@ -8,7 +8,20 @@
 //
 // Data Processing Platform
 // Copyright 2020-2021 by daxnet. All rights reserved.
-// Licensed under LGPL-v3
+// Apache License Version 2.0
+// ==============================================================
+
+// ==============================================================
+//           _
+//     /\   | |
+//    /  \  | |__ __ _ ___ _ _ ______ _
+//   / /\ \ | '_ \ / _` |/ __| | | |_  / _` |
+//  / ____ \| |_) | (_| | (__| |_| |/ / (_| |
+// /_/    \_\_.__/ \__,_|\___|\__,_/___\__,_|
+//
+// Data Processing Platform
+// Copyright 2020-2021 by daxnet. All rights reserved.
+// Apache License Version 2.0
 // ==============================================================
 
 using Abacuza.Common;
@@ -28,24 +41,25 @@ namespace Abacuza.Jobs.ApiService.Models
     {
         #region Public Properties
 
-        public List<S3File> BinaryFiles { get; set; }
+        public List<S3File> BinaryFiles { get; set; } = new List<S3File>();
 
         [Required]
-        public string ClusterType { get; set; }
-        public string Description { get; set; }
-        
+        public string ClusterType { get; set; } = string.Empty;
+
+        public string? Description { get; set; }
+
         public Guid Id { get; set; }
 
         [Required]
-        public string Name { get; set; }
+        public string Name { get; set; } = string.Empty;
 
-        public string PayloadTemplate { get; set; }
+        public string? PayloadTemplate { get; set; }
 
         #endregion Public Properties
 
         #region Public Methods
 
-        public override bool Equals(object obj)
+        public override bool Equals(object? obj)
         {
             return obj is JobRunnerEntity entity &&
                    Id.Equals(entity.Id);

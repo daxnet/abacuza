@@ -8,7 +8,7 @@
 //
 // Data Processing Platform
 // Copyright 2020-2021 by daxnet. All rights reserved.
-// Licensed under LGPL-v3
+// Apache License Version 2.0
 // ==============================================================
 
 using Abacuza.Common.Models;
@@ -119,14 +119,20 @@ namespace Abacuza.Common.ApiService.Controllers
                 }
 
                 var fileTransUtility = new TransferUtility(_s3);
-                var files = Request.Form.Files;
+                var files = Request?.Form?.Files;
                 var responseItems = new List<object>();
-                foreach (var file in files)
+                if (files != null)
                 {
-                    using var stream = file.OpenReadStream();
-                    var fileName = ContentDispositionHeaderValue.Parse(file.ContentDisposition).FileName.Trim('"');
-                    await fileTransUtility.UploadAsync(stream, bucketName, $"{keyName}/{fileName}");
-                    responseItems.Add(new S3File(bucketName, keyName, fileName));
+                    foreach (var file in files)
+                    {
+                        using var stream = file.OpenReadStream();
+                        var fileName = ContentDispositionHeaderValue.Parse(file.ContentDisposition).FileName?.Trim('"');
+                        if (!string.IsNullOrEmpty(fileName))
+                        {
+                            await fileTransUtility.UploadAsync(stream, bucketName, $"{keyName}/{fileName}");
+                            responseItems.Add(new S3File(bucketName, keyName, fileName));
+                        }
+                    }
                 }
 
                 return Ok(responseItems);

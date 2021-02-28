@@ -8,7 +8,7 @@
 //
 // Data Processing Platform
 // Copyright 2020-2021 by daxnet. All rights reserved.
-// Licensed under LGPL-v3
+// Apache License Version 2.0
 // ==============================================================
 
 using Abacuza.Common.UIComponents;
@@ -27,7 +27,7 @@ namespace Abacuza.Endpoints
                     Ordinal = 145,
                     Required = false,
                     Tooltip = "Sets the string that indicates a date format. Custom date formats follow the formats at java.text.SimpleDateFormat. This applies to date type.")]
-        public string DateFormat { get; set; }
+        public string? DateFormat { get; set; }
 
         [TextBox("txtEncoding",
                     "Encoding",
@@ -36,7 +36,7 @@ namespace Abacuza.Endpoints
                     Ordinal = 185,
                     Required = false,
                     Tooltip = "Specifies the encoding of the input or output file.")]
-        public string Encoding { get; set; }
+        public string? Encoding { get; set; }
 
         [TextBox("txtEscape",
                     "Escape",
@@ -45,7 +45,7 @@ namespace Abacuza.Endpoints
                     Ordinal = 175,
                     Required = false,
                     Tooltip = "Sets the single character used for escaping quotes inside an already quoted value.")]
-        public string Escape { get; set; }
+        public string? Escape { get; set; }
 
         [Checkbox("chkHeader",
                     "Header",
@@ -75,7 +75,7 @@ namespace Abacuza.Endpoints
             MaxLength = 1,
             Required = false,
             Tooltip = "Defines the line separator that should be used for parsing. If not set (empty), covers all \\r, \\r\\n and \\n.")]
-        public string LineSep { get; set; }
+        public string? LineSep { get; set; }
 
         [TextBox("txtNullValue",
                             "Null value",
@@ -84,7 +84,7 @@ namespace Abacuza.Endpoints
                     Ordinal = 150,
                     Required = false,
                     Tooltip = "Sets the string representation of a null value.")]
-        public string NullValue { get; set; }
+        public string? NullValue { get; set; }
 
         [TextBox("txtQuote",
                     "Quote",
@@ -93,7 +93,7 @@ namespace Abacuza.Endpoints
                     Ordinal = 180,
                     Required = false,
                     Tooltip = "Sets the single character used for escaping quoted values where the separator can be part of the value.")]
-        public string Quote { get; set; }
+        public string? Quote { get; set; }
 
         /// <summary>
         /// Gets or sets the type of the separator of the row values.
@@ -104,7 +104,7 @@ namespace Abacuza.Endpoints
             Tooltip = "Chooses the delimiter used for separating the values.",
             Ordinal = 190,
             DefaultValue = "Comma")]
-        public string Separator { get; set; }
+        public string? Separator { get; set; }
 
         [TextBox("txtTimestampFormat",
             "Timestamp format",
@@ -113,7 +113,7 @@ namespace Abacuza.Endpoints
             MaxLength = 50,
             Required = false,
             Tooltip = "Sets the string that indicates a timestamp format. Custom date formats follow the formats at java.text.SimpleDateFormat. This applies to timestamp type.")]
-        public string TimestampFormat { get; set; }
+        public string? TimestampFormat { get; set; }
 
         #endregion Public Properties
     }

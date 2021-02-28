@@ -18,7 +18,7 @@ namespace Abacuza.JobSchedulers.Models
         /// <value>
         /// The cluster type.
         /// </value>
-        public string Type { get; set; }
+        public string Type { get; set; } = string.Empty;
 
         /// <summary>
         /// Gets or sets the job parameters.
@@ -26,7 +26,7 @@ namespace Abacuza.JobSchedulers.Models
         /// <value>
         /// The job parameters.
         /// </value>
-        public Dictionary<string, object> Properties { get; set; }
+        public Dictionary<string, object> Properties { get; set; } = new Dictionary<string, object>();
 
 
     }
