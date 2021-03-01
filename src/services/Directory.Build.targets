@@ -4,12 +4,15 @@
     <Copyright>Copyright (C) 2020-2021 by daxnet</Copyright>
     <PackageVersion>$(AbacuzaPackageVersion)</PackageVersion>
     <Version>$(AbacuzaPackageVersion)</Version>
+  </PropertyGroup>
+
+  <PropertyGroup Condition=" '$(IncludeLicenseWhenGeneratePackage)' == 'true' ">
     <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
     <PackageLicenseFile>LICENSE</PackageLicenseFile>
   </PropertyGroup>
 
   <ItemGroup>
-    <None Include="$(SolutionDir)..\..\LICENSE">
+    <None Include="$(SolutionDir)..\..\LICENSE" Condition=" '$(IncludeLicenseWhenGeneratePackage)' == 'true' ">
       <Pack>True</Pack>
       <PackagePath></PackagePath>
     </None>
