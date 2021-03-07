@@ -30,7 +30,8 @@ namespace Abacuza.Endpoints.ApiService.Controllers
         public IActionResult Get()
             => Ok(new
             {
-                version = Assembly.GetExecutingAssembly().GetName().Version!.ToString()
+                version = Assembly.GetExecutingAssembly().GetName().Version!.ToString(),
+                name = "endpoint-service"
             });
 
         #endregion Public Methods

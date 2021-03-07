@@ -10,9 +10,5 @@
 
 export const environment = {
   production: false,
-  clusterServiceBaseUrl: 'http://localhost:9023/',
-  jobServiceBaseUrl: 'http://localhost:9024/',
-  commonServiceBaseUrl: 'http://localhost:9025/',
-  endpointServiceBaseUrl: 'http://localhost:9026/',
-  projectServiceBaseUrl: 'http://localhost:9027/',
+  serviceBaseUrl: 'http://localhost:9900/'
 };

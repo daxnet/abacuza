@@ -15,7 +15,7 @@ export class CommonService {
     formData.append('file', file, file.name);
     formData.append('bucket', bucket);
     formData.append('key', key);
-    return this.http.post(`${environment.commonServiceBaseUrl}api/files/s3`, formData, {
+    return this.http.post(`${environment.serviceBaseUrl}common-service/files/s3`, formData, {
       reportProgress: true, observe: 'events',
     });
   }

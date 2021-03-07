@@ -40,6 +40,11 @@ services:
         build:
             context: src/services
             dockerfile: projects/Abacuza.Projects.ApiService/Dockerfile
+    abacuza-api-gateway:
+        image: daxnet/abacuza-api-gateway
+        build:
+            context: src/services
+            dockerfile: api-gateway/Abacuza.Services.ApiGateway/Dockerfile
     abacuza-livy-spark:
         image: daxnet/abacuza-livy-spark
         build:

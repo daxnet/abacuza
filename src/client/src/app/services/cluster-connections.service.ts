@@ -13,7 +13,7 @@ export class ClusterConnectionsService {
   constructor(private httpClient: HttpClient) { }
 
   public getAllClusterConnections(): Observable<HttpResponse<ClusterConnection[]>> {
-    return this.httpClient.get<ClusterConnection[]>(`${environment.clusterServiceBaseUrl}api/cluster-connections`, {
+    return this.httpClient.get<ClusterConnection[]>(`${environment.serviceBaseUrl}cluster-service/cluster-connections`, {
       observe: 'response',
     }).pipe(
       map(response => {
@@ -24,7 +24,7 @@ export class ClusterConnectionsService {
   }
 
   public createClusterConnection(conn: ClusterConnection): Observable<string> {
-    return this.httpClient.post<string>(`${environment.clusterServiceBaseUrl}api/cluster-connections`, {
+    return this.httpClient.post<string>(`${environment.serviceBaseUrl}cluster-service/cluster-connections`, {
       clusterType: conn.clusterType,
       description: conn.description,
       name: conn.name,
@@ -33,13 +33,13 @@ export class ClusterConnectionsService {
   }
 
   public deleteClusterConnection(id: string): Observable<any> {
-    return this.httpClient.delete(`${environment.clusterServiceBaseUrl}api/cluster-connections/${id}`);
+    return this.httpClient.delete(`${environment.serviceBaseUrl}cluster-service/cluster-connections/${id}`);
   }
 
   public updateClusterConnection(id: string, description: string, settingsJsonObject: any): Observable<ClusterConnection> {
 
     return this.httpClient.patch<ClusterConnection>(
-      `${environment.clusterServiceBaseUrl}api/cluster-connections/${id}`,
+      `${environment.serviceBaseUrl}cluster-service/cluster-connections/${id}`,
       [
         {
           op: 'replace',

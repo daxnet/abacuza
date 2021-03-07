@@ -13,11 +13,12 @@ COPY ["common/Abacuza.DataAccess.Mongo/Abacuza.DataAccess.Mongo.csproj", "common
 COPY ["common/Abacuza.DataAccess.DistributedCached/Abacuza.DataAccess.DistributedCached.csproj", "common/Abacuza.DataAccess.DistributedCached/"]
 RUN dotnet restore "projects/Abacuza.Projects.ApiService/Abacuza.Projects.ApiService.csproj"
 COPY . .
-WORKDIR "/src/projects/Abacuza.Projects.ApiService"
-RUN dotnet build "Abacuza.Projects.ApiService.csproj" -c Release -o /app/build
+#WORKDIR "/src/projects/Abacuza.Projects.ApiService"
+#RUN dotnet build "Abacuza.Projects.ApiService.csproj" -c Release -o /app/build
 
 FROM build AS publish
-RUN dotnet publish "Abacuza.Projects.ApiService.csproj" -c Release -o /app/publish
+WORKDIR "/src/projects/Abacuza.Projects.ApiService"
+RUN dotnet publish -p:IncludeLicenseWhenGeneratePackage=false "Abacuza.Projects.ApiService.csproj" -c Release -o /app/publish
 
 FROM base AS final
 WORKDIR /app

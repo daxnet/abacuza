@@ -30,7 +30,8 @@ namespace Abacuza.Projects.ApiService.Controllers
         public IActionResult Get()
             => Ok(new
             {
-                version = Assembly.GetExecutingAssembly().GetName().Version!.ToString()
+                version = Assembly.GetExecutingAssembly().GetName().Version!.ToString(),
+                name = "project-service"
             });
 
         #endregion Public Methods

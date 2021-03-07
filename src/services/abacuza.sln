@@ -64,6 +64,10 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		Directory.Build.targets = Directory.Build.targets
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Abacuza.Services.ApiGateway", "api-gateway\Abacuza.Services.ApiGateway\Abacuza.Services.ApiGateway.csproj", "{EB528237-312F-4DBB-8399-AFAB11DC5845}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "api-gateway", "api-gateway", "{29DAA34E-B8D6-449D-A0A0-384FEAFDEEDD}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -290,6 +294,18 @@ Global
 		{C851CD28-986B-47F1-AC4B-1025392C80C3}.Release|x64.Build.0 = Release|Any CPU
 		{C851CD28-986B-47F1-AC4B-1025392C80C3}.Release|x86.ActiveCfg = Release|Any CPU
 		{C851CD28-986B-47F1-AC4B-1025392C80C3}.Release|x86.Build.0 = Release|Any CPU
+		{EB528237-312F-4DBB-8399-AFAB11DC5845}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EB528237-312F-4DBB-8399-AFAB11DC5845}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EB528237-312F-4DBB-8399-AFAB11DC5845}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{EB528237-312F-4DBB-8399-AFAB11DC5845}.Debug|x64.Build.0 = Debug|Any CPU
+		{EB528237-312F-4DBB-8399-AFAB11DC5845}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{EB528237-312F-4DBB-8399-AFAB11DC5845}.Debug|x86.Build.0 = Debug|Any CPU
+		{EB528237-312F-4DBB-8399-AFAB11DC5845}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EB528237-312F-4DBB-8399-AFAB11DC5845}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EB528237-312F-4DBB-8399-AFAB11DC5845}.Release|x64.ActiveCfg = Release|Any CPU
+		{EB528237-312F-4DBB-8399-AFAB11DC5845}.Release|x64.Build.0 = Release|Any CPU
+		{EB528237-312F-4DBB-8399-AFAB11DC5845}.Release|x86.ActiveCfg = Release|Any CPU
+		{EB528237-312F-4DBB-8399-AFAB11DC5845}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -313,6 +329,7 @@ Global
 		{C7423EF1-EC2B-4179-AA6E-B92241C70822} = {757F3BA8-A0EB-454C-8C04-37CE22C1D30F}
 		{8364BF4A-3326-40EE-A25B-61082B1DF853} = {3E0E2EDE-2055-4D03-A348-BB37A4BE904F}
 		{C851CD28-986B-47F1-AC4B-1025392C80C3} = {757F3BA8-A0EB-454C-8C04-37CE22C1D30F}
+		{EB528237-312F-4DBB-8399-AFAB11DC5845} = {29DAA34E-B8D6-449D-A0A0-384FEAFDEEDD}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {37762C87-D4E9-4C03-9476-E519F44ED3D1}

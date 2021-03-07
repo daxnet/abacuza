@@ -19,13 +19,13 @@ export class EndpointsService {
    * @memberof EndpointsService
    */
   public getAvailableEndpoints(type: string = 'input'): Observable<HttpResponse<Endpoint[]>> {
-    return this.httpClient.get<Endpoint[]>(`${environment.endpointServiceBaseUrl}api/endpoints?type=${type}`, {
+    return this.httpClient.get<Endpoint[]>(`${environment.serviceBaseUrl}endpoint-service/endpoints?type=${type}`, {
       observe: 'response',
     });
   }
 
   public getEndpointByName(name: string): Observable<HttpResponse<Endpoint>> {
-    return this.httpClient.get<Endpoint>(`${environment.endpointServiceBaseUrl}api/endpoints/${name}`, {
+    return this.httpClient.get<Endpoint>(`${environment.serviceBaseUrl}endpoint-service/endpoints/${name}`, {
       observe: 'response',
     });
   }

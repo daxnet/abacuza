@@ -1,0 +1,30 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Abacuza.Common.ApiService</name>
+    </assembly>
+    <members>
+        <member name="T:Abacuza.Common.ApiService.Controllers.FilesController">
+            <summary>
+            Represents the API controller that provides the access
+            to files.
+            </summary>
+        </member>
+        <member name="M:Abacuza.Common.ApiService.Controllers.FilesController.#ctor(Microsoft.Extensions.Logging.ILogger{Abacuza.Common.ApiService.Controllers.FilesController},Amazon.S3.IAmazonS3)">
+            <summary>
+            Initializes a new instance of the <c>FilesController</c> class.
+            </summary>
+            <param name="logger"></param>
+            <param name="s3"></param>
+        </member>
+        <member name="M:Abacuza.Common.ApiService.Controllers.FilesController.DeleteS3FileAsync(System.String,System.String,System.String)">
+            <summary>
+            Deletes a file from the S3 storage.
+            </summary>
+            <param name="bucket">The bucket name.</param>
+            <param name="key">The file key.</param>
+            <param name="file">The name of the file.</param>
+            <returns></returns>
+        </member>
+    </members>
+</doc>

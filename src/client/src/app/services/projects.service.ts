@@ -13,19 +13,19 @@ export class ProjectsService {
   constructor(private httpClient: HttpClient) { }
 
   public getAllProjects(): Observable<HttpResponse<Project[]>> {
-    return this.httpClient.get<Project[]>(`${environment.projectServiceBaseUrl}api/projects`, {
+    return this.httpClient.get<Project[]>(`${environment.serviceBaseUrl}project-service/projects`, {
       observe: 'response',
     });
   }
 
   public getProjectById(id: string): Observable<HttpResponse<Project>> {
-    return this.httpClient.get<Project>(`${environment.projectServiceBaseUrl}api/projects/${id}`, {
+    return this.httpClient.get<Project>(`${environment.serviceBaseUrl}project-service/projects/${id}`, {
       observe: 'response',
     });
   }
 
   public createProject(project: Project): Observable<string> {
-    return this.httpClient.post<string>(`${environment.projectServiceBaseUrl}api/projects`, {
+    return this.httpClient.post<string>(`${environment.serviceBaseUrl}project-service/projects`, {
       name: project.name,
       description: project.description,
       inputEndpointName: project.inputEndpointName,
@@ -35,11 +35,11 @@ export class ProjectsService {
   }
 
   public deleteProject(id: string): Observable<any> {
-    return this.httpClient.delete(`${environment.projectServiceBaseUrl}api/projects/${id}`);
+    return this.httpClient.delete(`${environment.serviceBaseUrl}project-service/projects/${id}`);
   }
 
   public updateProject(id: string, entity: Project): Observable<Project> {
-    return this.httpClient.patch<Project>(`${environment.projectServiceBaseUrl}api/projects/${id}`,
+    return this.httpClient.patch<Project>(`${environment.serviceBaseUrl}project-service/projects/${id}`,
     [
       {
         op: 'replace',
@@ -82,19 +82,19 @@ export class ProjectsService {
   }
 
   public createRevision(projectId: string): Observable<string> {
-    return this.httpClient.post<string>(`${environment.projectServiceBaseUrl}api/projects/${projectId}/revisions`, null, {
+    return this.httpClient.post<string>(`${environment.serviceBaseUrl}project-service/projects/${projectId}/revisions`, null, {
       observe: 'body',
     });
   }
 
   public getRevisions(projectId: string, includeJobInformation: boolean = true): Observable<ProjectRevision[]> {
-    return this.httpClient.get<ProjectRevision[]>(`${environment.projectServiceBaseUrl}api/projects/${projectId}/revisions?job-info=${includeJobInformation}`, {
+    return this.httpClient.get<ProjectRevision[]>(`${environment.serviceBaseUrl}project-service/projects/${projectId}/revisions?job-info=${includeJobInformation}`, {
       observe: 'body',
     });
   }
 
   public getRevisionLogs(revisionId: string): Observable<string[]> {
-    return this.httpClient.get<string[]>(`${environment.projectServiceBaseUrl}api/revisions/${revisionId}/logs`, {
+    return this.httpClient.get<string[]>(`${environment.serviceBaseUrl}project-service/revisions/${revisionId}/logs`, {
       observe: 'body',
     });
   }

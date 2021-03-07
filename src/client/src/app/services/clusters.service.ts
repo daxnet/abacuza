@@ -15,13 +15,13 @@ export class ClustersService {
    * getAllClusters
    */
    public getAllClusters(): Observable<HttpResponse<Cluster[]>> {
-    return this.http.get<Cluster[]>(`${environment.clusterServiceBaseUrl}api/clusters`, {
+    return this.http.get<Cluster[]>(`${environment.serviceBaseUrl}cluster-service/clusters`, {
       observe: 'response',
     });
   }
 
   public getAllClusterTypes(): Observable<HttpResponse<string[]>> {
-    return this.http.get<string[]>(`${environment.clusterServiceBaseUrl}api/clusters/types`, {
+    return this.http.get<string[]>(`${environment.serviceBaseUrl}cluster-service/clusters/types`, {
       observe: 'response',
     });
   }
