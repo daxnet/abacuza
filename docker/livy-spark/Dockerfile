@@ -2,7 +2,7 @@ FROM openjdk:8
 
 # Setting version and environment variables
 ENV SPARK_HOME=/spark
-ENV SPARK_VERSION=3.0.2
+ENV SPARK_VERSION=3.0.1
 ENV HADOOP_VERSION=3.1.4
 ENV DOTNET_SPARK_WROKER_VERSION=1.0.0
 ENV AWS_JAVA_SDK_VERSION=1.11.871
@@ -37,23 +37,13 @@ ENV DOTNET_WORKER_DIR=/Microsoft.Spark.Worker
 # WORKDIR /
 
 # Getting Spark
-#RUN wget https://archive.apache.org/dist/spark/spark-$SPARK_VERSION/spark-$SPARK_VERSION-bin-without-hadoop.tgz && \
-#    tar -xzf spark-$SPARK_VERSION-bin-without-hadoop.tgz && \
-#    mv spark-$SPARK_VERSION-bin-without-hadoop spark && \
-#    rm -f spark-$SPARK_VERSION-bin-without-hadoop.tgz
-
-RUN wget https://mirrors.aliyun.com/apache/spark/spark-$SPARK_VERSION/spark-$SPARK_VERSION-bin-without-hadoop.tgz && \
+RUN wget https://archive.apache.org/dist/spark/spark-$SPARK_VERSION/spark-$SPARK_VERSION-bin-without-hadoop.tgz && \
     tar -xzf spark-$SPARK_VERSION-bin-without-hadoop.tgz && \
     mv spark-$SPARK_VERSION-bin-without-hadoop spark && \
     rm -f spark-$SPARK_VERSION-bin-without-hadoop.tgz
 
 # Getting Hadoop
-#RUN wget https://archive.apache.org/dist/hadoop/common/hadoop-$HADOOP_VERSION/hadoop-$HADOOP_VERSION.tar.gz && \
-#    tar -xzf hadoop-$HADOOP_VERSION.tar.gz && \
-#    mv hadoop-$HADOOP_VERSION hadoop && \
-#    rm -f hadoop-$HADOOP_VERSION.tar.gz
-
-RUN wget https://mirrors.aliyun.com/apache/hadoop/common/hadoop-$HADOOP_VERSION/hadoop-$HADOOP_VERSION.tar.gz && \
+RUN wget https://archive.apache.org/dist/hadoop/common/hadoop-$HADOOP_VERSION/hadoop-$HADOOP_VERSION.tar.gz && \
     tar -xzf hadoop-$HADOOP_VERSION.tar.gz && \
     mv hadoop-$HADOOP_VERSION hadoop && \
     rm -f hadoop-$HADOOP_VERSION.tar.gz

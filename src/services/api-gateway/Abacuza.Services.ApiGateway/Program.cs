@@ -26,6 +26,9 @@ namespace Abacuza.Services.ApiGateway
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
                     webBuilder.UseStartup<Startup>();
+                    webBuilder.UseKestrel(options => {
+                        options.Limits.MaxRequestBodySize = null;
+                    });
                 });
     }
 }

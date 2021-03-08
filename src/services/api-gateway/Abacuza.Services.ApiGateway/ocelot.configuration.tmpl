@@ -1,0 +1,122 @@
+{
+    "Routes": [
+      {
+        "DownstreamPathTemplate": "/api/{everything}",
+        "DownstreamScheme": "http",
+        "DownstreamHostAndPorts": [
+          {
+            "Host": "{{ .Env.AppName }}-cluster-service",
+            "Port": 9023
+          }
+        ],
+        "UpstreamPathTemplate": "/cluster-service/{everything}",
+        "UpstreamHttpMethod": [ "Get", "Post", "Put", "Patch", "Delete", "Options" ],
+        "SwaggerKey": "ClusterService"
+      },
+      {
+        "DownstreamPathTemplate": "/api/{everything}",
+        "DownstreamScheme": "http",
+        "DownstreamHostAndPorts": [
+          {
+            "Host": "{{ .Env.AppName }}-job-service",
+            "Port": 9024
+          }
+        ],
+        "UpstreamPathTemplate": "/job-service/{everything}",
+        "UpstreamHttpMethod": [ "Get", "Post", "Put", "Patch", "Delete", "Options" ],
+        "SwaggerKey": "JobService"
+      },
+      {
+        "DownstreamPathTemplate": "/api/{everything}",
+        "DownstreamScheme": "http",
+        "DownstreamHostAndPorts": [
+          {
+            "Host": "{{ .Env.AppName }}-common-service",
+            "Port": 9025
+          }
+        ],
+        "UpstreamPathTemplate": "/common-service/{everything}",
+        "UpstreamHttpMethod": [ "Get", "Post", "Put", "Patch", "Delete", "Options" ],
+        "SwaggerKey": "CommonService"
+      },
+      {
+        "DownstreamPathTemplate": "/api/{everything}",
+        "DownstreamScheme": "http",
+        "DownstreamHostAndPorts": [
+          {
+            "Host": "{{ .Env.AppName }}-endpoint-service",
+            "Port": 9026
+          }
+        ],
+        "UpstreamPathTemplate": "/endpoint-service/{everything}",
+        "UpstreamHttpMethod": [ "Get", "Post", "Put", "Patch", "Delete", "Options" ],
+        "SwaggerKey": "EndpointService"
+      },
+      {
+        "DownstreamPathTemplate": "/api/{everything}",
+        "DownstreamScheme": "http",
+        "DownstreamHostAndPorts": [
+          {
+            "Host": "{{ .Env.AppName }}-project-service",
+            "Port": 9027
+          }
+        ],
+        "UpstreamPathTemplate": "/project-service/{everything}",
+        "UpstreamHttpMethod": [ "Get", "Post", "Put", "Patch", "Delete", "Options" ],
+        "SwaggerKey": "ProjectService"
+      }
+    ],
+    "SwaggerEndPoints": [
+      {
+        "Key": "ClusterService",
+        "Config": [
+          {
+            "Name": "Cluster Service API",
+            "Version": "v1",
+            "Url": "http://{{ .Env.AppName }}-cluster-service:9023/swagger/v1/swagger.json"
+          }
+        ]
+      },
+      {
+        "Key": "JobService",
+        "Config": [
+          {
+            "Name": "Job Service API",
+            "Version": "v1",
+            "Url": "http://{{ .Env.AppName }}-job-service:9024/swagger/v1/swagger.json"
+          }
+        ]
+      },
+      {
+        "Key": "CommonService",
+        "Config": [
+          {
+            "Name": "Common Service API",
+            "Version": "v1",
+            "Url": "http://{{ .Env.AppName }}-common-service:9025/swagger/v1/swagger.json"
+          }
+        ]
+      },
+      {
+        "Key": "EndpointService",
+        "Config": [
+          {
+            "Name": "Endpoint Service API",
+            "Version": "v1",
+            "Url": "http://{{ .Env.AppName }}-endpoint-service:9026/swagger/v1/swagger.json"
+          }
+        ]
+      },
+      {
+        "Key": "ProjectService",
+        "Config": [
+          {
+            "Name": "Project Service API",
+            "Version": "v1",
+            "Url": "http://{{ .Env.AppName }}-project-service:9027/swagger/v1/swagger.json"
+          }
+        ]
+      }
+    ]
+  }
+  

@@ -1,0 +1,71 @@
+events {
+  worker_connections 4096;
+}
+
+http {
+  server {
+    listen 80;
+    server_name localhost;
+
+    include /etc/nginx/mime.types;
+
+    client_max_body_size 5000000M;
+
+    location / {
+      proxy_pass http://client;
+    }
+
+    location ~* (^/cluster-service|/job-service|/common-service|/endpoint-service|/project-service|/swagger) {
+      proxy_http_version 1.1;
+      proxy_pass http://api-gateway;
+    }
+
+    # location ~ ^/cluster-service/(.*)$ {
+    #   proxy_http_version 1.1;
+    #   rewrite ^ $request_uri;
+    #   rewrite ^/cluster-service/(.*)$ $1 break;
+    #   return 400;
+    #   proxy_pass http://cluster-service/$1;
+    # }
+
+    # location ~ ^/job-service/(.*)$ {
+    #   proxy_http_version 1.1;
+    #   rewrite ^ $request_uri;
+    #   rewrite ^/job-service/(.*)$ $1 break;
+    #   return 400;
+    #   proxy_pass http://job-service/$1;
+    # }
+
+    # location ~ ^/common-service/(.*)$ {
+    #   proxy_http_version 1.1;
+    #   rewrite ^ $request_uri;
+    #   rewrite ^/common-service/(.*)$ $1 break;
+    #   return 400;
+    #   proxy_pass http://common-service/$1;
+    # }
+
+    # location ~ ^/endpoint-service/(.*)$ {
+    #   proxy_http_version 1.1;
+    #   rewrite ^ $request_uri;
+    #   rewrite ^/endpoint-service/(.*)$ $1 break;
+    #   return 400;
+    #   proxy_pass http://endpoint-service/$1;
+    # }
+
+    # location ~ ^/project-service/(.*)$ {
+    #   proxy_http_version 1.1;
+    #   rewrite ^ $request_uri;
+    #   rewrite ^/project-service/(.*)$ $1 break;
+    #   return 400;
+    #   proxy_pass http://project-service/$1;
+    # }
+  }
+
+  upstream client {
+    server {{ .Env.AppName }}-client:80;
+  }
+
+  upstream api-gateway {
+    server {{ .Env.AppName }}-api-gateway:9099;
+  }
+}
