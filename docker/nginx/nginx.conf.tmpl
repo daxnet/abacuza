@@ -18,54 +18,21 @@ http {
     location ~* (^/cluster-service|/job-service|/common-service|/endpoint-service|/project-service|/swagger) {
       proxy_http_version 1.1;
       proxy_pass http://api-gateway;
+      proxy_set_header   Upgrade $http_upgrade;
+      proxy_set_header   Connection keep-alive;
+      proxy_set_header   Host $http_host;
+      proxy_cache_bypass $http_upgrade;
+      proxy_set_header   X-Forwarded-For $proxy_add_x_forwarded_for;
+      proxy_set_header   X-Forwarded-Port $server_port;
+      proxy_set_header   X-Forwarded-Proto $scheme;
     }
-
-    # location ~ ^/cluster-service/(.*)$ {
-    #   proxy_http_version 1.1;
-    #   rewrite ^ $request_uri;
-    #   rewrite ^/cluster-service/(.*)$ $1 break;
-    #   return 400;
-    #   proxy_pass http://cluster-service/$1;
-    # }
-
-    # location ~ ^/job-service/(.*)$ {
-    #   proxy_http_version 1.1;
-    #   rewrite ^ $request_uri;
-    #   rewrite ^/job-service/(.*)$ $1 break;
-    #   return 400;
-    #   proxy_pass http://job-service/$1;
-    # }
-
-    # location ~ ^/common-service/(.*)$ {
-    #   proxy_http_version 1.1;
-    #   rewrite ^ $request_uri;
-    #   rewrite ^/common-service/(.*)$ $1 break;
-    #   return 400;
-    #   proxy_pass http://common-service/$1;
-    # }
-
-    # location ~ ^/endpoint-service/(.*)$ {
-    #   proxy_http_version 1.1;
-    #   rewrite ^ $request_uri;
-    #   rewrite ^/endpoint-service/(.*)$ $1 break;
-    #   return 400;
-    #   proxy_pass http://endpoint-service/$1;
-    # }
-
-    # location ~ ^/project-service/(.*)$ {
-    #   proxy_http_version 1.1;
-    #   rewrite ^ $request_uri;
-    #   rewrite ^/project-service/(.*)$ $1 break;
-    #   return 400;
-    #   proxy_pass http://project-service/$1;
-    # }
   }
 
   upstream client {
-    server {{ .Env.AppName }}-client:80;
+    server {{ .Env.APPLICATION_NAME }}-client:80;
   }
 
   upstream api-gateway {
-    server {{ .Env.AppName }}-api-gateway:9099;
+    server {{ .Env.APPLICATION_NAME }}-api-gateway:9099;
   }
 }

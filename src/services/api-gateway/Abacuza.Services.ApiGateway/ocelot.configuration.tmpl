@@ -5,7 +5,7 @@
         "DownstreamScheme": "http",
         "DownstreamHostAndPorts": [
           {
-            "Host": "{{ .Env.AppName }}-cluster-service",
+            "Host": "{{ .Env.APPLICATION_NAME }}-cluster-service",
             "Port": 9023
           }
         ],
@@ -18,7 +18,7 @@
         "DownstreamScheme": "http",
         "DownstreamHostAndPorts": [
           {
-            "Host": "{{ .Env.AppName }}-job-service",
+            "Host": "{{ .Env.APPLICATION_NAME }}-job-service",
             "Port": 9024
           }
         ],
@@ -31,7 +31,7 @@
         "DownstreamScheme": "http",
         "DownstreamHostAndPorts": [
           {
-            "Host": "{{ .Env.AppName }}-common-service",
+            "Host": "{{ .Env.APPLICATION_NAME }}-common-service",
             "Port": 9025
           }
         ],
@@ -44,7 +44,7 @@
         "DownstreamScheme": "http",
         "DownstreamHostAndPorts": [
           {
-            "Host": "{{ .Env.AppName }}-endpoint-service",
+            "Host": "{{ .Env.APPLICATION_NAME }}-endpoint-service",
             "Port": 9026
           }
         ],
@@ -57,7 +57,7 @@
         "DownstreamScheme": "http",
         "DownstreamHostAndPorts": [
           {
-            "Host": "{{ .Env.AppName }}-project-service",
+            "Host": "{{ .Env.APPLICATION_NAME }}-project-service",
             "Port": 9027
           }
         ],
@@ -73,7 +73,7 @@
           {
             "Name": "Cluster Service API",
             "Version": "v1",
-            "Url": "http://{{ .Env.AppName }}-cluster-service:9023/swagger/v1/swagger.json"
+            "Url": "http://{{ .Env.APPLICATION_NAME }}-cluster-service:9023/swagger/v1/swagger.json"
           }
         ]
       },
@@ -83,7 +83,7 @@
           {
             "Name": "Job Service API",
             "Version": "v1",
-            "Url": "http://{{ .Env.AppName }}-job-service:9024/swagger/v1/swagger.json"
+            "Url": "http://{{ .Env.APPLICATION_NAME }}-job-service:9024/swagger/v1/swagger.json"
           }
         ]
       },
@@ -93,7 +93,7 @@
           {
             "Name": "Common Service API",
             "Version": "v1",
-            "Url": "http://{{ .Env.AppName }}-common-service:9025/swagger/v1/swagger.json"
+            "Url": "http://{{ .Env.APPLICATION_NAME }}-common-service:9025/swagger/v1/swagger.json"
           }
         ]
       },
@@ -103,7 +103,7 @@
           {
             "Name": "Endpoint Service API",
             "Version": "v1",
-            "Url": "http://{{ .Env.AppName }}-endpoint-service:9026/swagger/v1/swagger.json"
+            "Url": "http://{{ .Env.APPLICATION_NAME }}-endpoint-service:9026/swagger/v1/swagger.json"
           }
         ]
       },
@@ -113,7 +113,7 @@
           {
             "Name": "Project Service API",
             "Version": "v1",
-            "Url": "http://{{ .Env.AppName }}-project-service:9027/swagger/v1/swagger.json"
+            "Url": "http://{{ .Env.APPLICATION_NAME }}-project-service:9027/swagger/v1/swagger.json"
           }
         ]
       }

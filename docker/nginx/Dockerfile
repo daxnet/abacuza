@@ -1,5 +1,5 @@
 FROM nginx
-ENV AppName=abacuza
+ENV APPLICATION_NAME=abacuza
 RUN apt update
 RUN apt install -y wget
 
@@ -10,5 +10,4 @@ RUN wget https://github.com/jwilder/dockerize/releases/download/$DOCKERIZE_VERSI
     && rm dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz
 
 COPY nginx.conf.tmpl /etc/nginx/nginx.conf.tmpl
-#CMD ["nginx", "-g", "daemon off;"]
 CMD dockerize -template /etc/nginx/nginx.conf.tmpl:/etc/nginx/nginx.conf nginx -g "daemon off;"

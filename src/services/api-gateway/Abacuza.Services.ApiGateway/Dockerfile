@@ -3,7 +3,7 @@
 FROM mcr.microsoft.com/dotnet/aspnet:5.0-buster-slim AS base
 WORKDIR /app
 ENV ASPNETCORE_URLS=http://+:9099
-ENV AppName=abacuza
+ENV APPLICATION_NAME=abacuza
 EXPOSE 9099
 
 FROM mcr.microsoft.com/dotnet/sdk:5.0-buster-slim AS build
