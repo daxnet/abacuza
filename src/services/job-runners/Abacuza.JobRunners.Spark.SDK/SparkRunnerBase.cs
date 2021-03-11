@@ -50,30 +50,18 @@ namespace Abacuza.JobRunners.Spark.SDK
         private const string ProjectContextKey = "project_context";
 
         private static readonly Lazy<IEnumerable<Type>> _inputEndpointTypes = new Lazy<IEnumerable<Type>>(() =>
-            //from p in typeof(EmptyInputEndpoint).Assembly.GetExportedTypes()
-            //where p.IsClass && !p.IsAbstract && typeof(IInputEndpoint).IsAssignableFrom(p) && p.IsDefined(typeof(EndpointAttribute), false)
-            //select p
             DiscoverDerivedTypes<IInputEndpoint>(typeof(EndpointAttribute))
         );
 
         private static readonly Lazy<IEnumerable<Type>> _outputEndpointTypes = new Lazy<IEnumerable<Type>>(() =>
-            //from p in typeof(EmptyOutputEndpoint).Assembly.GetExportedTypes()
-            //where p.IsClass && !p.IsAbstract && typeof(IOutputEndpoint).IsAssignableFrom(p) && p.IsDefined(typeof(EndpointAttribute), false)
-            //select p
             DiscoverDerivedTypes<IOutputEndpoint>(typeof(EndpointAttribute))
         );
 
         private static readonly Lazy<IEnumerable<Type>> _inputReaderTypes = new Lazy<IEnumerable<Type>>(() =>
-            //from p in typeof(IInputReader).Assembly.GetExportedTypes()
-            //where p.IsClass && !p.IsAbstract && typeof(IInputReader).IsAssignableFrom(p)
-            //select p
             DiscoverDerivedTypes<IInputReader>()
         );
 
         private static readonly Lazy<IEnumerable<Type>> _outputWriterTypes = new Lazy<IEnumerable<Type>>(() =>
-            //from p in typeof(IOutputWriter).Assembly.GetExportedTypes()
-            //where p.IsClass && !p.IsAbstract && typeof(IOutputWriter).IsAssignableFrom(p)
-            //select p
             DiscoverDerivedTypes<IOutputWriter>()
         );
 
@@ -185,13 +173,14 @@ namespace Abacuza.JobRunners.Spark.SDK
             {
                 if (Path.GetFileName(assemblyFile).StartsWith("System"))
                 {
+                    // Bypassing the system assemblies.
                     continue;
                 }
 
                 try
                 {
                     var assembly = Assembly.LoadFrom(assemblyFile);
-                    var query = from p in assembly.GetExportedTypes()
+                    var query = from p in assembly.GetTypes()
                                 where p.IsClass && !p.IsAbstract && typeof(T).IsAssignableFrom(p)
                                 select p;
                     if (attributeType != null)

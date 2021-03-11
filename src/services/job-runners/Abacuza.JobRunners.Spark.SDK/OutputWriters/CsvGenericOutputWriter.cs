@@ -6,9 +6,9 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace Abacuza.JobRunners.Spark.SDK.IO.OutputWriters
+namespace Abacuza.JobRunners.Spark.SDK.OutputWriters
 {
-    public class CsvGenericOutputWriter : OutputWriter<CsvGenericOutputEndpoint>
+    internal class CsvGenericOutputWriter : OutputWriter<CsvGenericOutputEndpoint>
     {
         protected override void WriteToInternal(DataFrame dataFrame, CsvGenericOutputEndpoint outputEndpoint, ProjectContext projectContext)
         {

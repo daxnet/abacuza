@@ -18,12 +18,12 @@ using Microsoft.Spark.Sql;
 using System;
 using System.Linq;
 
-namespace Abacuza.JobRunners.Spark.SDK.IO.InputReaders
+namespace Abacuza.JobRunners.Spark.SDK.InputReaders
 {
     /// <summary>
     /// Represents the input reader that reads data from JSON files.
     /// </summary>
-    public sealed class JsonFileInputReader : InputReader<JsonInputEndpoint>
+    internal sealed class JsonFileInputReader : InputReader<JsonInputEndpoint>
     {
         #region Protected Methods
 

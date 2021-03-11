@@ -6,9 +6,9 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace Abacuza.JobRunners.Spark.SDK.IO.InputReaders
+namespace Abacuza.JobRunners.Spark.SDK.InputReaders
 {
-    public sealed class MultiDataSourcesInputReader : InputReader<MultiDataSourcesInputEndpoint>
+    internal sealed class MultiDataSourcesInputReader : InputReader<MultiDataSourcesInputEndpoint>
     {
         protected override DataFrame ReadFromInternal(SparkSession sparkSession, MultiDataSourcesInputEndpoint inputEndpoint, ProjectContext projectContext)
         {
