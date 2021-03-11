@@ -56,6 +56,13 @@ namespace Abacuza.Common.ApiService.Controllers
 
         #region Public Methods
 
+        /// <summary>
+        /// Deletes a file from the S3 storage.
+        /// </summary>
+        /// <param name="bucket">The bucket name.</param>
+        /// <param name="key">The file key.</param>
+        /// <param name="file">The name of the file.</param>
+        /// <returns></returns>
         [HttpDelete("{bucket}/{key}/{file}")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         public async Task<IActionResult> DeleteS3FileAsync(string bucket, string key, string file)

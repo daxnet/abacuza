@@ -16,20 +16,20 @@ RUN dotnet restore "endpoints/Abacuza.Endpoints.ApiService/Abacuza.Endpoints.Api
 RUN dotnet restore "endpoints/Abacuza.Endpoints.Input/Abacuza.Endpoints.Input.csproj"
 RUN dotnet restore "endpoints/Abacuza.Endpoints.Output/Abacuza.Endpoints.Output.csproj"
 COPY . .
-WORKDIR "/src/endpoints/Abacuza.Endpoints.ApiService"
-RUN dotnet build "Abacuza.Endpoints.ApiService.csproj" -c Release -o /app/build
-WORKDIR "/src/endpoints/Abacuza.Endpoints.Input"
-RUN dotnet build "Abacuza.Endpoints.Input.csproj" -c Release -o /app/plugins/endpoints
-WORKDIR "/src/endpoints/Abacuza.Endpoints.Output"
-RUN dotnet build "Abacuza.Endpoints.Output.csproj" -c Release -o /app/plugins/endpoints
+#WORKDIR "/src/endpoints/Abacuza.Endpoints.ApiService"
+#RUN dotnet build "Abacuza.Endpoints.ApiService.csproj" -c Release -o /app/build
+#WORKDIR "/src/endpoints/Abacuza.Endpoints.Input"
+#RUN dotnet build "Abacuza.Endpoints.Input.csproj" -c Release -o /app/plugins/endpoints
+#WORKDIR "/src/endpoints/Abacuza.Endpoints.Output"
+#RUN dotnet build "Abacuza.Endpoints.Output.csproj" -c Release -o /app/plugins/endpoints
 
 FROM build AS publish
 WORKDIR "/src/endpoints/Abacuza.Endpoints.ApiService"
-RUN dotnet publish "Abacuza.Endpoints.ApiService.csproj" -c Release -o /app/publish
+RUN dotnet publish -p:IncludeLicenseWhenGeneratePackage=false "Abacuza.Endpoints.ApiService.csproj" -c Release -o /app/publish
 WORKDIR "/src/endpoints/Abacuza.Endpoints.Input"
-RUN dotnet publish "Abacuza.Endpoints.Input.csproj" -c Release -o /app/publish/plugins/endpoints
+RUN dotnet publish -p:IncludeLicenseWhenGeneratePackage=false "Abacuza.Endpoints.Input.csproj" -c Release -o /app/publish/plugins/endpoints
 WORKDIR "/src/endpoints/Abacuza.Endpoints.Output"
-RUN dotnet publish "Abacuza.Endpoints.Output.csproj" -c Release -o /app/publish/plugins/endpoints
+RUN dotnet publish -p:IncludeLicenseWhenGeneratePackage=false "Abacuza.Endpoints.Output.csproj" -c Release -o /app/publish/plugins/endpoints
 
 FROM base AS final
 WORKDIR /app

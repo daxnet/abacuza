@@ -12,10 +12,10 @@ COPY ["common/Abacuza.Common.ApiService/Abacuza.Common.ApiService.csproj", "comm
 RUN dotnet restore "common/Abacuza.Common.ApiService/Abacuza.Common.ApiService.csproj"
 COPY . .
 WORKDIR "/src/common/Abacuza.Common.ApiService"
-RUN dotnet build "Abacuza.Common.ApiService.csproj" -c Release -o /app/build
+# RUN dotnet build "Abacuza.Common.ApiService.csproj" -c Release -o /app/build
 
 FROM build AS publish
-RUN dotnet publish "Abacuza.Common.ApiService.csproj" -c Release -o /app/publish
+RUN dotnet publish -p:IncludeLicenseWhenGeneratePackage=false "Abacuza.Common.ApiService.csproj" -c Release -o /app/publish
 
 FROM base AS final
 WORKDIR /app

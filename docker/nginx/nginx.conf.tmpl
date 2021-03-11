@@ -1,0 +1,38 @@
+events {
+  worker_connections 4096;
+}
+
+http {
+  server {
+    listen 80;
+    server_name localhost;
+
+    include /etc/nginx/mime.types;
+
+    client_max_body_size 5000000M;
+
+    location / {
+      proxy_pass http://client;
+    }
+
+    location ~* (^/cluster-service|/job-service|/common-service|/endpoint-service|/project-service|/swagger) {
+      proxy_http_version 1.1;
+      proxy_pass http://api-gateway;
+      proxy_set_header   Upgrade $http_upgrade;
+      proxy_set_header   Connection keep-alive;
+      proxy_set_header   Host $http_host;
+      proxy_cache_bypass $http_upgrade;
+      proxy_set_header   X-Forwarded-For $proxy_add_x_forwarded_for;
+      proxy_set_header   X-Forwarded-Port $server_port;
+      proxy_set_header   X-Forwarded-Proto $scheme;
+    }
+  }
+
+  upstream client {
+    server {{ .Env.APPLICATION_NAME }}-client:80;
+  }
+
+  upstream api-gateway {
+    server {{ .Env.APPLICATION_NAME }}-api-gateway:9099;
+  }
+}

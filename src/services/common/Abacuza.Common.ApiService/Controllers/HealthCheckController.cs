@@ -26,7 +26,8 @@ namespace Abacuza.Common.ApiService.Controllers
         public IActionResult Get()
             => Ok(new
             {
-                version = Assembly.GetExecutingAssembly().GetName().Version!.ToString()
+                version = Assembly.GetExecutingAssembly().GetName().Version!.ToString(),
+                name = "common-service"
             });
 
         #endregion Public Methods

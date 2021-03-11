@@ -29,56 +29,30 @@ services:
             - "27017:27017"
     abacuza-common-service:
         image: daxnet/abacuza-common-service
-        ports:
-            - "9025:9025"
         links:
             - abacuza-minio
         depends_on: 
             - abacuza-minio
-        healthcheck:
-            test: ["CMD", "curl", "-f", "http://localhost:9025/api/healthcheck"]
-            interval: 20s
-            timeout: 10s
-            retries: 5
-            start_period: 40s
         environment: 
             - s3__endpoint=http://abacuza-minio:9000
             - s3__accessKey=AKIAIOSFODNN7EXAMPLE
             - s3__secretKey=wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY
     abacuza-cluster-service:
         image: daxnet/abacuza-cluster-service
-        ports:
-            - "9023:9023"
         depends_on: 
             - abacuza-mongo
             - abacuza-redis
         links: 
             - abacuza-mongo
             - abacuza-redis
-        healthcheck:
-            test: ["CMD", "curl", "-f", "http://localhost:9023/api/healthcheck"]
-            interval: 20s
-            timeout: 10s
-            retries: 5
-            start_period: 40s
         environment: 
             - mongo__connectionString=mongodb://abacuza-mongo:27017
             - mongo__database=abacuza-clusters
             - redis__connectionString=abacuza-redis:6379
     abacuza-endpoint-service:
         image: daxnet/abacuza-endpoint-service
-        ports:
-            - "9026:9026"
-        healthcheck:
-            test: ["CMD", "curl", "-f", "http://localhost:9026/api/healthcheck"]
-            interval: 20s
-            timeout: 10s
-            retries: 5
-            start_period: 40s
     abacuza-project-service:
         image: daxnet/abacuza-project-service
-        ports:
-            - "9027:9027"
         depends_on: 
             - abacuza-mongo
             - abacuza-redis
@@ -87,12 +61,6 @@ services:
             - abacuza-mongo
             - abacuza-redis
             - abacuza-job-service
-        healthcheck:
-            test: ["CMD", "curl", "-f", "http://localhost:9027/api/healthcheck"]
-            interval: 20s
-            timeout: 10s
-            retries: 5
-            start_period: 40s
         environment:
             - mongo__connectionString=mongodb://abacuza-mongo:27017
             - mongo__database=abacuza-projects
@@ -103,8 +71,6 @@ services:
             - options__maxReservedRevisions=24
     abacuza-job-service:
         image: daxnet/abacuza-job-service
-        ports:
-            - "9024:9024"
         depends_on: 
             - abacuza-mongo
             - abacuza-postgres
@@ -113,12 +79,6 @@ services:
             - abacuza-mongo
             - abacuza-postgres
             - abacuza-redis
-        healthcheck:
-            test: ["CMD", "curl", "-f", "http://localhost:9024/api/healthcheck"]
-            interval: 20s
-            timeout: 10s
-            retries: 5
-            start_period: 40s
         environment: 
             - mongo__connectionString=mongodb://abacuza-mongo:27017
             - mongo__database=abacuza-job-schedulers
@@ -226,32 +186,35 @@ services:
             - /spark/sbin/start-slave.sh
             - --work-dir /data/work
             - abacuza-spark-master:7077
+    abacuza-api-gateway:
+        image: daxnet/abacuza-api-gateway
+        depends_on: 
+            - abacuza-common-service
+            - abacuza-cluster-service
+            - abacuza-endpoint-service
+            - abacuza-job-service
+            - abacuza-project-service
+        links:
+            - abacuza-common-service
+            - abacuza-cluster-service
+            - abacuza-endpoint-service
+            - abacuza-job-service
+            - abacuza-project-service
+        environment:
+            - APPLICATION_NAME=abacuza
     abacuza-client:
         image: daxnet/abacuza-client
         depends_on:
-            - abacuza-cluster-service
-            - abacuza-job-service
-            - abacuza-common-service
-            - abacuza-endpoint-service
-        links:
-            - abacuza-cluster-service
-            - abacuza-job-service
-            - abacuza-common-service
-            - abacuza-endpoint-service
+            - abacuza-api-gateway
     abacuza-nginx:
         image: daxnet/abacuza-nginx
         depends_on:
+            - abacuza-api-gateway
             - abacuza-client
-            - abacuza-cluster-service
-            - abacuza-job-service
-            - abacuza-common-service
-            - abacuza-endpoint-service
         links:
+            - abacuza-api-gateway
             - abacuza-client
-            - abacuza-cluster-service
-            - abacuza-job-service
-            - abacuza-common-service
-            - abacuza-endpoint-service
+        environment:
+            - APPLICATION_NAME=abacuza
         ports:
             - 9320:80
-        

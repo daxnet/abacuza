@@ -14,7 +14,7 @@ export class JobRunnersService {
   constructor(private httpClient: HttpClient) { }
 
   public getAllJobRunners(): Observable<HttpResponse<JobRunner[]>> {
-    return this.httpClient.get<JobRunner[]>(`${environment.jobServiceBaseUrl}api/job-runners`, {
+    return this.httpClient.get<JobRunner[]>(`${environment.serviceBaseUrl}job-service/job-runners`, {
       observe: 'response',
     }).pipe(
       map(response => {
@@ -25,7 +25,7 @@ export class JobRunnersService {
   }
 
   public createJobRunner(jr: JobRunner): Observable<string> {
-    return this.httpClient.post<string>(`${environment.jobServiceBaseUrl}api/job-runners`, {
+    return this.httpClient.post<string>(`${environment.serviceBaseUrl}job-service/job-runners`, {
       name: jr.name,
       description: jr.description,
       clusterType: jr.clusterType,
@@ -33,7 +33,7 @@ export class JobRunnersService {
   }
 
   public getJobRunnerById(id: string): Observable<HttpResponse<JobRunner>> {
-    return this.httpClient.get<JobRunner>(`${environment.jobServiceBaseUrl}api/job-runners/${id}`, {
+    return this.httpClient.get<JobRunner>(`${environment.serviceBaseUrl}job-service/job-runners/${id}`, {
       observe: 'response',
     }).pipe(
       map(response => {
@@ -44,11 +44,11 @@ export class JobRunnersService {
   }
 
   public deleteJobRunner(id: string): Observable<any> {
-    return this.httpClient.delete(`${environment.jobServiceBaseUrl}api/job-runners/${id}`);
+    return this.httpClient.delete(`${environment.serviceBaseUrl}job-service/job-runners/${id}`);
   }
 
   public addBinaryFiles(id: string, files: S3File[]): Observable<JobRunner> {
-    return this.httpClient.post<JobRunner>(`${environment.jobServiceBaseUrl}api/job-runners/${id}/files`, files,
+    return this.httpClient.post<JobRunner>(`${environment.serviceBaseUrl}job-service/job-runners/${id}/files`, files,
     {
       observe: 'body',
     });
@@ -58,14 +58,14 @@ export class JobRunnersService {
     const normalizedBucketName = encodeURIComponent(file.bucket);
     const normalizedKeyName = encodeURIComponent(file.key);
     const normalizedFileName = encodeURIComponent(file.file);
-    return this.httpClient.delete<JobRunner>(`${environment.jobServiceBaseUrl}api/job-runners/${id}/files/${normalizedBucketName}/${normalizedKeyName}/${normalizedFileName}`, {
+    return this.httpClient.delete<JobRunner>(`${environment.serviceBaseUrl}job-service/job-runners/${id}/files/${normalizedBucketName}/${normalizedKeyName}/${normalizedFileName}`, {
       observe: 'body',
     });
   }
 
   public updateJobRunner(id: string, entity: JobRunner): Observable<JobRunner> {
     entity.payloadTemplate = JSON.stringify(entity.payloadTemplateJsonObject);
-    return this.httpClient.patch<JobRunner>(`${environment.jobServiceBaseUrl}api/job-runners/${id}`,
+    return this.httpClient.patch<JobRunner>(`${environment.serviceBaseUrl}job-service/job-runners/${id}`,
     [
       {
         op: 'replace',

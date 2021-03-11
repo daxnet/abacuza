@@ -16,16 +16,16 @@ COPY ["clusters/Abacuza.Clusters.Spark/Abacuza.Clusters.Spark.csproj", "clusters
 RUN dotnet restore "clusters/Abacuza.Clusters.ApiService/Abacuza.Clusters.ApiService.csproj"
 RUN dotnet restore "clusters/Abacuza.Clusters.Spark/Abacuza.Clusters.Spark.csproj"
 COPY . .
-WORKDIR "/src/clusters/Abacuza.Clusters.ApiService"
-RUN dotnet build "Abacuza.Clusters.ApiService.csproj" -c Release -o /app/build
-WORKDIR "/src/clusters/Abacuza.Clusters.Spark"
-RUN dotnet build "Abacuza.Clusters.Spark.csproj" -c Release -o /app/plugins/clusters/spark
+#WORKDIR "/src/clusters/Abacuza.Clusters.ApiService"
+#RUN dotnet build "Abacuza.Clusters.ApiService.csproj" -c Release -o /app/build
+#WORKDIR "/src/clusters/Abacuza.Clusters.Spark"
+#RUN dotnet build "Abacuza.Clusters.Spark.csproj" -c Release -o /app/plugins/clusters/spark
 
 FROM build AS publish
 WORKDIR "/src/clusters/Abacuza.Clusters.ApiService"
-RUN dotnet publish "Abacuza.Clusters.ApiService.csproj" -c Release -o /app/publish
+RUN dotnet publish -p:IncludeLicenseWhenGeneratePackage=false "Abacuza.Clusters.ApiService.csproj" -c Release -o /app/publish
 WORKDIR "/src/clusters/Abacuza.Clusters.Spark"
-RUN dotnet publish "Abacuza.Clusters.Spark.csproj" -c Release -o /app/publish/plugins/clusters/spark
+RUN dotnet publish -p:IncludeLicenseWhenGeneratePackage=false "Abacuza.Clusters.Spark.csproj" -c Release -o /app/publish/plugins/clusters/spark
 
 FROM base AS final
 WORKDIR /app
