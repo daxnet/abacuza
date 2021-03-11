@@ -5,9 +5,9 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace Abacuza.JobRunners.Spark.SDK.IO.OutputWriters
+namespace Abacuza.JobRunners.Spark.SDK.OutputWriters
 {
-    public sealed class ConsoleOutputWriter : OutputWriter<ConsoleOutputEndpoint>
+    internal sealed class ConsoleOutputWriter : OutputWriter<ConsoleOutputEndpoint>
     {
         protected override void WriteToInternal(DataFrame dataFrame, ConsoleOutputEndpoint outputEndpoint, ProjectContext projectContext)
         {

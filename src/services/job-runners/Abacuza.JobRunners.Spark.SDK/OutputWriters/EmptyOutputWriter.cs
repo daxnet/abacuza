@@ -15,12 +15,12 @@ using Abacuza.Endpoints.Output;
 using Abacuza.JobRunners.Spark.SDK.OutputWriters;
 using Microsoft.Spark.Sql;
 
-namespace Abacuza.JobRunners.Spark.SDK.IO.OutputWriters
+namespace Abacuza.JobRunners.Spark.SDK.OutputWriters
 {
     /// <summary>
     /// Represents the output writer that doesn't write anything out.
     /// </summary>
-    public sealed class EmptyOutputWriter : OutputWriter<EmptyOutputEndpoint>
+    internal sealed class EmptyOutputWriter : OutputWriter<EmptyOutputEndpoint>
     {
         #region Protected Methods
 

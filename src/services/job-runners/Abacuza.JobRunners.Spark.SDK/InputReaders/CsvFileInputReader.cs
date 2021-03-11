@@ -18,13 +18,13 @@ using Microsoft.Spark.Sql;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Abacuza.JobRunners.Spark.SDK.IO.InputReaders
+namespace Abacuza.JobRunners.Spark.SDK.InputReaders
 {
     /// <summary>
     /// Represents the input reader that reads CSV files from the input endpoint.
     /// </summary>
     /// <seealso cref="InputReader{CsvInputEndpoint}" />
-    public class CsvFileInputReader : InputReader<CsvInputEndpoint>
+    internal class CsvFileInputReader : InputReader<CsvInputEndpoint>
     {
 
         #region Protected Methods
