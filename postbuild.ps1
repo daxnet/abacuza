@@ -1,8 +1,4 @@
-﻿param (
-	[string]$configuration = "Debug"
-)
-
-$nupkgOutputDirectory = $PSScriptRoot + '\bld\nupkgs'
+﻿$nupkgOutputDirectory = $PSScriptRoot + '\bld\nupkgs'
 if (-not (Test-Path -LiteralPath $nupkgOutputDirectory)) {
 	try {
         New-Item -Path $nupkgOutputDirectory -ItemType Directory -ErrorAction Stop | Out-Null

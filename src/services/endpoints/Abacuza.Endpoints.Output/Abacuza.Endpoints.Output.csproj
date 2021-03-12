@@ -2,6 +2,8 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.1</TargetFramework>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <Description>Includes the basic output endpoint implementations for the Abacuza data processing platform.</Description>
   </PropertyGroup>
 
   <ItemGroup>
