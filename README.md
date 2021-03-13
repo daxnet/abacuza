@@ -137,8 +137,8 @@ Follow the steps below to create a job runner in Abacuza.
 1. From `Jobs` menu, click `Job Runners`, then in the `Job Runners` page, click the plus icon to create a new job runner
 2. In the `Create Job Runner` dialog, fill in the name and description for the job runner, and for the `Cluster type`, choose `Spark`:
    ![Create Job Runner](docs/images/create-job-runner.png)
-3. Click `SAVE` button, Abacuza will redirect you to the `Job Runner Details` page
-4. In the `Job Runner Details` page, under the `Binaries` section, add the following two files to the `Job Runner`:
+4. Click `SAVE` button, Abacuza will redirect you to the `Job Runner Details` page
+5. In the `Job Runner Details` page, under the `Binaries` section, add the following two files to the `Job Runner`:
    1. `microsoft-spark-3-0_2.12-1.0.0.jar` - you can find it here:
    2. `WordCount20210313.zip` - This is the Zip file you created in step 6 of chapter [Develop the Word Count Application](#develop-the-word-count-application)
    ![Job Runner Binaries](docs/images/job-runner-binaries.png)
