@@ -66,7 +66,7 @@ Microsoft provides a .NET for Spark tutorial that demonstrates the counting of t
 An application in Abacuza describes how the data should be processed or transformed, it is usually developed by data scientists to meet their analysis needs. Applications will be assigned to the Job Runners and then loaded by the job runner when a project requests a data processing session. Developing an application for Abacuza involves the following tasks:
 
 - Create a new .NET 5 console application
-- Add `Abacuza.JobRunners.Spark.SDK` NuGet package reference
+- Add `Microsoft.Spark` and `Abacuza.JobRunners.Spark.SDK` NuGet package reference
 - Customize the application
 - Build and pack the application
 
@@ -76,7 +76,8 @@ An application in Abacuza describes how the data should be processed or transfor
    ```
 2. Add NuGet package reference
    ```shell
-   $ dotnet add package Abacuza.JobRunners.Spark.SDK --version 0.1.107-dev
+   $ dotnet add package Microsoft.Spark --version 1.0.0
+   $ dotnet add package Abacuza.JobRunners.Spark.SDK --prerelease
    ```
 3. Add a new class which derives from the `SparkRunnerBase`, actually its code is copied from the [example code provided by Microsoft](https://dotnet.microsoft.com/learn/data/spark-tutorial/code):
    ```csharp
@@ -139,7 +140,7 @@ Follow the steps below to create a job runner in Abacuza.
    ![Create Job Runner](docs/images/create-job-runner.png)
 4. Click `SAVE` button, Abacuza will redirect you to the `Job Runner Details` page
 5. In the `Job Runner Details` page, under the `Binaries` section, add the following two files to the `Job Runner`:
-   1. `microsoft-spark-3-0_2.12-1.0.0.jar` - you can find it here:
+   1. `microsoft-spark-3-0_2.12-1.0.0.jar` - you can find it in your `published` folder
    2. `WordCount20210313.zip` - This is the Zip file you created in step 6 of chapter [Develop the Word Count Application](#develop-the-word-count-application)
    ![Job Runner Binaries](docs/images/job-runner-binaries.png)
 5. Under the `Payload template` section, use the following JSON document:
