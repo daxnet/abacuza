@@ -15,6 +15,9 @@ using Abacuza.Common.UIComponents;
 
 namespace Abacuza.Endpoints.Output
 {
+    /// <summary>
+    /// Represents the output endpoint that writes the CSV files to the project folder.
+    /// </summary>
     [Endpoint(
         "endpoint.output.csv.projectfile",
         "CSV/TSV Files Saved to Projects",

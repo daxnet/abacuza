@@ -1,0 +1,35 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Abacuza.Endpoints.Output</name>
+    </assembly>
+    <members>
+        <member name="T:Abacuza.Endpoints.Output.ConsoleOutputEndpoint">
+            <summary>
+            Represents the output endpoint that writes the output to the console.
+            </summary>
+        </member>
+        <member name="T:Abacuza.Endpoints.Output.CsvGenericOutputEndpoint">
+            <summary>
+            Represents the output endpoint for CSV/TSV files.
+            </summary>
+            <remarks>For a complete list of the options, please refer to https://spark.apache.org/docs/latest/api/java/org/apache/spark/sql/DataFrameWriter.html.
+            </remarks>
+        </member>
+        <member name="P:Abacuza.Endpoints.Output.CsvGenericOutputEndpoint.Path">
+            <summary>
+            Gets or sets the path to which the CSV should be written.
+            </summary>
+        </member>
+        <member name="T:Abacuza.Endpoints.Output.CsvProjectOutputEndpoint">
+            <summary>
+            Represents the output endpoint that writes the CSV files to the project folder.
+            </summary>
+        </member>
+        <member name="T:Abacuza.Endpoints.Output.EmptyOutputEndpoint">
+            <summary>
+            Represents the output endpoint that doesn't output anything.
+            </summary>
+        </member>
+    </members>
+</doc>

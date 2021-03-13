@@ -1,0 +1,71 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Abacuza.Endpoints.Input</name>
+    </assembly>
+    <members>
+        <member name="T:Abacuza.Endpoints.Input.CsvInputEndpoint">
+            <summary>
+            Represents the input endpoint for CSV/TSV files.
+            </summary>
+            <remarks>For possible options please refer to https://spark.apache.org/docs/latest/api/java/org/apache/spark/sql/DataFrameReader.html
+            </remarks>
+        </member>
+        <member name="P:Abacuza.Endpoints.Input.CsvInputEndpoint.Files">
+            <summary>
+            Gets or sets a list of files, in particular, the files with CSV or TSV extensions.
+            </summary>
+        </member>
+        <member name="P:Abacuza.Endpoints.Input.CsvInputEndpoint.InferSchema">
+            <summary>
+            Gets or sets a <see cref="T:System.Boolean"/> value which indicates whether the schema should be inferred from the raw data.
+            </summary>
+        </member>
+        <member name="P:Abacuza.Endpoints.Input.CsvInputEndpoint.Multiline">
+            <summary>
+            Gets or sets a <see cref="T:System.Boolean"/> value which indicates whether a record in the file could span multiple lines.
+            </summary>
+        </member>
+        <member name="T:Abacuza.Endpoints.Input.EmptyInputEndpoint">
+            <summary>
+            Represents the input endpoint that doesn't read any data.
+            </summary>
+        </member>
+        <member name="T:Abacuza.Endpoints.Input.JsonInputEndpoint">
+            <summary>
+            Represents the input endpoint that reads data from JSON files.
+            </summary>
+        </member>
+        <member name="P:Abacuza.Endpoints.Input.JsonInputEndpoint.Files">
+            <summary>
+            Gets or sets the JSON files.
+            </summary>
+        </member>
+        <member name="T:Abacuza.Endpoints.Input.MultiDataSourcesInputEndpoint">
+            <summary>
+            Represents the input endpoint that accepts a JSON text that represents
+            the settings of multiple data sources.
+            </summary>
+        </member>
+        <member name="P:Abacuza.Endpoints.Input.MultiDataSourcesInputEndpoint.Json">
+            <summary>
+            Gets or sets the JSON text that contains the settings of multiple data sources.
+            </summary>
+        </member>
+        <member name="T:Abacuza.Endpoints.Input.SqlServerDataTableInputEndpoint">
+            <summary>
+            Represents the input endpoint that reads data from Microsoft SQL Server database.
+            </summary>
+        </member>
+        <member name="T:Abacuza.Endpoints.Input.TextInputEndpoint">
+            <summary>
+            Represents the input endpoint that reads data from text files.
+            </summary>
+        </member>
+        <member name="P:Abacuza.Endpoints.Input.TextInputEndpoint.Files">
+            <summary>
+            Gets or sets the text files.
+            </summary>
+        </member>
+    </members>
+</doc>

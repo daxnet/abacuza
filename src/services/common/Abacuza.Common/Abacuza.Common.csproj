@@ -5,4 +5,9 @@
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <Description>Common library for implementing Abacuza extensions.</Description>
   </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <NoWarn>1701;1702;1591</NoWarn>
+    <DocumentationFile>Abacuza.Common.xml</DocumentationFile>
+  </PropertyGroup>
 </Project>

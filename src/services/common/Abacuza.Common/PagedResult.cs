@@ -7,7 +7,6 @@ namespace Abacuza.Common
     /// <summary>
     /// Represents the object which contains a particular page of data and the pagination information.
     /// </summary>
-    /// <seealso cref="System.Collections.Generic.ICollection{System.Object}" />
     public class PagedResult<T> : IPagedResult, ICollection<T>
     {
         #region Private Fields
@@ -16,14 +15,14 @@ namespace Abacuza.Common
 
         #region Public Fields        
         /// <summary>
-        /// The <see cref="PagedResult"/> instance which represents the empty value.
+        /// The <see cref="PagedResult{T}"/> instance which represents the empty value.
         /// </summary>
         public static readonly PagedResult<T> Empty = new PagedResult<T>(new List<T>(), 0, 0, 0, 0);
         #endregion
 
         #region Ctor        
         /// <summary>
-        /// Initializes a new instance of the <see cref="PagedResult"/> class.
+        /// Initializes a new instance of the <see cref="PagedResult{T}"/> class.
         /// </summary>
         /// <param name="source">The source collection which contains a particular page of data.</param>
         /// <param name="pageNumber">The page number.</param>

@@ -12,8 +12,6 @@
 // ==============================================================
 
 using Abacuza.Endpoints;
-using Abacuza.Endpoints.Input;
-using Abacuza.Endpoints.Output;
 using Abacuza.JobRunners.Spark.SDK.InputReaders;
 using Abacuza.JobRunners.Spark.SDK.OutputWriters;
 using Microsoft.Spark;
@@ -33,7 +31,6 @@ namespace Abacuza.JobRunners.Spark.SDK
     /// </summary>
     public abstract class SparkRunnerBase
     {
-
         #region Protected Fields
 
         protected readonly string[] _args;
@@ -53,12 +50,12 @@ namespace Abacuza.JobRunners.Spark.SDK
             DiscoverDerivedTypes<IInputEndpoint>(typeof(EndpointAttribute))
         );
 
-        private static readonly Lazy<IEnumerable<Type>> _outputEndpointTypes = new Lazy<IEnumerable<Type>>(() =>
-            DiscoverDerivedTypes<IOutputEndpoint>(typeof(EndpointAttribute))
-        );
-
         private static readonly Lazy<IEnumerable<Type>> _inputReaderTypes = new Lazy<IEnumerable<Type>>(() =>
             DiscoverDerivedTypes<IInputReader>()
+        );
+
+        private static readonly Lazy<IEnumerable<Type>> _outputEndpointTypes = new Lazy<IEnumerable<Type>>(() =>
+                    DiscoverDerivedTypes<IOutputEndpoint>(typeof(EndpointAttribute))
         );
 
         private static readonly Lazy<IEnumerable<Type>> _outputWriterTypes = new Lazy<IEnumerable<Type>>(() =>
@@ -145,7 +142,6 @@ namespace Abacuza.JobRunners.Spark.SDK
             var outputEndpoint = CreateOutputEndpoint(outputEndpointName, outputEndpointSettings);
             var outputWriter = CreateOutputWriter(outputEndpointName);
             outputWriter.WriteTo(dataFrameResult, outputEndpoint, projectContext);
-
         }
 
         #endregion Public Methods
@@ -162,42 +158,6 @@ namespace Abacuza.JobRunners.Spark.SDK
         #endregion Protected Methods
 
         #region Private Methods
-
-        private static IEnumerable<Type> DiscoverDerivedTypes<T>(Type? attributeType = null)
-        {
-            var types = new List<Type>();
-            var path = Path.GetDirectoryName(typeof(SparkRunnerBase).Assembly.Location);
-            Console.WriteLine($"*** Discovering Path: {path}");
-            var assemblyFiles = Directory.EnumerateFiles(path, "*.dll", SearchOption.AllDirectories);
-            foreach (var assemblyFile in assemblyFiles)
-            {
-                if (Path.GetFileName(assemblyFile).StartsWith("System"))
-                {
-                    // Bypassing the system assemblies.
-                    continue;
-                }
-
-                try
-                {
-                    var assembly = Assembly.LoadFrom(assemblyFile);
-                    var query = from p in assembly.GetTypes()
-                                where p.IsClass && !p.IsAbstract && typeof(T).IsAssignableFrom(p)
-                                select p;
-                    if (attributeType != null)
-                    {
-                        query = query.Where(p => p.IsDefined(attributeType, false));
-                    }
-
-                    types.AddRange(query);
-                }
-                catch
-                {
-
-                }
-            }
-
-            return types;
-        }
 
         private static IInputEndpoint CreateInputEndpoint(string inputEndpointName, string inputEndpointSettings)
         {
@@ -258,17 +218,52 @@ namespace Abacuza.JobRunners.Spark.SDK
             }
 
             var outputWriterType = (from type in _outputWriterTypes.Value
-                                   where type.BaseType?.IsGenericType ?? false &&
-                                   type.BaseType?.GetGenericTypeDefinition() == typeof(OutputWriter<>)
-                                   let genericArguments = type.BaseType?.GetGenericArguments()
-                                   where genericArguments?.Length == 1 && genericArguments[0] == outputEndpointType
-                                   select type).FirstOrDefault();
+                                    where type.BaseType?.IsGenericType ?? false &&
+                                    type.BaseType?.GetGenericTypeDefinition() == typeof(OutputWriter<>)
+                                    let genericArguments = type.BaseType?.GetGenericArguments()
+                                    where genericArguments?.Length == 1 && genericArguments[0] == outputEndpointType
+                                    select type).FirstOrDefault();
             if (outputWriterType == null)
             {
                 throw new SparkRunnerException($"Can't find the output writer for output endpoint {outputEndpointName}.");
             }
 
             return (IOutputWriter)Activator.CreateInstance(outputWriterType);
+        }
+
+        private static IEnumerable<Type> DiscoverDerivedTypes<T>(Type? attributeType = null)
+        {
+            var types = new List<Type>();
+            var path = Path.GetDirectoryName(typeof(SparkRunnerBase).Assembly.Location);
+            Console.WriteLine($"*** Discovering Path: {path}");
+            var assemblyFiles = Directory.EnumerateFiles(path, "*.dll", SearchOption.AllDirectories);
+            foreach (var assemblyFile in assemblyFiles)
+            {
+                if (Path.GetFileName(assemblyFile).StartsWith("System"))
+                {
+                    // Bypassing the system assemblies.
+                    continue;
+                }
+
+                try
+                {
+                    var assembly = Assembly.LoadFrom(assemblyFile);
+                    var query = from p in assembly.GetTypes()
+                                where p.IsClass && !p.IsAbstract && typeof(T).IsAssignableFrom(p)
+                                select p;
+                    if (attributeType != null)
+                    {
+                        query = query.Where(p => p.IsDefined(attributeType, false));
+                    }
+
+                    types.AddRange(query);
+                }
+                catch
+                {
+                }
+            }
+
+            return types;
         }
 
         private static bool TryParseSingleValue(string[] args, string key, out string value)
@@ -310,6 +305,5 @@ namespace Abacuza.JobRunners.Spark.SDK
         }
 
         #endregion Private Methods
-
     }
 }

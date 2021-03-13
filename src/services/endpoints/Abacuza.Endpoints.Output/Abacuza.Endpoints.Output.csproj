@@ -6,6 +6,11 @@
     <Description>Includes the basic output endpoint implementations for the Abacuza data processing platform.</Description>
   </PropertyGroup>
 
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <NoWarn>1701;1702;1591</NoWarn>
+    <DocumentationFile>Abacuza.Endpoints.Output.xml</DocumentationFile>
+  </PropertyGroup>
+
   <ItemGroup>
     <ProjectReference Include="..\Abacuza.Endpoints\Abacuza.Endpoints.csproj" />
   </ItemGroup>

@@ -1,0 +1,224 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Abacuza.JobRunners.Spark.SDK</name>
+    </assembly>
+    <members>
+        <member name="T:Abacuza.JobRunners.Spark.SDK.InputReaders.CsvFileInputReader">
+            <summary>
+            Represents the input reader that reads CSV files from the input endpoint.
+            </summary>
+            <seealso cref="T:Abacuza.JobRunners.Spark.SDK.InputReaders.InputReader`1" />
+        </member>
+        <member name="M:Abacuza.JobRunners.Spark.SDK.InputReaders.CsvFileInputReader.ReadFromInternal(Microsoft.Spark.Sql.SparkSession,Abacuza.Endpoints.Input.CsvInputEndpoint,Abacuza.JobRunners.Spark.SDK.ProjectContext)">
+            <summary>
+            Reads the data sets from the given <see cref="T:Abacuza.Endpoints.IInputEndpoint" /> and under the
+            specified <see cref="T:Microsoft.Spark.Sql.SparkSession" />.
+            </summary>
+            <param name="sparkSession">The <see cref="T:Microsoft.Spark.Sql.SparkSession" /> which creates the <see cref="T:Microsoft.Spark.Sql.DataFrame" />.</param>
+            <param name="inputEndpoint">The <see cref="T:Abacuza.Endpoints.IInputEndpoint" /> instance which provides the information
+            of the input data sets.</param>
+            <param name="projectContext">The data that contains project and revision information.</param>
+            <returns>
+            The <see cref="T:Microsoft.Spark.Sql.DataFrame" /> for data processing.
+            </returns>
+            <exception cref="T:Abacuza.JobRunners.Spark.SDK.SparkRunnerException">No files could be read by the JsonFileInputReader.</exception>
+        </member>
+        <member name="T:Abacuza.JobRunners.Spark.SDK.InputReaders.IInputReader">
+            <summary>
+            Represents that the implemented classes are input readers that read data sets
+            from input endpoints and create the <see cref="T:Microsoft.Spark.Sql.DataFrame"/> for data processing.
+            </summary>
+        </member>
+        <member name="M:Abacuza.JobRunners.Spark.SDK.InputReaders.IInputReader.ReadFrom(Microsoft.Spark.Sql.SparkSession,Abacuza.Endpoints.IInputEndpoint,Abacuza.JobRunners.Spark.SDK.ProjectContext)">
+            <summary>
+            Reads the data sets from the given <see cref="T:Abacuza.Endpoints.IInputEndpoint"/> and under the
+            specified <see cref="T:Microsoft.Spark.Sql.SparkSession"/>.
+            </summary>
+            <param name="sparkSession">The <see cref="T:Microsoft.Spark.Sql.SparkSession"/> which creates the <see cref="T:Microsoft.Spark.Sql.DataFrame"/>.</param>
+            <param name="inputEndpoint">The <see cref="T:Abacuza.Endpoints.IInputEndpoint"/> instance which provides the information
+            of the input data sets.</param>
+            <param name="context">The data that contains project and revision information.</param>
+            <returns>The <see cref="T:Microsoft.Spark.Sql.DataFrame"/> for data processing.</returns>
+        </member>
+        <member name="T:Abacuza.JobRunners.Spark.SDK.InputReaders.InputReader`1">
+            <summary>
+            Represents the generic base class for input readers.
+            </summary>
+            <typeparam name="TEndpoint">The type of the input endpoint.</typeparam>
+        </member>
+        <member name="M:Abacuza.JobRunners.Spark.SDK.InputReaders.InputReader`1.ReadFrom(Microsoft.Spark.Sql.SparkSession,Abacuza.Endpoints.IInputEndpoint,Abacuza.JobRunners.Spark.SDK.ProjectContext)">
+            <summary>
+            Reads the data sets from the given <see cref="T:Abacuza.Endpoints.IInputEndpoint"/> and under the
+            specified <see cref="T:Microsoft.Spark.Sql.SparkSession"/>.
+            </summary>
+            <param name="sparkSession">The <see cref="T:Microsoft.Spark.Sql.SparkSession"/> which creates the <see cref="T:Microsoft.Spark.Sql.DataFrame"/>.</param>
+            <param name="inputEndpoint">The <see cref="T:Abacuza.Endpoints.IInputEndpoint"/> instance which provides the information
+            of the input data sets.</param>
+            <param name="projectContext">The data that contains project and revision information.</param>
+            <returns>The <see cref="T:Microsoft.Spark.Sql.DataFrame"/> for data processing.</returns>
+        </member>
+        <member name="M:Abacuza.JobRunners.Spark.SDK.InputReaders.InputReader`1.ReadFromInternal(Microsoft.Spark.Sql.SparkSession,`0,Abacuza.JobRunners.Spark.SDK.ProjectContext)">
+            <summary>
+            Reads the data sets from the given <see cref="T:Abacuza.Endpoints.IInputEndpoint"/> and under the
+            specified <see cref="T:Microsoft.Spark.Sql.SparkSession"/>.
+            </summary>
+            <param name="sparkSession">The <see cref="T:Microsoft.Spark.Sql.SparkSession"/> which creates the <see cref="T:Microsoft.Spark.Sql.DataFrame"/>.</param>
+            <param name="inputEndpoint">The <see cref="T:Abacuza.Endpoints.IInputEndpoint"/> instance which provides the information
+            of the input data sets.</param>
+            <param name="projectContext">The data that contains project and revision information.</param>
+            <returns>The <see cref="T:Microsoft.Spark.Sql.DataFrame"/> for data processing.</returns>
+        </member>
+        <member name="T:Abacuza.JobRunners.Spark.SDK.InputReaders.InputReaderException">
+            <summary>
+            Represents the error that occurs when data sets are read from input endpoints.
+            </summary>
+        </member>
+        <member name="M:Abacuza.JobRunners.Spark.SDK.InputReaders.InputReaderException.#ctor">
+            <summary>
+            Initializes a new instance of the <see cref="T:Abacuza.JobRunners.Spark.SDK.InputReaders.InputReaderException"/> class.
+            </summary>
+        </member>
+        <member name="M:Abacuza.JobRunners.Spark.SDK.InputReaders.InputReaderException.#ctor(System.String)">
+            <summary>
+            Initializes a new instance of the <see cref="T:Abacuza.JobRunners.Spark.SDK.InputReaders.InputReaderException"/> class.
+            </summary>
+            <param name="message">The message that describes the error.</param>
+        </member>
+        <member name="M:Abacuza.JobRunners.Spark.SDK.InputReaders.InputReaderException.#ctor(System.String,System.Exception)">
+            <summary>
+            Initializes a new instance of the <see cref="T:Abacuza.JobRunners.Spark.SDK.InputReaders.InputReaderException"/> class.
+            </summary>
+            <param name="message">The error message that explains the reason for the exception.</param>
+            <param name="innerException">The exception that is the cause of the current exception, or a null reference (Nothing in Visual Basic) if no inner exception is specified.</param>
+        </member>
+        <member name="T:Abacuza.JobRunners.Spark.SDK.InputReaders.JsonFileInputReader">
+            <summary>
+            Represents the input reader that reads data from JSON files.
+            </summary>
+        </member>
+        <member name="M:Abacuza.JobRunners.Spark.SDK.InputReaders.JsonFileInputReader.ReadFromInternal(Microsoft.Spark.Sql.SparkSession,Abacuza.Endpoints.Input.JsonInputEndpoint,Abacuza.JobRunners.Spark.SDK.ProjectContext)">
+            <summary>
+            Reads the data sets from the given <see cref="T:Abacuza.Endpoints.IInputEndpoint" /> and under the
+            specified <see cref="T:Microsoft.Spark.Sql.SparkSession" />.
+            </summary>
+            <param name="sparkSession">The <see cref="T:Microsoft.Spark.Sql.SparkSession" /> which creates the <see cref="T:Microsoft.Spark.Sql.DataFrame" />.</param>
+            <param name="inputEndpoint">The <see cref="T:Abacuza.Endpoints.IInputEndpoint" /> instance which provides the information
+            of the input data sets.</param>
+            <param name="projectContext">The data that contains project and revision information.</param>
+            <returns>
+            The <see cref="T:Microsoft.Spark.Sql.DataFrame" /> for data processing.
+            </returns>
+            <exception cref="T:Abacuza.JobRunners.Spark.SDK.SparkRunnerException">No files could be read by the JsonFileInputReader</exception>
+        </member>
+        <member name="T:Abacuza.JobRunners.Spark.SDK.InputReaders.SqlServerDataTableInputReader">
+            <summary>
+            Represents the input reader that reads data from Microsoft SQL Server.
+            </summary>
+            <remarks>
+            For more information, please refer to: https://docs.microsoft.com/en-us/dotnet/spark/how-to-guides/connect-to-sql-server
+            </remarks>
+        </member>
+        <member name="T:Abacuza.JobRunners.Spark.SDK.OutputWriters.EmptyOutputWriter">
+            <summary>
+            Represents the output writer that doesn't write anything out.
+            </summary>
+        </member>
+        <member name="T:Abacuza.JobRunners.Spark.SDK.OutputWriters.OutputWriter`1">
+            <summary>
+            Represents the output writers.
+            </summary>
+            <typeparam name="TEndpoint">The type of the output endpoint.</typeparam>
+        </member>
+        <member name="M:Abacuza.JobRunners.Spark.SDK.OutputWriters.OutputWriter`1.WriteTo(Microsoft.Spark.Sql.DataFrame,Abacuza.Endpoints.IOutputEndpoint,Abacuza.JobRunners.Spark.SDK.ProjectContext)">
+            <summary>
+            Writes the data frame to the specified output endpoint.
+            </summary>
+            <param name="dataFrame">The <see cref="T:Microsoft.Spark.Sql.DataFrame"/> to be written to the output endpoint.</param>
+            <param name="outputEndpoint">The output endpoint.</param>
+            <param name="projectContext">The data that contains project and revision information.</param>
+        </member>
+        <member name="T:Abacuza.JobRunners.Spark.SDK.ProjectContext">
+            <summary>
+            Represents the data that contains project and revision information.
+            </summary>
+        </member>
+        <member name="M:Abacuza.JobRunners.Spark.SDK.ProjectContext.#ctor(System.Guid,System.String,System.DateTime,System.Guid)">
+            <summary>
+            Initializes a new instance of the <c>ProjectContext</c> class.
+            </summary>
+            <param name="projectId">The id of the project.</param>
+            <param name="projectName">The name of the project.</param>
+            <param name="projectCreationDate">The date on which the project was created.</param>
+            <param name="revisionId">The id of the project revision.</param>
+        </member>
+        <member name="P:Abacuza.JobRunners.Spark.SDK.ProjectContext.ProjectCreationDate">
+            <summary>
+            Gets the creation date of the project.
+            </summary>
+        </member>
+        <member name="P:Abacuza.JobRunners.Spark.SDK.ProjectContext.ProjectId">
+            <summary>
+            Gets the id of the project.
+            </summary>
+        </member>
+        <member name="P:Abacuza.JobRunners.Spark.SDK.ProjectContext.ProjectName">
+            <summary>
+            Gets the name of the project.
+            </summary>
+        </member>
+        <member name="P:Abacuza.JobRunners.Spark.SDK.ProjectContext.RevisionId">
+            <summary>
+            Gets the id of the revision.
+            </summary>
+        </member>
+        <member name="T:Abacuza.JobRunners.Spark.SDK.SparkRunnerBase">
+            <summary>
+            Represents the base class for all job runners that executes
+            on .NET for Spark tech stack and can be schedule by Abacuza.
+            </summary>
+        </member>
+        <member name="M:Abacuza.JobRunners.Spark.SDK.SparkRunnerBase.#ctor(System.String[])">
+            <summary>
+            Initializes a new instance of the <see cref="T:Abacuza.JobRunners.Spark.SDK.SparkRunnerBase"/> class.
+            </summary>
+            <param name="args">The arguments used for running the job.</param>
+        </member>
+        <member name="M:Abacuza.JobRunners.Spark.SDK.SparkRunnerBase.Run">
+            <summary>
+            Runs the data transformation on the Spark cluster.
+            </summary>
+        </member>
+        <member name="M:Abacuza.JobRunners.Spark.SDK.SparkRunnerBase.RunInternal(Microsoft.Spark.Sql.SparkSession,Microsoft.Spark.Sql.DataFrame)">
+            <summary>
+            Runs the data processing based on the data frame.
+            </summary>
+            <param name="sparkSession">The spark session.</param>
+            <param name="dataFrame">The data frame.</param>
+        </member>
+        <member name="T:Abacuza.JobRunners.Spark.SDK.SparkRunnerException">
+            <summary>
+            Represents the error that occurs when the spark runner is executing
+            the data processing jobs.
+            </summary>
+        </member>
+        <member name="M:Abacuza.JobRunners.Spark.SDK.SparkRunnerException.#ctor">
+            <summary>
+            Initializes a new instance of the <c>SparkRunnerException</c> class.
+            </summary>
+        </member>
+        <member name="M:Abacuza.JobRunners.Spark.SDK.SparkRunnerException.#ctor(System.String)">
+            <summary>
+            Initializes a new instance of the <c>SparkRunnerException</c> class.
+            </summary>
+            <param name="message">The error message.</param>
+        </member>
+        <member name="M:Abacuza.JobRunners.Spark.SDK.SparkRunnerException.#ctor(System.String,System.Exception)">
+            <summary>
+            Initializes a new instance of the <c>SparkRunnerException</c> class.
+            </summary>
+            <param name="message">The error message</param>
+            <param name="innerException">The inner exception that caused this error to occur.</param>
+        </member>
+    </members>
+</doc>

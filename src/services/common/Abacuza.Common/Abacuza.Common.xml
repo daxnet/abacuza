@@ -1,0 +1,541 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Abacuza.Common</name>
+    </assembly>
+    <members>
+        <member name="T:Abacuza.Common.AbacuzaException">
+            <summary>
+            Represents the error that occurs in Abacuza.
+            </summary>
+            <seealso cref="T:System.Exception" />
+        </member>
+        <member name="M:Abacuza.Common.AbacuzaException.#ctor">
+            <summary>
+            Initializes a new instance of the <see cref="T:Abacuza.Common.AbacuzaException"/> class.
+            </summary>
+        </member>
+        <member name="M:Abacuza.Common.AbacuzaException.#ctor(System.String)">
+            <summary>
+            Initializes a new instance of the <see cref="T:Abacuza.Common.AbacuzaException"/> class.
+            </summary>
+            <param name="message">The message that describes the error.</param>
+        </member>
+        <member name="M:Abacuza.Common.AbacuzaException.#ctor(System.String,System.Exception)">
+            <summary>
+            Initializes a new instance of the <see cref="T:Abacuza.Common.AbacuzaException"/> class.
+            </summary>
+            <param name="message">The error message that explains the reason for the exception.</param>
+            <param name="innerException">The exception that is the cause of the current exception, or a null reference (Nothing in Visual Basic) if no inner exception is specified.</param>
+        </member>
+        <member name="T:Abacuza.Common.DataAccess.IDataAccessObject">
+            <summary>
+            Represents that the implemented classes are data access objects that perform
+            CRUD operations on the given entity type.
+            </summary>
+            <seealso cref="T:System.IDisposable" />
+        </member>
+        <member name="M:Abacuza.Common.DataAccess.IDataAccessObject.AddAsync``1(``0)">
+            <summary>
+            Adds the given entity asynchronously.
+            </summary>
+            <typeparam name="TObject">The type of the entity.</typeparam>
+            <param name="entity">The entity to be added.</param>
+            <returns>The task which performs the adding operation.</returns>
+        </member>
+        <member name="M:Abacuza.Common.DataAccess.IDataAccessObject.DeleteByIdAsync``1(System.Guid)">
+            <summary>
+            Deletes the entity by specified identifier asynchronously.
+            </summary>
+            <typeparam name="TObject">The type of the entity.</typeparam>
+            <param name="id">The identifier which represents the entity that is going to be deleted.</param>
+            <returns>The task which performs the deletion operation.</returns>
+        </member>
+        <member name="M:Abacuza.Common.DataAccess.IDataAccessObject.FindBySpecificationAsync``1(System.Linq.Expressions.Expression{System.Func{``0,System.Boolean}})">
+            <summary>
+            Finds the entities which match the specified criteria that is defined by the given specification asynchronously.
+            </summary>
+            <typeparam name="TObject">The type of the entity.</typeparam>
+            <param name="expr">The expression which defines the matching criteria.</param>
+            <returns>The task which performs the data retrieval operation, and after the operation
+            has completed, would return a list of entities that match the specified criteria.</returns>
+        </member>
+        <member name="M:Abacuza.Common.DataAccess.IDataAccessObject.GetAllAsync``1">
+            <summary>
+            Gets all of the entities asynchronously.
+            </summary>
+            <typeparam name="TObject">The type of the entity.</typeparam>
+            <returns>The task which performs the data retrieval operation, and after
+            the operation has completed, would return a list of retrieved entities.
+            </returns>
+        </member>
+        <member name="M:Abacuza.Common.DataAccess.IDataAccessObject.GetByIdAsync``1(System.Guid)">
+            <summary>
+            Gets the entity by specified identifier asynchronously.
+            </summary>
+            <typeparam name="TObject">The type of the entity.</typeparam>
+            <param name="id">The identifier of the entity.</param>
+            <returns>The task which performs the data retrieval operation.</returns>
+        </member>
+        <member name="M:Abacuza.Common.DataAccess.IDataAccessObject.UpdateByIdAsync``1(System.Guid,``0)">
+            <summary>
+            Updates the entity by the specified identifier asynchronously.
+            </summary>
+            <typeparam name="TObject">The type of the entity.</typeparam>
+            <param name="id">The identifier of the entity to be updated.</param>
+            <param name="entity">The entity which contains the updated value.</param>
+            <returns>The task which performs the updating operation.</returns>
+        </member>
+        <member name="T:Abacuza.Common.DataAccess.StorageModelAttribute">
+            <summary>
+            Represents that the decorated class is a storage model object.
+            </summary>
+            <seealso cref="T:System.Attribute" />
+        </member>
+        <member name="M:Abacuza.Common.DataAccess.StorageModelAttribute.#ctor(System.String)">
+            <summary>
+            Initializes a new instance of the <see cref="T:Abacuza.Common.DataAccess.StorageModelAttribute"/> class.
+            </summary>
+            <param name="tableName">Name of the table that the decorated class will be mapped to.</param>
+        </member>
+        <member name="P:Abacuza.Common.DataAccess.StorageModelAttribute.TableName">
+            <summary>
+            Gets the name of the table.
+            </summary>
+            <value>
+            The name of the table.
+            </value>
+        </member>
+        <member name="T:Abacuza.Common.IEntity">
+            <summary>
+            Represents that the implemented classes are entities that identifies themselves
+            by their identifiers of <see cref="T:System.Guid"/> type.
+            </summary>
+        </member>
+        <member name="P:Abacuza.Common.IEntity.Id">
+            <summary>
+            Gets or sets the identifier.
+            </summary>
+            <value>
+            The identifier.
+            </value>
+        </member>
+        <member name="T:Abacuza.Common.IPagedResult">
+            <summary>
+            Represents that the implemented classes are the collection
+            that contains a specific page of the records along with
+            the pagination information.
+            </summary>
+        </member>
+        <member name="P:Abacuza.Common.IPagedResult.PageSize">
+            <summary>
+            Gets or sets the size of the page.
+            </summary>
+            <value>
+            The size of the page.
+            </value>
+        </member>
+        <member name="P:Abacuza.Common.IPagedResult.PageNumber">
+            <summary>
+            Gets or sets the page number.
+            </summary>
+            <value>
+            The page number.
+            </value>
+        </member>
+        <member name="P:Abacuza.Common.IPagedResult.TotalRecords">
+            <summary>
+            Gets or sets the number of total records.
+            </summary>
+            <value>
+            The number of total records.
+            </value>
+        </member>
+        <member name="P:Abacuza.Common.IPagedResult.TotalPages">
+            <summary>
+            Gets or sets the total pages.
+            </summary>
+            <value>
+            The total pages.
+            </value>
+        </member>
+        <member name="T:Abacuza.Common.PagedResult`1">
+            <summary>
+            Represents the object which contains a particular page of data and the pagination information.
+            </summary>
+        </member>
+        <member name="F:Abacuza.Common.PagedResult`1.Empty">
+            <summary>
+            The <see cref="T:Abacuza.Common.PagedResult`1"/> instance which represents the empty value.
+            </summary>
+        </member>
+        <member name="M:Abacuza.Common.PagedResult`1.#ctor(System.Collections.Generic.IEnumerable{`0},System.Int32,System.Int32,System.Int64,System.Int64)">
+            <summary>
+            Initializes a new instance of the <see cref="T:Abacuza.Common.PagedResult`1"/> class.
+            </summary>
+            <param name="source">The source collection which contains a particular page of data.</param>
+            <param name="pageNumber">The page number.</param>
+            <param name="pageSize">Size of the page.</param>
+            <param name="totalRecords">The total records.</param>
+            <param name="totalPages">The total pages.</param>
+        </member>
+        <member name="P:Abacuza.Common.PagedResult`1.PageSize">
+            <summary>
+            Gets or sets the size of the page.
+            </summary>
+            <value>
+            The size of the page.
+            </value>
+        </member>
+        <member name="P:Abacuza.Common.PagedResult`1.PageNumber">
+            <summary>
+            Gets or sets the page number.
+            </summary>
+            <value>
+            The page number.
+            </value>
+        </member>
+        <member name="P:Abacuza.Common.PagedResult`1.TotalRecords">
+            <summary>
+            Gets or sets the number of total records.
+            </summary>
+            <value>
+            The number of total records.
+            </value>
+        </member>
+        <member name="P:Abacuza.Common.PagedResult`1.TotalPages">
+            <summary>
+            Gets or sets the total pages.
+            </summary>
+            <value>
+            The total pages.
+            </value>
+        </member>
+        <member name="P:Abacuza.Common.PagedResult`1.Count">
+            <summary>
+            Gets the number of elements contained in the <see cref="T:System.Collections.Generic.ICollection`1" />.
+            </summary>
+        </member>
+        <member name="P:Abacuza.Common.PagedResult`1.IsReadOnly">
+            <summary>
+            Gets a value indicating whether the <see cref="T:System.Collections.Generic.ICollection`1" /> is read-only.
+            </summary>
+        </member>
+        <member name="M:Abacuza.Common.PagedResult`1.Add(`0)">
+            <summary>
+            Adds an item to the <see cref="T:System.Collections.Generic.ICollection`1" />.
+            </summary>
+            <param name="item">The object to add to the <see cref="T:System.Collections.Generic.ICollection`1" />.</param>
+        </member>
+        <member name="M:Abacuza.Common.PagedResult`1.Clear">
+            <summary>
+            Removes all items from the <see cref="T:System.Collections.Generic.ICollection`1" />.
+            </summary>
+        </member>
+        <member name="M:Abacuza.Common.PagedResult`1.Contains(`0)">
+            <summary>
+            Determines whether the <see cref="T:System.Collections.Generic.ICollection`1" /> contains a specific value.
+            </summary>
+            <param name="item">The object to locate in the <see cref="T:System.Collections.Generic.ICollection`1" />.</param>
+            <returns>
+            true if <paramref name="item" /> is found in the <see cref="T:System.Collections.Generic.ICollection`1" />; otherwise, false.
+            </returns>
+        </member>
+        <member name="M:Abacuza.Common.PagedResult`1.CopyTo(`0[],System.Int32)">
+            <summary>
+            Copies the elements of the <see cref="T:System.Collections.Generic.ICollection`1" /> to an <see cref="T:System.Array" />, starting at a particular <see cref="T:System.Array" /> index.
+            </summary>
+            <param name="array">The one-dimensional <see cref="T:System.Array" /> that is the destination of the elements copied from <see cref="T:System.Collections.Generic.ICollection`1" />. The <see cref="T:System.Array" /> must have zero-based indexing.</param>
+            <param name="arrayIndex">The zero-based index in <paramref name="array" /> at which copying begins.</param>
+        </member>
+        <member name="M:Abacuza.Common.PagedResult`1.GetEnumerator">
+            <summary>
+            Returns an enumerator that iterates through the collection.
+            </summary>
+            <returns>
+            An enumerator that can be used to iterate through the collection.
+            </returns>
+        </member>
+        <member name="M:Abacuza.Common.PagedResult`1.Remove(`0)">
+            <summary>
+            Removes the first occurrence of a specific object from the <see cref="T:System.Collections.Generic.ICollection`1" />.
+            </summary>
+            <param name="item">The object to remove from the <see cref="T:System.Collections.Generic.ICollection`1" />.</param>
+            <returns>
+            true if <paramref name="item" /> was successfully removed from the <see cref="T:System.Collections.Generic.ICollection`1" />; otherwise, false. This method also returns false if <paramref name="item" /> is not found in the original <see cref="T:System.Collections.Generic.ICollection`1" />.
+            </returns>
+        </member>
+        <member name="M:Abacuza.Common.PagedResult`1.System#Collections#IEnumerable#GetEnumerator">
+            <summary>
+            Returns an enumerator that iterates through a collection.
+            </summary>
+            <returns>
+            An <see cref="T:System.Collections.IEnumerator" /> object that can be used to iterate through the collection.
+            </returns>
+        </member>
+        <member name="T:Abacuza.Common.UIComponents.CheckboxAttribute">
+            <summary>
+            Represents the Checkbox UI component.
+            </summary>
+            <seealso cref="T:Abacuza.Common.UIComponents.UIComponentAttribute" />
+        </member>
+        <member name="M:Abacuza.Common.UIComponents.CheckboxAttribute.#ctor(System.String,System.String)">
+            <summary>
+            Initializes a new instance of the <see cref="T:Abacuza.Common.UIComponents.CheckboxAttribute"/> class.
+            </summary>
+            <param name="name">The name of the UI component.</param>
+            <param name="label">The label text of the UI component.</param>
+        </member>
+        <member name="T:Abacuza.Common.UIComponents.DropDownBoxAttribute">
+            <summary>
+            Represents the drop-down box UI component.
+            </summary>
+            <seealso cref="T:Abacuza.Common.UIComponents.UIComponentAttribute" />
+        </member>
+        <member name="M:Abacuza.Common.UIComponents.DropDownBoxAttribute.#ctor(System.String,System.String,System.String)">
+            <summary>
+            Initializes a new instance of the <see cref="T:Abacuza.Common.UIComponents.DropDownBoxAttribute"/> class.
+            </summary>
+            <param name="name">The name of the UI component.</param>
+            <param name="label">The label of the UI component.</param>
+            <param name="options">The options available for the drop-down box.</param>
+        </member>
+        <member name="P:Abacuza.Common.UIComponents.DropDownBoxAttribute.Options">
+            <summary>
+            Gets the options separated with comma (,) that are available to be selected in a drop-down box.
+            </summary>
+            <value>
+            The options.
+            </value>
+        </member>
+        <member name="M:Abacuza.Common.UIComponents.DropDownBoxAttribute.ToString">
+            <summary>
+            Converts to string.
+            </summary>
+            <returns>
+            A <see cref="T:System.String" /> that represents this instance.
+            </returns>
+        </member>
+        <member name="T:Abacuza.Common.UIComponents.FilePickerAttribute">
+            <summary>
+            Represents the File Picker UI component.
+            </summary>
+            <seealso cref="T:Abacuza.Common.UIComponents.UIComponentAttribute" />
+            <remarks>
+            A File Picker UI component will render an Amazon S3 file list on the UI allowing
+            users to upload local files to Amazon S3. Usually, the File Picker UI component
+            should decorate a property of type <see cref="T:System.Collections.Generic.List`1"/> in the containing class (where
+            T is <c>S3File</c> instance).
+            </remarks>
+        </member>
+        <member name="M:Abacuza.Common.UIComponents.FilePickerAttribute.#ctor(System.String,System.String)">
+            <summary>
+            Initializes a new instance of the <see cref="T:Abacuza.Common.UIComponents.FilePickerAttribute"/> class.
+            </summary>
+            <param name="name">The name of the UI component.</param>
+            <param name="label">The label text of the UI component.</param>
+        </member>
+        <member name="P:Abacuza.Common.UIComponents.FilePickerAttribute.AllowedExtensions">
+            <summary>
+            Gets or sets a list of allowed extensions, each of which is separated by comma (,).
+            </summary>
+            <value>
+            The allowed extensions.
+            </value>
+            <remarks>For example: .csv,.tsv</remarks>
+        </member>
+        <member name="P:Abacuza.Common.UIComponents.FilePickerAttribute.AllowMultipleSelection">
+            <summary>
+            Gets or sets a value indicating whether the File Uploader can upload multiple
+            files once at a time.
+            </summary>
+            <value>
+              <c>true</c> if multiple files can be uploaded once at a time; otherwise, <c>false</c>.
+            </value>
+        </member>
+        <member name="T:Abacuza.Common.UIComponents.JsonTextAreaAttribute">
+            <summary>
+            Represents the Text Area component that provides the editing capabilities for JSON document.
+            </summary>
+        </member>
+        <member name="M:Abacuza.Common.UIComponents.JsonTextAreaAttribute.#ctor(System.String,System.String)">
+            <summary>
+            Initializes a new instance of the <c>JsonTextAreaAttribute</c> class.
+            </summary>
+            <param name="name">The name of the component.</param>
+            <param name="label">The label of the component.</param>
+        </member>
+        <member name="T:Abacuza.Common.UIComponents.TextAreaAttribute">
+            <summary>
+            Represents the Text Area UI component.
+            </summary>
+            <seealso cref="T:Abacuza.Common.UIComponents.UIComponentAttribute" />
+        </member>
+        <member name="M:Abacuza.Common.UIComponents.TextAreaAttribute.#ctor(System.String,System.String)">
+            <summary>
+            Initializes a new instance of the <see cref="T:Abacuza.Common.UIComponents.TextAreaAttribute"/> class.
+            </summary>
+            <param name="name">The name of the UI component.</param>
+            <param name="label">The label text of the UI component.</param>
+        </member>
+        <member name="P:Abacuza.Common.UIComponents.TextAreaAttribute.MinLines">
+            <summary>
+            Gets or sets the minimum lines that should be shown by default
+            in the Text Area component.
+            </summary>
+            <value>
+            The minimum lines.
+            </value>
+        </member>
+        <member name="T:Abacuza.Common.UIComponents.TextBoxAttribute">
+            <summary>
+            Represents the Text Box UI component.
+            </summary>
+        </member>
+        <member name="M:Abacuza.Common.UIComponents.TextBoxAttribute.#ctor(System.String,System.String)">
+            <summary>
+            Initializes a new instance of the <c>TextBoxAttribute</c> class.
+            </summary>
+            <param name="name">The name of the UI component.</param>
+            <param name="label">The label of the UI component.</param>
+        </member>
+        <member name="P:Abacuza.Common.UIComponents.TextBoxAttribute.MaxLength">
+            <summary>
+            Gets or sets the maximum allowed length of the text box.
+            </summary>
+        </member>
+        <member name="P:Abacuza.Common.UIComponents.TextBoxAttribute.Required">
+            <summary>
+            Gets or sets a <see cref="T:System.Boolean"/> value which indicates whether the value
+            of the text box is required.
+            </summary>
+        </member>
+        <member name="T:Abacuza.Common.UIComponents.UIComponentAttribute">
+            <summary>
+            Represents that the derived classes are UI components.
+            </summary>
+        </member>
+        <member name="M:Abacuza.Common.UIComponents.UIComponentAttribute.#ctor(System.String,System.String)">
+            <summary>
+            Initializes a new instance of the <c>UIAnnotation</c> class.
+            </summary>
+            <param name="name">The name of the UI component.</param>
+            <param name="label">The label text of the UI component.</param>
+        </member>
+        <member name="P:Abacuza.Common.UIComponents.UIComponentAttribute.DefaultValue">
+            <summary>
+            Gets or sets the default value of the current UI component.
+            </summary>
+        </member>
+        <member name="P:Abacuza.Common.UIComponents.UIComponentAttribute.Label">
+            <summary>
+            Gets the label text of the UI component on the front-end page.
+            </summary>
+        </member>
+        <member name="P:Abacuza.Common.UIComponents.UIComponentAttribute.Name">
+            <summary>
+            Gets the name of the UI component.
+            </summary>
+        </member>
+        <member name="P:Abacuza.Common.UIComponents.UIComponentAttribute.Ordinal">
+            <summary>
+            Gets or sets the ordinal of the component in its container.
+            </summary>
+        </member>
+        <member name="P:Abacuza.Common.UIComponents.UIComponentAttribute.Tooltip">
+            <summary>
+            Gets or sets the tooltip of the component.
+            </summary>
+        </member>
+        <member name="M:Abacuza.Common.UIComponents.UIComponentAttribute.ToString">
+            <summary>
+            Gets the string representation of the current <c>UIComponentAttribute</c> instance.
+            </summary>
+            <returns>The string representation of the current instance.</returns>
+        </member>
+        <member name="T:Abacuza.Common.Utilities.Extensions">
+            <summary>
+            Provides extension methods for specific types.
+            </summary>
+        </member>
+        <member name="M:Abacuza.Common.Utilities.Extensions.Pluralize(System.String,System.Boolean)">
+            <summary>
+            Pluralizes a given word.
+            </summary>
+            <param name="word">The word to be pluralized.</param>
+            <param name="inputIsKnownToBeSingular">Indicates whether the input is known to be singular.</param>
+            <returns>The pluralized word.</returns>
+        </member>
+        <member name="M:Abacuza.Common.Utilities.Extensions.ToExpando(System.Collections.Generic.IEnumerable{System.Collections.Generic.KeyValuePair{System.String,System.Object}})">
+            <summary>
+            Converts an array of key value pair to an ExpandoObject.
+            </summary>
+            <param name="src">The array of key value pair to be converted.</param>
+            <returns>The converted ExpandoObject.</returns>
+            <remarks>Referenced implementation: https://theburningmonk.com/2011/05/idictionarystring-object-to-expandoobject-extension-method/</remarks>
+        </member>
+        <member name="T:Abacuza.Common.Utilities.Vocabularies">
+            <summary>
+            Container for registered Vocabularies.  At present, only a single vocabulary is supported: Default.
+            </summary>
+        </member>
+        <member name="P:Abacuza.Common.Utilities.Vocabularies.Default">
+            <summary>
+            The default vocabulary used for singular/plural irregularities.
+            Rules can be added to this vocabulary and will be picked up by called to Singularize() and Pluralize().
+            At this time, multiple vocabularies and removing existing rules are not supported.
+            </summary>
+        </member>
+        <member name="T:Abacuza.Common.Utilities.Vocabulary">
+            <summary>
+            A container for exceptions to simple pluralization/singularization rules.
+            Vocabularies.Default contains an extensive list of rules for US English.
+            At this time, multiple vocabularies and removing existing rules are not supported.
+            </summary>
+        </member>
+        <member name="M:Abacuza.Common.Utilities.Vocabulary.AddIrregular(System.String,System.String,System.Boolean)">
+            <summary>
+            Adds a word to the vocabulary which cannot easily be pluralized/singularized by RegEx, e.g. "person" and "people".
+            </summary>
+            <param name="singular">The singular form of the irregular word, e.g. "person".</param>
+            <param name="plural">The plural form of the irregular word, e.g. "people".</param>
+            <param name="matchEnding">True to match these words on their own as well as at the end of longer words. False, otherwise.</param>
+        </member>
+        <member name="M:Abacuza.Common.Utilities.Vocabulary.AddUncountable(System.String)">
+            <summary>
+            Adds an uncountable word to the vocabulary, e.g. "fish".  Will be ignored when plurality is changed.
+            </summary>
+            <param name="word">Word to be added to the list of uncountables.</param>
+        </member>
+        <member name="M:Abacuza.Common.Utilities.Vocabulary.AddPlural(System.String,System.String)">
+            <summary>
+            Adds a rule to the vocabulary that does not follow trivial rules for pluralization, e.g. "bus" -> "buses"
+            </summary>
+            <param name="rule">RegEx to be matched, case insensitive, e.g. "(bus)es$"</param>
+            <param name="replacement">RegEx replacement  e.g. "$1"</param>
+        </member>
+        <member name="M:Abacuza.Common.Utilities.Vocabulary.AddSingular(System.String,System.String)">
+            <summary>
+            Adds a rule to the vocabulary that does not follow trivial rules for singularization, e.g. "vertices/indices -> "vertex/index"
+            </summary>
+            <param name="rule">RegEx to be matched, case insensitive, e.g. ""(vert|ind)ices$""</param>
+            <param name="replacement">RegEx replacement  e.g. "$1ex"</param>
+        </member>
+        <member name="M:Abacuza.Common.Utilities.Vocabulary.Pluralize(System.String,System.Boolean)">
+            <summary>
+            Pluralizes the provided input considering irregular words
+            </summary>
+            <param name="word">Word to be pluralized</param>
+            <param name="inputIsKnownToBeSingular">Normally you call Pluralize on singular words; but if you're unsure call it with false</param>
+            <returns></returns>
+        </member>
+        <member name="M:Abacuza.Common.Utilities.Vocabulary.Singularize(System.String,System.Boolean)">
+            <summary>
+            Singularizes the provided input considering irregular words
+            </summary>
+            <param name="word">Word to be singularized</param>
+            <param name="inputIsKnownToBePlural">Normally you call Singularize on plural words; but if you're unsure call it with false</param>
+            <returns></returns>
+        </member>
+    </members>
+</doc>

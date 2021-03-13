@@ -13,6 +13,9 @@
 
 namespace Abacuza.Endpoints.Input
 {
+    /// <summary>
+    /// Represents the input endpoint that doesn't read any data.
+    /// </summary>
     [Endpoint("endpoints.input.empty",
         "Empty",
         EndpointType.Input,

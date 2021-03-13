@@ -1,0 +1,111 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Abacuza.Clusters.ApiService</name>
+    </assembly>
+    <members>
+        <member name="T:Abacuza.Clusters.ApiService.Controllers.HealthCheckController">
+            <summary>
+            Represents the controller that returns the health check status.
+            </summary>
+            <seealso cref="T:Microsoft.AspNetCore.Mvc.ControllerBase" />
+        </member>
+        <member name="T:Abacuza.Clusters.ApiService.Models.ClusterCollection">
+            <summary>
+            Represents the object that holds a collection of clusters.
+            </summary>
+            <seealso cref="!:System.Collections.Generic.ICollection&lt;Abacuza.Clusters.Common.ICluster&gt;" />
+        </member>
+        <member name="T:Abacuza.Clusters.ApiService.Models.ClusterConnectionEntity">
+            <summary>
+            Represents the data storage model for cluster connections.
+            </summary>
+        </member>
+        <member name="M:Abacuza.Clusters.ApiService.Models.ClusterConnectionEntity.#ctor">
+            <summary>
+            Initializes a new instance of the <c>ClusterConnectionEntity</c> class.
+            </summary>
+        </member>
+        <member name="M:Abacuza.Clusters.ApiService.Models.ClusterConnectionEntity.#ctor(Abacuza.Clusters.Common.IClusterConnection)">
+            <summary>
+            Initializes a new instance of the <c>ClusterConnectionEntity</c> class.
+            </summary>
+            <param name="clusterConnection">The cluster connection object used to initialize the current instance.</param>
+        </member>
+        <member name="P:Abacuza.Clusters.ApiService.Models.ClusterConnectionEntity.ClusterType">
+            <summary>
+            Gets or sets the type of the cluster that the current cluster connection entity is used for.
+            </summary>
+        </member>
+        <member name="P:Abacuza.Clusters.ApiService.Models.ClusterConnectionEntity.Description">
+            <summary>
+            Gets or sets the description of the cluster connection entity.
+            </summary>
+        </member>
+        <member name="P:Abacuza.Clusters.ApiService.Models.ClusterConnectionEntity.Id">
+            <summary>
+            Gets or sets the id of the cluster connection entity.
+            </summary>
+        </member>
+        <member name="P:Abacuza.Clusters.ApiService.Models.ClusterConnectionEntity.Name">
+            <summary>
+            Gets or sets the name of the cluster connection entity.
+            </summary>
+        </member>
+        <member name="P:Abacuza.Clusters.ApiService.Models.ClusterConnectionEntity.Settings">
+            <summary>
+            Gets or sets a JSON serialized string of the cluster connection.
+            </summary>
+        </member>
+        <member name="T:Abacuza.Clusters.ApiService.Models.GetJobStatusesRequestItem">
+            <summary>
+            Represents the item in a GetJobStatus request.
+            </summary>
+        </member>
+        <member name="P:Abacuza.Clusters.ApiService.Models.GetJobStatusesRequestItem.ConnectionId">
+            <summary>
+            The identifier of the cluster connection where
+            the job was running.
+            </summary>
+        </member>
+        <member name="P:Abacuza.Clusters.ApiService.Models.GetJobStatusesRequestItem.LocalJobIdentifiers">
+            <summary>
+            The identifiers of the jobs on the cluster where
+            they were running.
+            </summary>
+        </member>
+        <member name="P:Abacuza.Clusters.ApiService.Models.GetJobStatusesResponseItem.ConnectionId">
+            <summary>
+            Gets or sets the connection ID.
+            </summary>
+        </member>
+        <member name="P:Abacuza.Clusters.ApiService.Models.GetJobStatusesResponseItem.LocalJobId">
+            <summary>
+            Gets or sets the local ID of the job.
+            </summary>
+        </member>
+        <member name="P:Abacuza.Clusters.ApiService.Models.GetJobStatusesResponseItem.State">
+            <summary>
+            Gets or sets the job state.
+            </summary>
+        </member>
+        <member name="P:Abacuza.Clusters.ApiService.Models.GetJobStatusesResponseItem.Logs">
+            <summary>
+            Gets or sets the logs emitted by the job.
+            </summary>
+        </member>
+        <member name="P:Abacuza.Clusters.ApiService.Models.GetJobStatusesResponseItem.Succeeded">
+            <summary>
+            Gets or sets the <see cref="T:System.Boolean"/> value which indicates
+            whether the retrieving of the status was succeeded. Note that
+            this doesn't reflect the job status itself.
+            </summary>
+        </member>
+        <member name="P:Abacuza.Clusters.ApiService.Models.GetJobStatusesResponseItem.ErrorMessage">
+            <summary>
+            Gets or sets the error message whether indicates the error
+            when retrieving the job status.
+            </summary>
+        </member>
+    </members>
+</doc>

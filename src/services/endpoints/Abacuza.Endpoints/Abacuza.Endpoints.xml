@@ -1,0 +1,192 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Abacuza.Endpoints</name>
+    </assembly>
+    <members>
+        <member name="P:Abacuza.Endpoints.CsvEndpoint.Separator">
+            <summary>
+            Gets or sets the type of the separator of the row values.
+            </summary>
+        </member>
+        <member name="T:Abacuza.Endpoints.Endpoint">
+            <summary>
+            Represents the base class for endpoints.
+            </summary>
+            <seealso cref="T:Abacuza.Endpoints.IEndpoint" />
+        </member>
+        <member name="P:Abacuza.Endpoints.Endpoint.AdditionalOptions">
+            <summary>
+            Gets or sets the additional options.
+            </summary>
+            <value>
+            The additional options.
+            </value>
+        </member>
+        <member name="P:Abacuza.Endpoints.Endpoint.ConfigurationUIElements">
+            <summary>
+            Gets the configuration UI elements that provide the UI capabilities for users
+            to configure the endpoint.
+            </summary>
+            <value>
+            The configuration UI elements.
+            </value>
+        </member>
+        <member name="P:Abacuza.Endpoints.Endpoint.Description">
+            <summary>
+            Gets the description of the endpoint.
+            </summary>
+            <value>
+            The description of the endpoint.
+            </value>
+        </member>
+        <member name="P:Abacuza.Endpoints.Endpoint.DisplayName">
+            <summary>
+            Gets the display name of the endpoint.
+            </summary>
+            <value>
+            The display name of the endpoint.
+            </value>
+        </member>
+        <member name="P:Abacuza.Endpoints.Endpoint.Name">
+            <summary>
+            Gets the name of the endpoint.
+            </summary>
+            <value>
+            The name of the endpoint.
+            </value>
+        </member>
+        <member name="P:Abacuza.Endpoints.Endpoint.Type">
+            <summary>
+            Gets the endpoint type.
+            </summary>
+            <value>
+            The type of the endpoint.
+            </value>
+        </member>
+        <member name="M:Abacuza.Endpoints.Endpoint.ApplySettings(System.String)">
+            <summary>
+            Applies the specified JSON setting value to the current endpoint.
+            </summary>
+            <param name="settings">The JSON setting to be applied to the current endpoint.</param>
+        </member>
+        <member name="T:Abacuza.Endpoints.EndpointAttribute">
+            <summary>
+            Represents that the decorated classes are endpoints.
+            </summary>
+        </member>
+        <member name="M:Abacuza.Endpoints.EndpointAttribute.#ctor(System.String,System.String,Abacuza.Endpoints.EndpointType)">
+            <summary>
+            Initializes a new instance of the <c>EndpointAttribute</c> class.
+            </summary>
+            <param name="name">The name of the endpoint.</param>
+            <param name="displayName">The display name of the endpoint that will be shown on the UI.</param>
+            <param name="type">The type of the endpoint.</param>
+        </member>
+        <member name="P:Abacuza.Endpoints.EndpointAttribute.Description">
+            <summary>
+            Gets or sets the description of the current endpoint.
+            </summary>
+        </member>
+        <member name="P:Abacuza.Endpoints.EndpointAttribute.DisplayName">
+            <summary>
+            Gets the display name of the current endpoint.
+            </summary>
+        </member>
+        <member name="P:Abacuza.Endpoints.EndpointAttribute.Name">
+            <summary>
+            Gets the name of the current endpoint.
+            </summary>
+        </member>
+        <member name="P:Abacuza.Endpoints.EndpointAttribute.Type">
+            <summary>
+            Gets the type of the current endpoint.
+            </summary>
+        </member>
+        <member name="T:Abacuza.Endpoints.EndpointType">
+            <summary>
+            Represents the type of the endpoint.
+            </summary>
+        </member>
+        <member name="F:Abacuza.Endpoints.EndpointType.None">
+            <summary>
+            Indicates that the endpoint is neither an Input nor an Output endpoint.
+            </summary>
+        </member>
+        <member name="F:Abacuza.Endpoints.EndpointType.Input">
+            <summary>
+            Indicates an Input endpoint.
+            </summary>
+        </member>
+        <member name="F:Abacuza.Endpoints.EndpointType.Output">
+            <summary>
+            Indicates an Output endpoint.
+            </summary>
+        </member>
+        <member name="T:Abacuza.Endpoints.IEndpoint">
+            <summary>
+            Represents that the implemented classes are endpoints that contain connection
+            information to the external data sources or data stores.
+            </summary>
+        </member>
+        <member name="P:Abacuza.Endpoints.IEndpoint.ConfigurationUIElements">
+            <summary>
+            Gets the configuration UI elements that provide the UI capabilities for users
+            to configure the endpoint.
+            </summary>
+            <value>
+            The configuration UI elements.
+            </value>
+        </member>
+        <member name="P:Abacuza.Endpoints.IEndpoint.Description">
+            <summary>
+            Gets the description of the endpoint.
+            </summary>
+            <value>
+            The description of the endpoint.
+            </value>
+        </member>
+        <member name="P:Abacuza.Endpoints.IEndpoint.DisplayName">
+            <summary>
+            Gets the display name of the endpoint.
+            </summary>
+            <value>
+            The display name of the endpoint.
+            </value>
+        </member>
+        <member name="P:Abacuza.Endpoints.IEndpoint.Name">
+            <summary>
+            Gets the name of the endpoint.
+            </summary>
+            <value>
+            The name of the endpoint.
+            </value>
+        </member>
+        <member name="P:Abacuza.Endpoints.IEndpoint.Type">
+            <summary>
+            Gets the endpoint type.
+            </summary>
+            <value>
+            The type of the endpoint.
+            </value>
+        </member>
+        <member name="M:Abacuza.Endpoints.IEndpoint.ApplySettings(System.String)">
+            <summary>
+            Applies the specified JSON setting value to the current endpoint.
+            </summary>
+            <param name="settings">The JSON setting to be applied to the current endpoint.</param>
+        </member>
+        <member name="T:Abacuza.Endpoints.IInputEndpoint">
+            <summary>
+            Represents that the implemented classes are input endpoints that contain
+            the connection information to the external data sources.
+            </summary>
+        </member>
+        <member name="T:Abacuza.Endpoints.IOutputEndpoint">
+            <summary>
+            Represents that the implemented classes are output endpoints that
+            contain the connection information to the external data stores.
+            </summary>
+        </member>
+    </members>
+</doc>
