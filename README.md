@@ -127,22 +127,32 @@ Before doing the data transformation, you will need to create a cluster connecti
 
 2. Open your web browser, navigate to `http://localhost:9320`, this opens the Abacuza dashboard
 3. In the left pane, From `Cluster` menu, click `Connections`, then in the `Cluster Connections` page, click the plus icon to create a new cluster connection:
+
    ![Create Cluster Connection](docs/images/create-cluster-connection.png)
+   
 4. In the `Create New Cluster Connection` dialog, fill in the name, description fields, for `Cluster type` choose `spark`. In the `Settings` text box, input the Spark settings in JSON format. To be simple, we just specify the base URL to the Spark livy. Click `SAVE` button to save the changes:
+
    ![New Cluster Connection](docs/images/new-cluster-connection.png)
+
 5. Now your cluster connection which connects to the running `Spark` instance should be ready:
+
    ![Cluster Connections](docs/images/cluster-connection-list.png)
+
 
 ### Preparing the Job Runner
 Follow the steps below to create a job runner in Abacuza.
 1. From `Jobs` menu, click `Job Runners`, then in the `Job Runners` page, click the plus icon to create a new job runner
 2. In the `Create Job Runner` dialog, fill in the name and description for the job runner, and for the `Cluster type`, choose `Spark`:
+
    ![Create Job Runner](docs/images/create-job-runner.png)
+
 4. Click `SAVE` button, Abacuza will redirect you to the `Job Runner Details` page
 5. In the `Job Runner Details` page, under the `Binaries` section, add the following two files to the `Job Runner`:
    1. `microsoft-spark-3-0_2.12-1.0.0.jar` - you can find it in your `published` folder
    2. `WordCount20210313.zip` - This is the Zip file you created in step 6 of chapter [Develop the Word Count Application](#develop-the-word-count-application)
+
    ![Job Runner Binaries](docs/images/job-runner-binaries.png)
+
 5. Under the `Payload template` section, use the following JSON document:
    ```json
    {
@@ -166,14 +176,20 @@ Follow the steps below to create a job runner in Abacuza.
 1. From `Projects` menu, click `Projects`
 2. In the `Projects` page, click the plus icon to add a new project
 3. In the `Create New Project` dialog, fill in the name, description of the project. For `Input Endpoint`, choose `Text Files`; for `Output Endpoint`, choose `Console`, which means that we want the output of the data process to be shown in the console log. For the `Job Runner`, choose the one that we just created in previous steps
+
    ![Create New Project](docs/images/create-new-project.png)
+
 4. Save the project, the `Project Details` page will show
 5. Let's prepare some data. Follow the instructions described on [Microsoft official site](https://dotnet.microsoft.com/learn/data/spark-tutorial/data) to create a `demo.txt` file
 6. On the `Project Details` page, under `INPUT` section, add the `demo.txt` as the project input
 7. Click `SUBMIT` button, the data processing job will be submitted to one of the clusters whose type is `spark`, and on that cluster, the customized application that we developed above will be executed for data processing. You can monitor the status of the execution from the `REVISIONS` tab of the `Project Details` page:
+
    ![Running Job](docs/images/running-job.png)
+
 8. Once the job is completed successfully, you can click the `log` icon to see the logs. In this example, you can see the following output in the log:
+
    ![Demo Log](docs/images/demo-log.png)
+
 
 For more information about the architecture, the design concepts and the developer's manual, please refer to the [Abacuza Documentation](docs/README.md).
 
