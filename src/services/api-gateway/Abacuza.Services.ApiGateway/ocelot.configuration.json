@@ -10,8 +10,19 @@
         }
       ],
       "UpstreamPathTemplate": "/cluster-service/{everything}",
-      "UpstreamHttpMethod": [ "Get", "Post", "Put", "Patch", "Delete", "Options" ],
-      "SwaggerKey": "ClusterService"
+      "UpstreamHttpMethod": [
+        "Get",
+        "Post",
+        "Put",
+        "Patch",
+        "Delete",
+        "Options"
+      ],
+      "SwaggerKey": "ClusterService",
+      "AuthenticationOptions": {
+        "AuthenticationProviderKey": "authKey",
+        "AllowedScopes": []
+      }
     },
     {
       "DownstreamPathTemplate": "/api/{everything}",
@@ -23,8 +34,19 @@
         }
       ],
       "UpstreamPathTemplate": "/job-service/{everything}",
-      "UpstreamHttpMethod": [ "Get", "Post", "Put", "Patch", "Delete", "Options" ],
-      "SwaggerKey": "JobService"
+      "UpstreamHttpMethod": [
+        "Get",
+        "Post",
+        "Put",
+        "Patch",
+        "Delete",
+        "Options"
+      ],
+      "SwaggerKey": "JobService",
+      "AuthenticationOptions": {
+        "AuthenticationProviderKey": "authKey",
+        "AllowedScopes": []
+      }
     },
     {
       "DownstreamPathTemplate": "/api/{everything}",
@@ -36,8 +58,19 @@
         }
       ],
       "UpstreamPathTemplate": "/common-service/{everything}",
-      "UpstreamHttpMethod": [ "Get", "Post", "Put", "Patch", "Delete", "Options" ],
-      "SwaggerKey": "CommonService"
+      "UpstreamHttpMethod": [
+        "Get",
+        "Post",
+        "Put",
+        "Patch",
+        "Delete",
+        "Options"
+      ],
+      "SwaggerKey": "CommonService",
+      "AuthenticationOptions": {
+        "AuthenticationProviderKey": "authKey",
+        "AllowedScopes": []
+      }
     },
     {
       "DownstreamPathTemplate": "/api/{everything}",
@@ -49,8 +82,19 @@
         }
       ],
       "UpstreamPathTemplate": "/endpoint-service/{everything}",
-      "UpstreamHttpMethod": [ "Get", "Post", "Put", "Patch", "Delete", "Options" ],
-      "SwaggerKey": "EndpointService"
+      "UpstreamHttpMethod": [
+        "Get",
+        "Post",
+        "Put",
+        "Patch",
+        "Delete",
+        "Options"
+      ],
+      "SwaggerKey": "EndpointService",
+      "AuthenticationOptions": {
+        "AuthenticationProviderKey": "authKey",
+        "AllowedScopes": []
+      }
     },
     {
       "DownstreamPathTemplate": "/api/{everything}",
@@ -62,8 +106,19 @@
         }
       ],
       "UpstreamPathTemplate": "/project-service/{everything}",
-      "UpstreamHttpMethod": [ "Get", "Post", "Put", "Patch", "Delete", "Options" ],
-      "SwaggerKey": "ProjectService"
+      "UpstreamHttpMethod": [
+        "Get",
+        "Post",
+        "Put",
+        "Patch",
+        "Delete",
+        "Options"
+      ],
+      "SwaggerKey": "ProjectService",
+      "AuthenticationOptions": {
+        "AuthenticationProviderKey": "authKey",
+        "AllowedScopes": []
+      }
     }
   ],
   "SwaggerEndPoints": [

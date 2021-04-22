@@ -11,7 +11,11 @@
         ],
         "UpstreamPathTemplate": "/cluster-service/{everything}",
         "UpstreamHttpMethod": [ "Get", "Post", "Put", "Patch", "Delete", "Options" ],
-        "SwaggerKey": "ClusterService"
+        "SwaggerKey": "ClusterService",
+        "AuthenticationOptions": {
+            "AuthenticationProviderKey": "authKey",
+            "AllowedScopes": []
+        }
       },
       {
         "DownstreamPathTemplate": "/api/{everything}",
@@ -24,7 +28,11 @@
         ],
         "UpstreamPathTemplate": "/job-service/{everything}",
         "UpstreamHttpMethod": [ "Get", "Post", "Put", "Patch", "Delete", "Options" ],
-        "SwaggerKey": "JobService"
+        "SwaggerKey": "JobService",
+        "AuthenticationOptions": {
+            "AuthenticationProviderKey": "authKey",
+            "AllowedScopes": []
+        }
       },
       {
         "DownstreamPathTemplate": "/api/{everything}",
@@ -37,7 +45,11 @@
         ],
         "UpstreamPathTemplate": "/common-service/{everything}",
         "UpstreamHttpMethod": [ "Get", "Post", "Put", "Patch", "Delete", "Options" ],
-        "SwaggerKey": "CommonService"
+        "SwaggerKey": "CommonService",
+        "AuthenticationOptions": {
+            "AuthenticationProviderKey": "authKey",
+            "AllowedScopes": []
+        }
       },
       {
         "DownstreamPathTemplate": "/api/{everything}",
@@ -50,7 +62,11 @@
         ],
         "UpstreamPathTemplate": "/endpoint-service/{everything}",
         "UpstreamHttpMethod": [ "Get", "Post", "Put", "Patch", "Delete", "Options" ],
-        "SwaggerKey": "EndpointService"
+        "SwaggerKey": "EndpointService",
+        "AuthenticationOptions": {
+            "AuthenticationProviderKey": "authKey",
+            "AllowedScopes": []
+        }
       },
       {
         "DownstreamPathTemplate": "/api/{everything}",
@@ -63,7 +79,11 @@
         ],
         "UpstreamPathTemplate": "/project-service/{everything}",
         "UpstreamHttpMethod": [ "Get", "Post", "Put", "Patch", "Delete", "Options" ],
-        "SwaggerKey": "ProjectService"
+        "SwaggerKey": "ProjectService",
+        "AuthenticationOptions": {
+            "AuthenticationProviderKey": "authKey",
+            "AllowedScopes": []
+        }
       }
     ],
     "SwaggerEndPoints": [

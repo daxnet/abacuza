@@ -66,6 +66,7 @@
     "ngx-echarts": "^4.2.2",
     "node-sass": "^4.12.0",
     "normalize.css": "6.0.0",
+    "oidc-client": "^1.11.5",
     "pace-js": "1.0.2",
     "roboto-fontface": "0.8.0",
     "rxjs": "6.6.2",

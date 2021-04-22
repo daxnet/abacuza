@@ -12,6 +12,7 @@ using IdentityServer4.Services;
 using IdentityServer4.Stores;
 using IdentityServer4.Test;
 using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
@@ -292,6 +293,15 @@ namespace IdentityServerHost.Quickstart.UI
             if (User?.Identity.IsAuthenticated == true)
             {
                 // delete local authentication cookie
+                if (HttpContext.Request.Cookies.Count > 0)
+                {
+                    var siteCookies = HttpContext.Request.Cookies.Where(c => c.Key.Contains(".AspNetCore.") || c.Key.Contains("Microsoft.Authentication"));
+                    foreach (var cookie in siteCookies)
+                    {
+                        Response.Cookies.Delete(cookie.Key);
+                    }
+                }
+
                 await HttpContext.SignOutAsync();
 
                 // raise the logout event

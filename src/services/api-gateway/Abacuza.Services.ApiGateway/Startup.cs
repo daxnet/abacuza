@@ -11,6 +11,7 @@
 // Apache License Version 2.0
 // ==============================================================
 
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -27,6 +28,7 @@ namespace Abacuza.Services.ApiGateway
 {
     public class Startup
     {
+
         #region Public Constructors
 
         public Startup(IConfiguration configuration) => Configuration = configuration;
@@ -49,6 +51,8 @@ namespace Abacuza.Services.ApiGateway
                 app.UseDeveloperExceptionPage();
             }
 
+            app.UseCors("AllowAll");
+
             app.UseSwaggerForOcelotUI();
 
             app.UseRouting();
@@ -66,7 +70,22 @@ namespace Abacuza.Services.ApiGateway
         // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
         public void ConfigureServices(IServiceCollection services)
         {
+            var idsAuthority = Configuration["ids:authority"] ?? "https://localhost:9051";
+            var authenticationProviderKey = "authKey";
+            Action<JwtBearerOptions> jwtBearerOptions = o =>
+            {
+                o.Authority = idsAuthority;
+                o.RequireHttpsMetadata = true;
+            };
+
             services.AddOcelot();
+            services.AddAuthentication().AddJwtBearer(authenticationProviderKey, jwtBearerOptions);
+
+            services.AddCors(options => options.AddPolicy("AllowAll", p =>
+                p.AllowAnyOrigin()
+                .AllowAnyHeader()
+                .AllowAnyMethod()));
+
             services.AddSwaggerForOcelot(Configuration);
 
             services.AddControllers();
