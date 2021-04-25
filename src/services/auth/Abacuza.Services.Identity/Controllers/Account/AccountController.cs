@@ -110,9 +110,9 @@ namespace IdentityServerHost.Quickstart.UI
 
             if (!result.Succeeded) return BadRequest(result.Errors);
 
-            await _userManager.AddClaimAsync(appUser, new Claim(ClaimTypes.NameIdentifier, appUser.UserName));
-            await _userManager.AddClaimAsync(appUser, new Claim(ClaimTypes.Name, appUser.DisplayName));
-            await _userManager.AddClaimAsync(appUser, new Claim(ClaimTypes.Email, appUser.Email));
+            await _userManager.AddClaimAsync(appUser, new Claim(JwtClaimTypes.Name, appUser.UserName));
+            await _userManager.AddClaimAsync(appUser, new Claim(JwtClaimTypes.NickName, appUser.DisplayName));
+            await _userManager.AddClaimAsync(appUser, new Claim(JwtClaimTypes.Email, appUser.Email));
 
             if (model.RoleNames?.Count > 0)
             {
@@ -127,7 +127,7 @@ namespace IdentityServerHost.Quickstart.UI
                     }
                 }
 
-                await _userManager.AddClaimAsync(appUser, new Claim(ClaimTypes.Role, string.Join(',', validRoleNames)));
+                await _userManager.AddClaimAsync(appUser, new Claim(JwtClaimTypes.Role, string.Join(',', validRoleNames)));
             }
 
             return Ok(new RegisterUserResponseViewModel(appUser));
@@ -217,7 +217,7 @@ namespace IdentityServerHost.Quickstart.UI
                     // issue authentication cookie with subject ID and username
                     var isuser = new IdentityServerUser(user.Id)
                     {
-                        DisplayName = user.DisplayName
+                        DisplayName = user.UserName
                     };
 
                     await HttpContext.SignInAsync(isuser, props);

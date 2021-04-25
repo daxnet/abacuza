@@ -1,0 +1,27 @@
+﻿@using Microsoft.AspNetCore.Authentication
+@{
+    ViewData["Title"] = "Home Page";
+}
+
+<a class="btn btn-primary" asp-area="" asp-controller="Home" asp-action="Logout">Logout</a> 
+<h2>Claims</h2>
+
+<dl>
+    <dt>Is Admin</dt>
+    <dd>@User.IsInRole("admin")</dd>
+    @foreach (var claim in User.Claims)
+    {
+        <dt>@claim.Type</dt>
+        <dd>@claim.Value</dd>
+    }
+</dl>
+
+<h2>Properties</h2>
+
+<dl>
+    @foreach (var prop in (await Context.AuthenticateAsync()).Properties.Items)
+    {
+        <dt>@prop.Key</dt>
+        <dd>@prop.Value</dd>
+    }
+</dl>

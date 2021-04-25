@@ -1,4 +1,6 @@
 ﻿
+using IdentityModel;
+using IdentityServer4;
 using IdentityServer4.Models;
 using System;
 using System.Collections.Generic;
@@ -16,41 +18,69 @@ namespace Abacuza.Services.Identity.Models
                 new IdentityResources.OpenId(),
                 new IdentityResources.Email(),
                 new IdentityResources.Profile(),
-                new IdentityResources.Address(),
-                new IdentityResources.Phone()
+                new IdentityResource("roles", "User Roles", new[]{ "role" })
             };
 
         public static IEnumerable<ApiResource> GetApiResources() =>
-            new []
+            new[]
             {
-                new ApiResource("api.common", "Common Service")
+                new ApiResource("weather.api", "Weather API")
                 {
                     Scopes =
                     {
-                        "api.common.full_access"
-                    },
-                    UserClaims =
-                    {
-                        ClaimTypes.NameIdentifier, ClaimTypes.Name, ClaimTypes.Email, ClaimTypes.Role
+                        "api.weather.full_access"
                     }
                 }
             };
 
+        public static IEnumerable<ApiScope> ApiScopes =>
+            new[]
+            {
+                new ApiScope("api.weather.full_access", "Weather API Full Access", new[] {
+                        JwtClaimTypes.Name,
+                        JwtClaimTypes.Email,
+                        JwtClaimTypes.Role
+                    })
+            };
+
         public static IEnumerable<Client> GetClients() =>
-            new []
+            new[]
             {
                 new Client
                 {
                     RequireConsent = false,
-                    ClientId = "web",
-                    ClientName = "Abacuza Administrator",
-                    AllowedGrantTypes = GrantTypes.Implicit,
-                    AllowedScopes = { "openid", "profile", "email", "address", "phone", "api.common.full_access" },
-                    RedirectUris = {"http://localhost:4200/auth-callback"},
-                    PostLogoutRedirectUris = {"http://localhost:4200/"},
-                    AllowedCorsOrigins = {"http://localhost:4200"},
+                    ClientId = "mvc",
+                    ClientName = "ASP.NET Core MVC",
+                    AllowedGrantTypes = GrantTypes.Code,
+                    ClientSecrets =
+                    {
+                        new Secret("mysecret".Sha256())
+                    },
+                    AllowedScopes = { 
+                        IdentityServerConstants.StandardScopes.OpenId,
+                        IdentityServerConstants.StandardScopes.Profile,
+                        IdentityServerConstants.StandardScopes.Email,
+                        "roles",
+                        "api.weather.full_access" },
+                    RedirectUris = {"https://localhost:9800/signin-oidc"},
+                    PostLogoutRedirectUris = {"https://localhost:9800/signout-callback-oidc"},
+                    AllowedCorsOrigins = {"https://localhost:9800"},
                     AllowAccessTokensViaBrowser = true,
+                    AlwaysSendClientClaims = true,
+                    AlwaysIncludeUserClaimsInIdToken = true,
                     AccessTokenLifetime = 3600
+                },
+                new Client
+                {
+                    ClientId = "console",
+                    AllowedGrantTypes = GrantTypes.ResourceOwnerPassword,
+                    ClientSecrets =
+                    {
+                        new Secret("mysecret".Sha256())
+                    },
+                    AlwaysSendClientClaims = true,
+                    AlwaysIncludeUserClaimsInIdToken = true,
+                    AllowedScopes = { "api.weather.full_access" }
                 }
             };
     }

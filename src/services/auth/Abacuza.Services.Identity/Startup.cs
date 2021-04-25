@@ -1,5 +1,8 @@
 using Abacuza.Services.Identity.Data;
 using Abacuza.Services.Identity.Models;
+using IdentityServer4.AccessTokenValidation;
+using IdentityServer4.Services;
+using IdentityServer4.Validation;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -11,6 +14,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using System;
 using System.Collections.Generic;
+using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -40,14 +44,22 @@ namespace Abacuza.Services.Identity
             services.AddIdentityServer().AddDeveloperSigningCredential()
                 .AddOperationalStore(options =>
                 {
-                    options.ConfigureDbContext = builder => builder.UseNpgsql(Configuration.GetConnectionString("DefaultConnection"),
-                        optionsBuilder => optionsBuilder.MigrationsAssembly(typeof(Startup).Assembly.GetName().Name));
+                    options.ConfigureDbContext = builder => builder
+                        .UseNpgsql(Configuration.GetConnectionString("DefaultConnection"),
+                        optionsBuilder => optionsBuilder
+                            .MigrationsAssembly(typeof(Startup).Assembly.GetName().Name));
                     options.EnableTokenCleanup = true;
                     options.TokenCleanupInterval = 30;
                 })
                 .AddInMemoryIdentityResources(IdentityConfig.GetIdentityResources())
                 .AddInMemoryApiResources(IdentityConfig.GetApiResources())
-                .AddInMemoryClients(IdentityConfig.GetClients());
+                .AddInMemoryApiScopes(IdentityConfig.ApiScopes)
+                .AddInMemoryClients(IdentityConfig.GetClients())
+                .AddProfileService<ProfileService>();
+
+            //Inject the classes we just created
+            services.AddTransient<IResourceOwnerPasswordValidator, ResourceOwnerPasswordValidator>();
+            services.AddTransient<IProfileService, ProfileService>();
 
             services.AddCors(options => options.AddPolicy("AllowAll", p => p.AllowAnyOrigin()
                 .AllowAnyHeader()
