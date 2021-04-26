@@ -5,30 +5,33 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "JobSchedulers (web)",
+            "name": "Identity Server",
             "type": "coreclr",
             "request": "launch",
-            "preLaunchTask": "build",
-            "program": "${workspaceFolder}/job-schedulers/Abacuza.JobSchedulers/bin/Debug/Abacuza.JobSchedulers.dll",
+            "preLaunchTask": "build_ids",
+            "program": "${workspaceFolder}/auth/Abacuza.Services.Identity/bin/Debug/net5.0/Abacuza.Services.Identity.dll",
             "args": [],
-            "cwd": "${workspaceFolder}/job-schedulers/Abacuza.JobSchedulers",
+            "cwd": "${workspaceFolder}/auth/Abacuza.Services.Identity",
             "stopAtEntry": false,
-            "serverReadyAction": {
-                "action": "openExternally",
-                "pattern": "\\bNow listening on:\\s+(https?://\\S+)"
-            },
-            "env": {
-                "ASPNETCORE_ENVIRONMENT": "Development"
-            },
-            "sourceFileMap": {
-                "/Views": "${workspaceFolder}/Views"
-            }
+            "console": "internalConsole"
         },
         {
-            "name": "JobSchedulers (attach)",
+            "name": "MVC Web Client",
             "type": "coreclr",
-            "request": "attach",
-            "processId": "${command:pickProcess}"
+            "request": "launch",
+            "preLaunchTask": "build_web",
+            "program": "${workspaceFolder}/front-end/Abacuza.WebApp/bin/Debug/net5.0/Abacuza.WebApp.dll",
+            "args": [],
+            "cwd": "${workspaceFolder}/front-end/Abacuza.WebApp",
+            "stopAtEntry": false,
+            "console": "internalConsole"
+        }
+        
+    ],
+    "compounds": [
+        {
+            "name": "Identity",
+            "configurations": ["Identity Server", "MVC Web Client"]
         }
     ]
 }
