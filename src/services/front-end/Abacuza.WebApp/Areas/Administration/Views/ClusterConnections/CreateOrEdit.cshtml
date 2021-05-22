@@ -1,0 +1,94 @@
+﻿@using Abacuza.WebApp.Areas.Administration.Models
+@model CreateOrEditClusterConnectionModel
+
+@{
+    var title = Model.Id.HasValue ? "Edit Connection" : "Create a New Connection";
+    var createOrEditButtonText = Model.Id.HasValue ? "Save Changes" : "Create";
+}
+<h3>@title</h3>
+<section class="content">
+    <form method="post" asp-area="Administration" asp-controller="ClusterConnections" asp-action="CreateOrEdit">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card card-primary">
+                    <div class="card-header">
+                        <h3 class="card-title">Basic Information</h3>
+                        <div class="card-tools">
+                            <button type="button" class="btn btn-tool" data-card-widget="collapse" title="Collapse">
+                                <i class="fas fa-minus"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="form-group">
+                            <label for="txtName">Name</label>
+                            <input class="form-control" id="txtName" asp-for="Name" placeholder="Name of the connection">
+                            <span asp-validation-for="Name" class="text-danger"></span>
+                        </div>
+                        <div class="form-group">
+                            <label for="txtDescription">Description</label>
+                            <input class="form-control" id="txtDescription" asp-for="Description" placeholder="Description of the connection">
+                            <span asp-validation-for="Description" class="text-danger"></span>
+                        </div>
+                        <div class="form-group">
+                            <label>Cluster type</label>
+                            <input type="hidden" asp-for="AvailableClusterTypesValue" />
+                            <select class="form-control" asp-for="ClusterType" asp-items="Model.AvailableClusterTypes">
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card card-primary">
+                    <div class="card-header">
+                        <h3 class="card-title">Settings</h3>
+                        <div class="card-tools">
+                            <button type="button" class="btn btn-tool" data-card-widget="collapse" title="Collapse">
+                                <i class="fas fa-minus"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="form-group">
+                            <label for="txtSettings">Configuration JSON</label>
+                            <textarea id="txtSettings" asp-for="Settings" style="display: none"></textarea>
+                            <span asp-validation-for="Settings" class="text-danger"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-12">
+                <a asp-area="Administration" asp-controller="Home" asp-action="ManageClusterConnections" class="btn btn-secondary">Back</a>
+                <input type="submit" value="@createOrEditButtonText" class="btn btn-success float-right">
+            </div>
+        </div>
+    </form>
+
+</section>
+@section Scripts{
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+        await Html.RenderPartialAsync("_ToastPartial");
+    }
+
+    <script>
+        $(function () {
+            // CodeMirror
+            CodeMirror.fromTextArea(document.getElementById("txtSettings"), {
+                mode: {
+                    name: "javascript",
+                    json: true
+                },
+                theme: "idea",
+                smartIndent: true,
+                tabSize: 2,
+                lineNumbers: true
+            });
+        })
+    </script>
+}

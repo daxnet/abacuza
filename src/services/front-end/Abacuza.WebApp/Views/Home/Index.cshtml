@@ -1,9 +1,10 @@
 ﻿@using Microsoft.AspNetCore.Authentication
 @{
     ViewData["Title"] = "Home Page";
+    Layout = "~/Views/Shared/AdminLTE/_Layout.cshtml";
 }
 
-<a class="btn btn-primary" asp-area="" asp-controller="Home" asp-action="Logout">Logout</a> 
+@*<a class="btn btn-primary" asp-area="" asp-controller="Home" asp-action="Logout">Logout</a>*@ 
 <h2>Claims</h2>
 
 <dl>
@@ -16,7 +17,7 @@
     }
 </dl>
 
-<h2>Properties</h2>
+@*<h2>Properties</h2>
 
 <dl>
     @foreach (var prop in (await Context.AuthenticateAsync()).Properties.Items)
@@ -24,4 +25,4 @@
         <dt>@prop.Key</dt>
         <dd>@prop.Value</dd>
     }
-</dl>
+</dl>*@

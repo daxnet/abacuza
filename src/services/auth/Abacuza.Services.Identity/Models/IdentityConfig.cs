@@ -51,7 +51,7 @@ namespace Abacuza.Services.Identity.Models
                     RequireConsent = false,
                     ClientId = "mvc",
                     ClientName = "ASP.NET Core MVC",
-                    AllowedGrantTypes = GrantTypes.Code,
+                    AllowedGrantTypes = GrantTypes.CodeAndClientCredentials,
                     ClientSecrets =
                     {
                         new Secret("mysecret".Sha256())
@@ -72,15 +72,27 @@ namespace Abacuza.Services.Identity.Models
                 },
                 new Client
                 {
+                    RequireConsent = false,
                     ClientId = "console",
+                    ClientName = "Console App for Test",
                     AllowedGrantTypes = GrantTypes.ResourceOwnerPassword,
                     ClientSecrets =
                     {
                         new Secret("mysecret".Sha256())
                     },
+                    AllowedScopes = {
+                        IdentityServerConstants.StandardScopes.OpenId,
+                        IdentityServerConstants.StandardScopes.Profile,
+                        IdentityServerConstants.StandardScopes.Email,
+                        "roles",
+                        "api.weather.full_access" },
+                    RedirectUris = {"https://localhost:9800/signin-oidc"},
+                    PostLogoutRedirectUris = {"https://localhost:9800/signout-callback-oidc"},
+                    AllowedCorsOrigins = {"https://localhost:9800"},
+                    AllowAccessTokensViaBrowser = true,
                     AlwaysSendClientClaims = true,
                     AlwaysIncludeUserClaimsInIdToken = true,
-                    AllowedScopes = { "api.weather.full_access" }
+                    AccessTokenLifetime = 3600
                 }
             };
     }

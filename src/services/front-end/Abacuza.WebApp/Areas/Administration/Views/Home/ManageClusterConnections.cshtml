@@ -1,0 +1,93 @@
+﻿
+@model IEnumerable<Abacuza.WebApp.Models.ClusterConnection>
+
+<div class="row">
+    <div class="col-12">
+        <div class="card card-primary">
+            <div class="card-header">
+                <h3 class="card-title">
+                    <i class="fas fa-server"></i>
+                    Cluster Connections
+                </h3>
+                <div class="card-tools">
+                    <a asp-area="Administration" asp-controller="ClusterConnections" asp-action="CreateOrEdit" title="Create a new cluster connection">
+                        <i class="fas fa-plus"></i>
+                        Create
+                    </a>
+                </div>
+            </div>
+            <!-- /.card-header -->
+            <div class="card-body">
+                <table id="tblClusterConnections" class="table table-bordered table-hover">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Cluster Type</th>
+                            <th>Description</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var vm in Model)
+                        {
+                            <tr>
+                                <td>
+                                    <a asp-area="Administration" asp-controller="ClusterConnections" asp-action="CreateOrEdit" asp-route-id="@vm.Id">
+                                        @vm.Name
+                                    </a>
+                                </td>
+                                <td>@vm.ClusterType</td>
+                                <td>@vm.Description</td>
+                                <td>
+                                    <button class="btn btn-sm btn-danger" onclick="onDelete('@vm.Id')">
+                                        <i class="fas fa-trash-alt"></i>
+                                        Delete
+                                    </button>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+            <!-- /.card-body -->
+        </div>
+    </div>
+</div>
+@{ await Html.RenderPartialAsync("_ModalPartial"); }
+@section Scripts {
+    @{ await Html.RenderPartialAsync("_ToastPartial");}
+    @{ await Html.RenderPartialAsync("_ModalScriptsPartial"); }
+    <script>
+        $(function () {
+            $('#tblClusterConnections').DataTable({
+                "paging": true,
+                "lengthChange": false,
+                "searching": false,
+                "ordering": true,
+                "info": true,
+                "autoWidth": false,
+                "responsive": true,
+            });
+        });
+
+        function onDelete(id) {
+            $.confirmModal('Are you sure to delete the selected cluster connection?', {
+                messageHeader: 'Confirm',
+                confirmButton: 'Yes',
+                cancelButton: 'No',
+            }, function (el) {
+                console.log(id);
+                $.ajax({
+                    type: 'POST',
+                    contentType: 'application/json; charset=utf-8',
+                    url: '@Url.Action("Delete", "ClusterConnections")',
+                    data: JSON.stringify({ id: id }),
+                    dataType: 'json',
+                    success: function () {
+                        showMessage('Delete successfully.', 'Success', '', 'bg-success');
+                    }
+                });
+            });
+        }
+    </script>
+} 

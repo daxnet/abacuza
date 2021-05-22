@@ -1,0 +1,20 @@
+﻿
+<script>
+    function showMessage(msg, title, subtitle, type) {
+        $(document).Toasts('create', {
+            class: type,
+            title: title,
+            subtitle: subtitle,
+            body: msg
+        });
+    }
+</script>
+
+@if (ViewBag.ToastMessage != null && ViewBag.ToastType != null)
+{
+    <script type="text/javascript">
+        showMessage("@ViewBag.ToastMessage", "@ViewBag.ToastTitle", "@ViewBag.ToastSubtitle", "@ViewBag.ToastType")
+    </script>
+}
+
+

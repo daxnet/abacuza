@@ -21,7 +21,10 @@
       "SwaggerKey": "ClusterService",
       "AuthenticationOptions": {
         "AuthenticationProviderKey": "authKey",
-        "AllowedScopes": []
+        "AllowedScopes": [ ]
+      },
+      "AddHeadersToRequest": {
+        "X-ROLE-NAME": "Claims[role] > value > |"
       }
     },
     {

@@ -1,0 +1,71 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Abacuza Administrator</title>
+    <partial name="AdminLTE/_Styles" />
+</head>
+
+<body class="hold-transition sidebar-mini">
+    <div class="wrapper">
+        <partial name="AdminLTE/_TopNavigation" />
+        <partial name="AdminLTE/_MainNavigation" />
+
+        <div class="content-wrapper">
+            <div class="content-header">
+                <div class="container-fluid">
+                    @*<div class="row mb-2">
+                            <div class="col-sm-6">
+                                <h1 class="m-0">Starter Page</h1>
+                            </div>
+                            <div class="col-sm-6">
+                                <ol class="breadcrumb float-sm-right">
+                                    <li class="breadcrumb-item"><a href="#">Home</a></li>
+                                    <li class="breadcrumb-item active">Starter Page</li>
+                                </ol>
+                            </div>
+                        </div>*@
+                </div>
+            </div>
+            <div class="content">
+                <div class="container-fluid">
+                    @RenderBody()
+                </div>
+            </div>
+
+        </div>
+        <aside class="control-sidebar control-sidebar-dark">
+            <div class="p-3">
+                <h5>Customize</h5>
+                <hr class="mb-2" />
+
+                <div class="mb-4 sidebar-darkmode-container">
+                </div>
+            </div>
+        </aside>
+        <partial name="AdminLTE/_Footer" />
+    </div>
+    <partial name="AdminLTE/_Scripts" />
+    <script>
+        var $container = $('.sidebar-darkmode-container')
+        var $dark_mode_checkbox = $('<input />', {
+            type: 'checkbox',
+            value: 1,
+            checked: $('body').hasClass('dark-mode'),
+            class: 'mr-1'
+        }).on('click', function () {
+            if ($(this).is(':checked')) {
+                $('body').addClass('dark-mode')
+            } else {
+                $('body').removeClass('dark-mode')
+            }
+        })
+        var $dark_mode_container = $('<div />', { class: 'mb-4' }).append($dark_mode_checkbox).append('<span>Dark Mode</span>')
+        $container.append($dark_mode_container)
+    </script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+
+</html>

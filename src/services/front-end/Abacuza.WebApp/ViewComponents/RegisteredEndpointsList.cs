@@ -1,0 +1,23 @@
+﻿using Abacuza.WebApp.Models;
+using Microsoft.AspNetCore.Mvc;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+
+namespace Abacuza.WebApp.ViewComponents
+{
+    [ViewComponent(Name = "RegisteredEndpointsList")]
+    public class RegisteredEndpointsList : ViewComponent
+    {
+        private readonly ApiService _apiService;
+
+        public RegisteredEndpointsList(ApiService apiService)
+            => _apiService = apiService;
+
+        public async Task<IViewComponentResult> InvokeAsync()
+        {
+            return View(await _apiService.GetRegisteredEndpointsAsync());
+        }
+    }
+}

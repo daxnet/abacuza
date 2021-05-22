@@ -1,6 +1,7 @@
 ﻿using IdentityServer4.Models;
 using IdentityServer4.Services;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,13 +11,11 @@ namespace Abacuza.Services.Identity.Models
 {
     public class ProfileService : IProfileService
     {
-        //services
         private readonly UserManager<AbacuzaAppUser> _userRepository;
+        private readonly ILogger<ProfileService> _logger;
 
-        public ProfileService(UserManager<AbacuzaAppUser> userRepository)
-        {
-            _userRepository = userRepository;
-        }
+        public ProfileService(UserManager<AbacuzaAppUser> userRepository, ILogger<ProfileService> logger)
+            => (_userRepository, _logger) = (userRepository, logger);
 
         //Get user profile date in terms of claims when calling /connect/userinfo
         public async Task GetProfileDataAsync(ProfileDataRequestContext context)
@@ -31,12 +30,11 @@ namespace Abacuza.Services.Identity.Models
 
                     if (user != null)
                     {
-                        var claims = ResourceOwnerPasswordValidator.GetUserClaims(user);
+                        var roles = await _userRepository.GetRolesAsync(user);
+                        var claims = ResourceOwnerPasswordValidator.GetUserClaims(user, roles);
 
                         //set issued claims to return
                         context.IssuedClaims = claims.Where(x => context.RequestedClaimTypes.Contains(x.Type)).ToList();
-
-                        
                     }
                 }
                 else
@@ -49,11 +47,12 @@ namespace Abacuza.Services.Identity.Models
                     {
                         //get user from db (find user by user id)
                         var user = await _userRepository.FindByNameAsync(userId.Value);
+                        var roles = await _userRepository.GetRolesAsync(user);
 
                         // issue the claims for the user
                         if (user != null)
                         {
-                            var claims = ResourceOwnerPasswordValidator.GetUserClaims(user);
+                            var claims = ResourceOwnerPasswordValidator.GetUserClaims(user, roles);
 
                             context.IssuedClaims = claims.Where(x => context.RequestedClaimTypes.Contains(x.Type)).ToList();
                         }
@@ -62,7 +61,7 @@ namespace Abacuza.Services.Identity.Models
             }
             catch (Exception ex)
             {
-                //log your error
+                _logger.LogError(ex, "Failed to read user profile.");
             }
         }
 
@@ -86,7 +85,7 @@ namespace Abacuza.Services.Identity.Models
             }
             catch (Exception ex)
             {
-                //handle error logging
+                _logger.LogError(ex, "Unable to set user active.");
             }
         }
     }

@@ -9,6 +9,8 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.IdentityModel.Tokens.Jwt;
 using Microsoft.AspNetCore.Authentication;
+using Abacuza.WebApp.Models;
+using Microsoft.AspNetCore.Http;
 
 namespace Abacuza.WebApp
 {
@@ -24,7 +26,9 @@ namespace Abacuza.WebApp
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddControllersWithViews();
+            services.AddControllersWithViews()
+                .AddRazorRuntimeCompilation();
+
             JwtSecurityTokenHandler.DefaultMapInboundClaims = false;
 
             services.AddAuthentication(options =>
@@ -41,6 +45,7 @@ namespace Abacuza.WebApp
                 options.ClientId = "mvc";
                 options.ClientSecret = "mysecret";
                 options.ResponseType = "code";
+                //options.ResponseType = "id_token token";
                 options.RequireHttpsMetadata = true;
                 options.Scope.Add("openid");
                 options.Scope.Add("profile");
@@ -55,6 +60,19 @@ namespace Abacuza.WebApp
                     RoleClaimType = "role"
                 };
                 options.SaveTokens = true;
+            });
+
+            services.AddTransient<ApiService>();
+
+            services.AddAccessTokenManagement(options =>
+            {
+                options.Client.Scope = "api.weather.full_access";
+            }).ConfigureBackchannelHttpClient()
+                .AddUserAccessTokenHandler();
+
+            services.AddUserAccessTokenClient("user_client", client =>
+            {
+                client.BaseAddress = new Uri("http://localhost:9900");
             });
         }
 
@@ -80,6 +98,11 @@ namespace Abacuza.WebApp
 
             app.UseEndpoints(endpoints =>
             {
+                endpoints.MapControllerRoute(
+                    name: "areas",
+                    pattern: "{area:exists}/{controller=Home}/{action=Index}/{id?}")
+                    .RequireAuthorization();
+
                 endpoints.MapControllerRoute(
                     name: "default",
                     pattern: "{controller=Home}/{action=Index}/{id?}")

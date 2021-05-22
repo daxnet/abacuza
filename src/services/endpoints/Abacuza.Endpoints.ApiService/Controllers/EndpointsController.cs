@@ -21,7 +21,7 @@ namespace Abacuza.Endpoints.ApiService.Controllers
 
         [HttpGet]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public IActionResult GetEndpoints([FromQuery(Name = "type")] string endpointType)
+        public IActionResult GetEndpoints([FromQuery(Name = "type")] string? endpointType = null)
         {
             EndpointType? type = endpointType?.ToLower() switch
             {

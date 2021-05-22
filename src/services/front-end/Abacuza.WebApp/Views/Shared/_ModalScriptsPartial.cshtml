@@ -1,0 +1,30 @@
+﻿<script>
+    function popupConfirm(message, title, args, confirmCallback) {
+        //$("#modal-confirm .modal-title").text(title);
+        //$("#modal-confirm .modal-body").html(message);
+        $("#modal-confirm").one('show.bs.modal', function (event) {
+            var modal = $(this);
+            modal.find('.modal-title').text(title);
+            modal.find('.modal-body').html(message);
+            var confirmButton = modal.find('[data-confirm="yes"]');
+            //modal.find('[data-confrim="yes"]').one('click', function (clkEvent) {
+            //    alert('sdf');
+            //});
+            confirmButton.attr('click', function (eve) {
+                
+            });
+        });
+        //$("#modal-confirm").one('hide.bs.modal', function (event) {
+        //    var button = $event.
+        //    console.log(button.html());
+        //    var isConfirm = button.data('confirm') === 'yes';
+        //    console.log(button.data('confirm'));
+        //    if (isConfirm) {
+
+        //        confirmCallback(args);
+        //    }
+        //});
+        $("#modal-confirm").modal();
+
+    }
+</script>

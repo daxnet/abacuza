@@ -35,8 +35,8 @@ namespace ConsoleApp1
             }
 
             Console.WriteLine(tokenResponse.AccessToken);
-            //client.SetBearerToken(tokenResponse.AccessToken);
-            //var response = await client.GetAsync("http://localhost:9000/api/weather");
+            // client.SetBearerToken(tokenResponse.AccessToken);
+            var response = await client.GetAsync("http://localhost:9900/cluster-service/clusters");
             //Console.WriteLine(response.IsSuccessStatusCode ?
             //    $"{response.StatusCode} {await response.Content.ReadAsStringAsync()}" :
             //    response.StatusCode.ToString());

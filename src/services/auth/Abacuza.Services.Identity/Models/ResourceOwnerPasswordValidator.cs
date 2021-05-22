@@ -18,7 +18,7 @@ namespace Abacuza.Services.Identity.Models
 
         public ResourceOwnerPasswordValidator(UserManager<AbacuzaAppUser> userRepository, RoleManager<AbacuzaAppRole> roleRepository)
         {
-            _userRepository = userRepository; //DI
+            _userRepository = userRepository;
             _roleRepository = roleRepository;
         }
 
@@ -34,11 +34,12 @@ namespace Abacuza.Services.Identity.Models
                     //check if password match - remember to hash password if stored as hash in db
                     if (await _userRepository.CheckPasswordAsync(user, context.Password))
                     {
+                        var roles = await _userRepository.GetRolesAsync(user);
                         //set the result
                         context.Result = new GrantValidationResult(
                             subject: user.UserName,
                             authenticationMethod: "custom",
-                            claims: GetUserClaims(user));
+                            claims: GetUserClaims(user, roles));
 
                         return;
                     }
@@ -49,21 +50,27 @@ namespace Abacuza.Services.Identity.Models
                 context.Result = new GrantValidationResult(TokenRequestErrors.InvalidGrant, "User does not exist.");
                 return;
             }
-            catch (Exception ex)
+            catch
             {
                 context.Result = new GrantValidationResult(TokenRequestErrors.InvalidGrant, "Invalid username or password");
             }
         }
 
         //build claims array from user data
-        public static Claim[] GetUserClaims(AbacuzaAppUser user)
+        public static Claim[] GetUserClaims(AbacuzaAppUser user, IEnumerable<string> roles)
         {
-            return new Claim[]
+            var claims = new List<Claim>
             {
                 new Claim(JwtClaimTypes.Email, user.Email  ?? ""),
-                new Claim(JwtClaimTypes.Name, user.DisplayName  ?? ""),
-                new Claim(JwtClaimTypes.Role, "admin") // TODO
+                new Claim(JwtClaimTypes.Name, user.DisplayName  ?? "")
             };
+
+            if (roles != null && roles.Count() > 0)
+            {
+                claims.AddRange(roles.Select(r => new Claim(JwtClaimTypes.Role, r)));
+            }
+
+            return claims.ToArray();
         }
     }
 }

@@ -11,6 +11,7 @@
 // Apache License Version 2.0
 // ==============================================================
 
+using IdentityServer4.AccessTokenValidation;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -79,7 +80,17 @@ namespace Abacuza.Services.ApiGateway
             };
 
             services.AddOcelot();
-            services.AddAuthentication().AddJwtBearer(authenticationProviderKey, jwtBearerOptions);
+            // services.AddAuthorization();
+            // services.AddAuthentication(IdentityServerAuthenticationDefaults.AuthenticationScheme).AddJwtBearer(authenticationProviderKey, jwtBearerOptions);
+
+            services.AddAuthentication()
+                .AddIdentityServerAuthentication(authenticationProviderKey, options =>
+                {
+                    options.Authority = idsAuthority;
+                    options.RequireHttpsMetadata = true;
+                });
+
+            services.AddAuthorization();
 
             services.AddCors(options => options.AddPolicy("AllowAll", p =>
                 p.AllowAnyOrigin()
