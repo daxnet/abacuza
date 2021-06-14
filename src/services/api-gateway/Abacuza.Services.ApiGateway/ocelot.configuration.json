@@ -21,7 +21,7 @@
       "SwaggerKey": "ClusterService",
       "AuthenticationOptions": {
         "AuthenticationProviderKey": "authKey",
-        "AllowedScopes": []
+        "AllowedScopes": [ "api" ]
       }
     },
     {

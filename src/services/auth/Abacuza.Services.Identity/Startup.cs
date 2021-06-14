@@ -1,5 +1,6 @@
 using Abacuza.Services.Identity.Data;
 using Abacuza.Services.Identity.Models;
+using IdentityServer4.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -9,6 +10,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -37,7 +39,13 @@ namespace Abacuza.Services.Identity
                 .AddEntityFrameworkStores<ApplicationDbContext>()
                 .AddDefaultTokenProviders();
 
-            services.AddIdentityServer().AddDeveloperSigningCredential()
+            services.AddIdentityServer(
+                    options =>
+                    {
+                        options.Authentication.CookieLifetime = TimeSpan.FromDays(30);
+                        options.Authentication.CookieSlidingExpiration = true;
+                    }
+                ).AddDeveloperSigningCredential()  
                 .AddOperationalStore(options =>
                 {
                     options.ConfigureDbContext = builder => builder.UseNpgsql(Configuration.GetConnectionString("DefaultConnection"),
@@ -47,11 +55,23 @@ namespace Abacuza.Services.Identity
                 })
                 .AddInMemoryIdentityResources(IdentityConfig.GetIdentityResources())
                 .AddInMemoryApiResources(IdentityConfig.GetApiResources())
-                .AddInMemoryClients(IdentityConfig.GetClients());
+                .AddInMemoryApiScopes(IdentityConfig.ApiScopes)
+                .AddInMemoryClients(IdentityConfig.GetClients())
+                .AddProfileService<ProfileService>();
+
+            services.AddTransient<IProfileService, ProfileService>();
 
             services.AddCors(options => options.AddPolicy("AllowAll", p => p.AllowAnyOrigin()
                 .AllowAnyHeader()
                 .AllowAnyMethod()));
+
+            services.AddSingleton<ICorsPolicyService>((container) => {
+                var logger = container.GetRequiredService<ILogger<DefaultCorsPolicyService>>();
+                return new DefaultCorsPolicyService(logger)
+                {
+                    AllowAll = true
+                };
+            });
 
             services.AddControllersWithViews();
 
@@ -73,7 +93,7 @@ namespace Abacuza.Services.Identity
                 app.UseHsts();
             }
             app.UseCors("AllowAll");
-            app.UseHttpsRedirection();
+            //app.UseHttpsRedirection();
             app.UseStaticFiles();
 
             app.UseRouting();
