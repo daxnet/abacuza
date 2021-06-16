@@ -66,9 +66,7 @@
           </div>
           <!-- Message End -->
         </a>
-        <div class="dropdown-divider" *ngIf="user"></div>
         <a *ngIf="user" href="javascript:void(0);" class="dropdown-item dropdown-footer" (click)="signOut()">Sign Out</a>
-        <a *ngIf="!user" href="javascript:void(0);" class="dropdown-item dropdown-footer" (click)="signIn()">Sign In</a>
       </div>
     </li>
   </ul>

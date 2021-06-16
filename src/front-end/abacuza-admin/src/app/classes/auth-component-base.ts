@@ -6,30 +6,31 @@ import { AuthService } from "../services/auth.service";
 @Component({
     template: ''
 })
-export abstract class AuthComponentBase implements OnInit {
+export abstract class AuthComponentBase implements OnInit, OnDestroy {
 
-    public userAuthenticated = false;
+    public user: User | null = null;
+    public isAdmin: boolean = false;
+    private loginChangedSubscription: Subscription | null = null;
 
     constructor(protected authService: AuthService) {
-        this.authService.loginChanged
-            .subscribe(userAuthenticated => {
-                this.userAuthenticated = userAuthenticated;
-            })
-    }
-    ngOnInit(): void {
-        this.authService.isAuthenticated()
-            .then(userAuthenticated => {
-                this.userAuthenticated = userAuthenticated;
+        this.loginChangedSubscription = this.authService.loginChanged
+            .subscribe(authenticated => {
+                if (authenticated) {
+                    this.user = this.authService.currentUser;
+                    this.isAdmin = this.authService.isAdmin;
+                } else {
+                    this.user = null;
+                }
             });
     }
 
-    // public userHasRole(role: string): boolean {
-    //     const roles: string[] = this.user == null ? '' : this.user.profile.role;
-    //     return roles.findIndex(item => item === role) >= 0;
-    // }
+    ngOnDestroy(): void {
+        this.loginChangedSubscription?.unsubscribe();
+    }
 
-    // public get isAdmin(): boolean {
-    //     //return this.userHasRole('admin');
-    //     return true;
-    // }
+    async ngOnInit() {
+        await this.authService.isAuthenticated();
+        this.user = this.authService.currentUser;
+        this.isAdmin = this.authService.isAdmin;
+    }
 }
