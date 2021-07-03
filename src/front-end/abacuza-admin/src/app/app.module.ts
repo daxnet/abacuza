@@ -12,6 +12,17 @@ import { AuthCallbackComponent } from './components/auth-callback/auth-callback.
 import { InstalledPluginsComponent } from './pages/installed-plugins/installed-plugins.component';
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { HttpAuthInterceptorService } from './services/http-auth-interceptor.service';
+import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
+import { DataTablesModule } from 'angular-datatables';
+import { ClusterConnectionsComponent } from './pages/cluster-connections/cluster-connections.component';
+import { CommonDialogComponent } from './services/common-dialog/common-dialog.component';
+import { ToastsComponent } from './services/toast/toasts.component';
+import { EditClusterConnectionComponent } from './pages/edit-cluster-connection/edit-cluster-connection.component';
+import { ComponentDialogComponent } from './services/component-dialog/component-dialog.component';
+import { ComponentDialogContentDirective } from './services/component-dialog/component-dialog-content.directive';
+import { FormsModule } from '@angular/forms';
+import { NgJsonEditorModule } from 'ang-jsoneditor';
+import { JobRunnersComponent } from './pages/job-runners/job-runners.component';
 
 @NgModule({
   declarations: [
@@ -22,12 +33,23 @@ import { HttpAuthInterceptorService } from './services/http-auth-interceptor.ser
     DashboardComponent,
     NotFoundComponent,
     AuthCallbackComponent,
-    InstalledPluginsComponent
+    InstalledPluginsComponent,
+    ClusterConnectionsComponent,
+    CommonDialogComponent,
+    ToastsComponent,
+    EditClusterConnectionComponent,
+    ComponentDialogComponent,
+    ComponentDialogContentDirective,
+    JobRunnersComponent
   ],
   imports: [
     BrowserModule,
     AppRoutingModule,
-    HttpClientModule
+    HttpClientModule,
+    FormsModule,
+    NgbModule,
+    DataTablesModule,
+    NgJsonEditorModule
   ],
   providers: [
     {

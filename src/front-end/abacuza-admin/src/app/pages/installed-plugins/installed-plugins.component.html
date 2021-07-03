@@ -1,4 +1,67 @@
-<p>installed-plugins works!</p>
-<ul *ngIf='clusterTypes'>
-    <li *ngFor='let ct of clusterTypes'>{{ct}}</li>
-</ul>
+<section class="content-header">
+  <div class="container-fluid">
+    <div class="row mb-2">
+      <div class="col-sm-6">
+        <h4>
+          <i class="nav-icon fas fa-plug"></i>
+          Installed Plugins
+        </h4>
+      </div>
+    </div>
+  </div>
+</section>
+<section class="content">
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-md-12">
+        <ul ngbNav #nav="ngbNav" class="nav-tabs">
+          <li ngbNavItem>
+            <a ngbNavLink>Supported Clusters</a>
+            <ng-template ngbNavContent>
+              <table *ngIf='clusters' datatable [dtOptions]="dtSupportedClustersOptions" class="table table-bordered table-striped">
+                <thead>
+                  <tr>
+                    <th>Name</th>
+                    <th>Description</th>
+                    <th>Type</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr *ngFor="let cluster of clusters">
+                    <td>{{cluster.name}}</td>
+                    <td>{{cluster.description}}</td>
+                    <td>{{cluster.type}}</td>
+                  </tr>
+                </tbody>
+              </table>
+            </ng-template>
+          </li>
+          <li ngbNavItem>
+            <a ngbNavLink>Supported Endpoints</a>
+            <ng-template ngbNavContent>
+              <table *ngIf='endpoints' datatable [dtOptions]="dtSupportedEndpointsOptions" class="table table-bordered table-striped">
+                <thead>
+                  <tr>
+                    <th>Name</th>
+                    <th>DisplayName</th>
+                    <th>Description</th>
+                    <th>Type</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr *ngFor="let endpoint of endpoints">
+                    <td>{{endpoint.name}}</td>
+                    <td>{{endpoint.displayName}}</td>
+                    <td>{{endpoint.description}}</td>
+                    <td>{{endpoint.typeName}}</td>
+                  </tr>
+                </tbody>
+              </table>
+            </ng-template>
+          </li>
+        </ul>
+        <div [ngbNavOutlet]="nav" class="mt-2"></div>
+      </div>
+    </div>
+  </div>
+</section>

@@ -1,11 +1,21 @@
-﻿using Abacuza.Clusters.ApiService.Models;
-using Abacuza.Clusters.Common;
+﻿// ==============================================================
+//           _
+//     /\   | |
+//    /  \  | |__ __ _ ___ _ _ ______ _
+//   / /\ \ | '_ \ / _` |/ __| | | |_  / _` |
+//  / ____ \| |_) | (_| | (__| |_| |/ / (_| |
+// /_/    \_\_.__/ \__,_|\___|\__,_/___\__,_|
+//
+// Data Processing Platform
+// Copyright 2020-2021 by daxnet. All rights reserved.
+// Apache License Version 2.0
+// ==============================================================
+
+using Abacuza.Clusters.ApiService.Models;
 using Abacuza.Common.DataAccess;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -15,13 +25,23 @@ namespace Abacuza.Clusters.ApiService.Controllers
     [Route("api/clusters")]
     public class ClustersController : ControllerBase
     {
-        private readonly ILogger<ClustersController> _logger;
+        #region Private Fields
+
         private readonly ClusterCollection _clusterImplementations;
         private readonly IDataAccessObject _dao;
+        private readonly ILogger<ClustersController> _logger;
+
+        #endregion Private Fields
+
+        #region Public Constructors
 
         public ClustersController(ClusterCollection clusterImplementations,
             ILogger<ClustersController> logger,
             IDataAccessObject dao) => (_clusterImplementations, _dao, _logger) = (clusterImplementations, dao, logger);
+
+        #endregion Public Constructors
+
+        #region Public Methods
 
         [HttpGet]
         [ProducesResponseType(StatusCodes.Status200OK)]
@@ -38,7 +58,6 @@ namespace Abacuza.Clusters.ApiService.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         public IActionResult GetAllClusterTypes()
             => Ok(_clusterImplementations.Select(ci => ci.Type));
-
 
         [HttpGet("state/{connectionName}")]
         public async Task<IActionResult> GetClusterStateAsync(string connectionName)
@@ -69,5 +88,7 @@ namespace Abacuza.Clusters.ApiService.Controllers
 
             return BadRequest($"Cannot create the cluster connection by type {clusterImplementation.ConnectionType}");
         }
+
+        #endregion Public Methods
     }
 }

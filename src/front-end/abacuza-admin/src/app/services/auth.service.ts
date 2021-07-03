@@ -8,11 +8,11 @@ import { environment } from 'src/environments/environment';
 })
 export class AuthService {
 
-  private loginChangedSubject = new Subject<boolean>();
+  private loginChangedSubject$ = new Subject<boolean>();
   private userManager : UserManager;
   private user: User | null = null;
 
-  public loginChanged = this.loginChangedSubject.asObservable();
+  public loginChanged = this.loginChangedSubject$.asObservable();
 
   constructor() {
     this.userManager  = new UserManager(this.getUserManagerSettings());
@@ -34,7 +34,7 @@ export class AuthService {
     const user = await this.userManager.signinRedirectCallback();
     if (this.user !== user) {
       this.user = user;
-      this.loginChangedSubject.next(this.checkUser(user));
+      this.loginChangedSubject$.next(this.checkUser(user));
     }
   }
 
@@ -45,7 +45,7 @@ export class AuthService {
   public isAuthenticated = async (): Promise<boolean> => {
     const user = await this.userManager.getUser();
     if (this.user !== user) {
-      this.loginChangedSubject.next(this.checkUser(user));
+      this.loginChangedSubject$.next(this.checkUser(user));
       this.user = user;
     }
     return this.checkUser(user);

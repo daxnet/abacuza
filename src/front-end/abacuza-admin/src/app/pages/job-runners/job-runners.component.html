@@ -1,0 +1,56 @@
+<section class="content-header">
+  <div class="container-fluid">
+    <div class="row mb-2">
+      <div class="col-sm-6">
+        <h4>
+          <i class="nav-icon fas fa-running"></i>
+          Job Runners
+        </h4>
+      </div>
+      <div class="col-sm-6">
+        <div class=" d-md-flex justify-content-md-end">
+          <button class="btn btn-outline-primary" type="button">
+            <i class="nav-icon fas fa-plus"></i>
+            Add Job Runner
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+<section class="content">
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-md-12">
+        <table datatable [dtOptions]='dtTableOptions' [dtTrigger]='dtTrigger'
+          class="table table-bordered table-striped table-hover">
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Description</th>
+              <th>Cluster type</th>
+              <th class="text-center">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor='let jr of jobRunners'>
+              <td>{{jr.name}}</td>
+              <td>{{jr.description}}</td>
+              <td>{{jr.clusterType}}</td>
+              <td class="text-center">
+                <a href="javascript:void(0);" title="Edit" class="m-1" (click)="onEditClicked(jr)">
+                  <span class="fas fa-edit">
+                  </span>
+                </a>
+                <a href="javascript:void(0);" title="Delete" class="m-1" (click)="onDeleteClicked(jr)">
+                  <span class="fas fa-trash-alt">
+                  </span>
+                </a>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</section>

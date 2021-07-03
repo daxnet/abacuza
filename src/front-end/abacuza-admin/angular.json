@@ -34,13 +34,20 @@
               "src/styles.scss",
               "src/assets/plugins/fontawesome-free/css/all.min.css",
               "src/assets/plugins/overlayScrollbars/css/OverlayScrollbars.min.css",
-              "src/assets/css/adminlte.min.css"
+              "src/assets/css/adminlte.min.css",
+              "node_modules/bootstrap/dist/css/bootstrap.min.css",
+              "node_modules/datatables.net-bs4/css/dataTables.bootstrap4.min.css",
+              "node_modules/jsoneditor/dist/jsoneditor.min.css"
             ],
             "scripts": [
               "src/assets/plugins/jquery/jquery.min.js",
-              "src/assets/plugins/bootstrap/js/bootstrap.bundle.min.js",
+              "node_modules/bootstrap/dist/js/bootstrap.min.js",
               "src/assets/plugins/overlayScrollbars/js/jquery.overlayScrollbars.min.js",
-              "src/assets/js/adminlte.min.js"
+              "src/assets/js/adminlte.min.js",
+              "node_modules/jquery/dist/jquery.js",
+              "node_modules/datatables.net/js/jquery.dataTables.js",
+              "node_modules/datatables.net-bs4/js/dataTables.bootstrap4.min.js",
+              "node_modules/jsoneditor/dist/jsoneditor.min.js"
             ]
           },
           "configurations": {
