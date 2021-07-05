@@ -23,6 +23,9 @@ import { ComponentDialogContentDirective } from './services/component-dialog/com
 import { FormsModule } from '@angular/forms';
 import { NgJsonEditorModule } from 'ang-jsoneditor';
 import { JobRunnersComponent } from './pages/job-runners/job-runners.component';
+import { JobRunnerDetailsComponent } from './pages/job-runner-details/job-runner-details.component';
+import { FileListComponent } from './components/file-list/file-list.component';
+import { FileUploadComponent } from './services/file-upload/file-upload.component';
 
 @NgModule({
   declarations: [
@@ -40,7 +43,10 @@ import { JobRunnersComponent } from './pages/job-runners/job-runners.component';
     EditClusterConnectionComponent,
     ComponentDialogComponent,
     ComponentDialogContentDirective,
-    JobRunnersComponent
+    JobRunnersComponent,
+    JobRunnerDetailsComponent,
+    FileListComponent,
+    FileUploadComponent
   ],
   imports: [
     BrowserModule,

@@ -1,0 +1,15 @@
+<div *ngFor="let progressInfo of progressInfos" class="mb-2">
+    <span>{{ progressInfo.fileName }}</span>
+    <div *ngIf='progressInfo.value < 100 && !progressInfo.message'>
+        <ngb-progressbar [showValue]="true" type="info" [value]="progressInfo.value"></ngb-progressbar>
+    </div>
+    <div *ngIf='progressInfo.value === 100'>
+        <span [class]='progressInfo.mstyle'>{{ progressInfo.message }}</span>
+    </div>
+</div>
+
+<label class="btn btn-default">
+    <input type="file" nbInput [multiple]='data.allowMultiple' [accept]='data.allowedExts' (change)="selectFiles($event)" />
+</label>
+
+<button nbButton hero status="success" size="small" [disabled]="!selectedFiles" (click)="uploadFiles()">Upload</button>

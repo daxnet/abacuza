@@ -1,0 +1,52 @@
+<section class="content-header">
+    <div class="container-fluid">
+        <div class="row mb-2">
+            <div class="col-sm-6">
+                <h4>Job Runner Details</h4>
+            </div>
+        </div>
+    </div><!-- /.container-fluid -->
+</section>
+<section class="content">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card" *ngIf="jobRunner">
+                    <!-- <div class="card-header">
+                        <h3 class="card-title">Project Details</h3>
+                    </div> -->
+                    <div class="card-body">
+                        <div class="form-group">
+                            <label for="name">Name</label>
+                            <input ngbAutofocus class="form-control" type="text" id="name" name="name" required
+                                [(ngModel)]="jobRunner.name">
+                        </div>
+                        <div class="form-group">
+                            <label for="description">Description</label>
+                            <input class="form-control" type="text" id="description" name="description" required
+                                [(ngModel)]="jobRunner.description">
+                        </div>
+                        <div class="form-group">
+                            <label for="clusterType">Cluster type</label>
+                            <select id="clusterType" name="clusterType" class="form-control"
+                                [(ngModel)]="jobRunner.clusterType">
+                                <option *ngFor="let ct of clusterTypes" [ngValue]="ct">{{ct}}</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="payloadTemplate">Payload template</label>
+                            <json-editor id="payloadTemplate" [options]="jsonEditorOptions"
+                                [(ngModel)]="jobRunner.payloadTemplateJsonObject"></json-editor>
+                        </div>
+                        <div class="form-group">
+                            <app-file-list id='jobRunnerBinaries' title = 'Binaries' [initFiles]='initFiles'
+                                bucket='data' [key]='key' allowedExts='.zip,.jar' [allowMultipleSelection]='true'
+                                (onFileAdded)='onFileAdded($event)'
+                                (onFileDeleted)='onFileDeleted($event)'></app-file-list>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>

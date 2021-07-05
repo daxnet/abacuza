@@ -1,4 +1,5 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
 import { AuthComponentBase } from './classes/auth-component-base';
 import { AuthService } from './services/auth.service';
 
@@ -9,7 +10,6 @@ import { AuthService } from './services/auth.service';
 })
 export class AppComponent /*extends AuthComponentBase*/ {
 
-  // constructor(authService: AuthService) {
-  //   super(authService);
-  // }
+  constructor() {
+  }
 }

@@ -14,7 +14,6 @@ export class HttpAuthInterceptorService implements HttpInterceptor {
     const authHeader = this.authService.authorizationHeaderValue;
     req = req.clone({
       setHeaders: {
-        'Content-Type': "application/json",
         'Authorization': authHeader
       }
     });

@@ -38,7 +38,7 @@
               <td>{{jr.description}}</td>
               <td>{{jr.clusterType}}</td>
               <td class="text-center">
-                <a href="javascript:void(0);" title="Edit" class="m-1" (click)="onEditClicked(jr)">
+                <a [routerLink]="['/job-runners/details', jr.id]" title="Edit" class="m-1">
                   <span class="fas fa-edit">
                   </span>
                 </a>

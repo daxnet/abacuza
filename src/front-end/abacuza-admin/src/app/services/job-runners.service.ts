@@ -20,4 +20,26 @@ export class JobRunnersService {
       return response;
     }))
   }
+
+
+  /**
+   *
+   * Retrieves a job runner by its ID.
+   *
+   * @param {string} id
+   * @returns {Observable<HttpResponse<JobRunner>>}
+   * @memberof JobRunnersService
+   */
+  public getJobRunnerById(id: string): Observable<HttpResponse<JobRunner>> {
+    return this.httpClient.get<JobRunner>(`${environment.apiBaseUrl}job-service/job-runners/${id}`, {
+      observe: 'response',
+    }).pipe(
+      map(response => {
+        if (response && response.body) {
+          response.body.payloadTemplateJsonObject = JSON.parse(response.body.payloadTemplate);
+        }
+        return response;
+      })
+    );
+  }
 }

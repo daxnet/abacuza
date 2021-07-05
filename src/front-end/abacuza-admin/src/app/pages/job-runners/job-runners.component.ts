@@ -1,4 +1,5 @@
 import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { Router } from '@angular/router';
 import { DataTableDirective } from 'angular-datatables';
 import { Subject, Subscription } from 'rxjs';
 import { JobRunner } from 'src/app/models/job-runner';
@@ -26,7 +27,8 @@ export class JobRunnersComponent implements OnInit, OnDestroy {
   constructor(private jobRunnersService: JobRunnersService,
     private clustersService: ClustersService,
     private commonDialogService: CommonDialogService,
-    private componentDialogService: ComponentDialogService) { }
+    private componentDialogService: ComponentDialogService,
+    private router: Router) { }
 
   ngOnDestroy(): void {
     this.dtTrigger.unsubscribe();
@@ -50,7 +52,7 @@ export class JobRunnersComponent implements OnInit, OnDestroy {
   }
 
   onEditClicked(event: any) {
-
+    this.router.navigate(['/job-runnder-details', event.id]);
   }
 
   onDeleteClicked(event: any) {
