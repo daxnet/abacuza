@@ -33,17 +33,11 @@ namespace Abacuza.Projects.ApiService.Controllers
     [ApiController]
     public class ProjectsController : ControllerBase
     {
+
         #region Private Fields
 
-        private const string MaxReservedRevisionsConfigKey = "options:maxReservedRevisions";
         private const int DefaultMaxReservedRevisions = 20;
-
-        private readonly IDataAccessObject _dao;
-        private readonly JobsApiService _jobsApiService;
-        private readonly ILogger<ProjectsController> _logger;
-        private readonly IConfiguration _configuration;
-        private readonly int maxReservedRevisions;
-
+        private const string MaxReservedRevisionsConfigKey = "options:maxReservedRevisions";
         private readonly static IEnumerable<Func<string, ProjectEntity, Guid, JobRunner, string>> PayloadTemplateFuncs
              = new List<Func<string, ProjectEntity, Guid, JobRunner, string>>
              {
@@ -97,10 +91,23 @@ namespace Abacuza.Projects.ApiService.Controllers
                  }
              };
 
+        private readonly IConfiguration _configuration;
+        private readonly IDataAccessObject _dao;
+        private readonly JobsApiService _jobsApiService;
+        private readonly ILogger<ProjectsController> _logger;
+        private readonly int maxReservedRevisions;
+
         #endregion Private Fields
 
         #region Public Constructors
 
+        /// <summary>
+        /// Initializes a new instance of the <c>ProjectsController</c> class.
+        /// </summary>
+        /// <param name="dao">The data access object used for accessing the projects information.</param>
+        /// <param name="logger">The logger used for logging.</param>
+        /// <param name="jobsApiService">The job API service.</param>
+        /// <param name="configuration">The configuration.</param>
         public ProjectsController(IDataAccessObject dao,
             ILogger<ProjectsController> logger,
             JobsApiService jobsApiService,
@@ -115,6 +122,19 @@ namespace Abacuza.Projects.ApiService.Controllers
         #endregion Public Constructors
 
         #region Public Methods
+
+        /// <summary>
+        /// Gets all project IDs that use the specified job runner.
+        /// </summary>
+        /// <param name="jobRunnerId">The ID of the job runner.</param>
+        /// <returns></returns>
+        [HttpGet("job-runner-usage/{jobRunnerId}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task<IActionResult> CheckJobRunnerUsageAsync(Guid jobRunnerId)
+        {
+            var projects = await _dao.FindBySpecificationAsync<ProjectEntity>(x => x.JobRunnerId == jobRunnerId);
+            return Ok(projects.Select(p => p.Id).ToArray());
+        }
 
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status201Created)]
@@ -133,7 +153,6 @@ namespace Abacuza.Projects.ApiService.Controllers
 
             return CreatedAtAction(nameof(GetProjectByIdAsync), new { id = projectEntity.Id }, projectEntity.Id);
         }
-
         [HttpPost("{projectId}/revisions")]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -307,5 +326,6 @@ namespace Abacuza.Projects.ApiService.Controllers
         }
 
         #endregion Public Methods
+
     }
 }

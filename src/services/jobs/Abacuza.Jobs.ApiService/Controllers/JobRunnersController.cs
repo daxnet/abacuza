@@ -35,6 +35,7 @@ namespace Abacuza.Jobs.ApiService.Controllers
         #region Private Fields
 
         private readonly CommonApiService _commonService;
+        private readonly ProjectApiService _projectService;
         private readonly IDataAccessObject _dao;
         private readonly ILogger<JobRunnersController> _logger;
 
@@ -44,7 +45,9 @@ namespace Abacuza.Jobs.ApiService.Controllers
 
         public JobRunnersController(IDataAccessObject dao,
             CommonApiService commonService,
-            ILogger<JobRunnersController> logger) => (_commonService, _dao, _logger) = (commonService, dao, logger);
+            ProjectApiService projectService,
+            ILogger<JobRunnersController> logger) => 
+            (_commonService, _projectService, _dao, _logger) = (commonService, projectService, dao, logger);
 
         #endregion Public Constructors
 
@@ -136,6 +139,7 @@ namespace Abacuza.Jobs.ApiService.Controllers
 
         [HttpDelete("{id}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> DeleteJobRunnerByIdAsync(Guid id)
         {
@@ -143,6 +147,12 @@ namespace Abacuza.Jobs.ApiService.Controllers
             if (entity == null)
             {
                 return NotFound($"The job runner {id} doesn't exist.");
+            }
+
+            var projectsUsingJobRunner = await _projectService.CheckJobRunnerUsageAsync(id);
+            if (projectsUsingJobRunner?.Count() > 0)
+            {
+                return BadRequest($"Job runner {id} is used by one of the projects.");
             }
 
             if (entity.BinaryFiles?.Count > 0)

@@ -47,7 +47,11 @@ export class FileListComponent implements OnInit, OnDestroy, AfterViewInit {
 
   ngOnInit(): void {
     this.dtTableOptions = {
-      pagingType: 'full_numbers'
+      pagingType: 'full_numbers',
+      columnDefs: [{
+        targets: 1,
+        orderable: false
+      }]
     };
 
     this.dtTrigger.next();

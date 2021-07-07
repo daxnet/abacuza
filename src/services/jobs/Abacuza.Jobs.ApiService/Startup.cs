@@ -104,6 +104,12 @@ namespace Abacuza.JobSchedulers
                 config.Timeout = Utils.ParseTimeSpanExpression(Configuration["services:commonService:timeout"], TimeSpan.FromSeconds(2));
             }).AddTransientHttpErrorPolicy(builder => builder.RetryAsync(Convert.ToInt32(Configuration["services:commonService:retries"])));
 
+            services.AddHttpClient<ProjectApiService>(config =>
+            {
+                config.BaseAddress = new Uri(Configuration["services:projectService:url"]);
+                config.Timeout = Utils.ParseTimeSpanExpression(Configuration["services:projectService:timeout"], TimeSpan.FromSeconds(2));
+            }).AddTransientHttpErrorPolicy(builder => builder.RetryAsync(Convert.ToInt32(Configuration["services:projectService:retries"])));
+
             // Initializes the job scheduler
             var quartzSchedulerSettings = new NameValueCollection
             {

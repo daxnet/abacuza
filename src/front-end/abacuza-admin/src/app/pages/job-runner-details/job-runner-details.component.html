@@ -45,6 +45,11 @@
                                 (onFileDeleted)='onFileDeleted($event)'></app-file-list>
                         </div>
                     </div>
+                    <div class="card-footer text-right">
+                        <button class="btn btn-primary" (click)="save(true)">Save & Close</button>
+                        <button class="btn btn-secondary" (click)="save(false)">Save</button>
+                        <button class="btn btn-secondary" (click)="close()">Close</button>
+                    </div>
                 </div>
             </div>
         </div>
