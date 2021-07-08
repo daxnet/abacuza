@@ -50,6 +50,14 @@ export class JobRunnersService {
     );
   }
 
+  public createJobRunner(jr: JobRunner): Observable<string> {
+    return this.httpClient.post<string>(`${environment.apiBaseUrl}job-service/job-runners`, {
+      name: jr.name,
+      description: jr.description,
+      clusterType: jr.clusterType,
+    });
+  }
+
   public deleteJobRunner(id: string): Observable<any> {
     return this.httpClient.delete(`${environment.apiBaseUrl}job-service/job-runners/${id}`);
   }

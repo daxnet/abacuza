@@ -22,7 +22,8 @@ export class ClusterConnectionsComponent implements OnInit, OnDestroy {
   dtTrigger: Subject<any> = new Subject<any>();
   clusterConnections: ClusterConnection[] | null = null;
   clusterTypes: string[] | null = null;
-  subscriptions: Subscription[] = [];
+  
+  private subscriptions: Subscription[] = [];
 
   @ViewChild(DataTableDirective, { static: false })
   dtElement!: DataTableDirective;

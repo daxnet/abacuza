@@ -26,6 +26,8 @@ import { JobRunnersComponent } from './pages/job-runners/job-runners.component';
 import { JobRunnerDetailsComponent } from './pages/job-runner-details/job-runner-details.component';
 import { FileListComponent } from './components/file-list/file-list.component';
 import { FileUploadComponent } from './services/file-upload/file-upload.component';
+import { CreateJobRunnerComponent } from './pages/create-job-runner/create-job-runner.component';
+import { ProjectsComponent } from './pages/projects/projects.component';
 
 @NgModule({
   declarations: [
@@ -46,7 +48,9 @@ import { FileUploadComponent } from './services/file-upload/file-upload.componen
     JobRunnersComponent,
     JobRunnerDetailsComponent,
     FileListComponent,
-    FileUploadComponent
+    FileUploadComponent,
+    CreateJobRunnerComponent,
+    ProjectsComponent
   ],
   imports: [
     BrowserModule,

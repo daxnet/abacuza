@@ -7,9 +7,11 @@ import { JobRunner } from 'src/app/models/job-runner';
 import { ClustersService } from 'src/app/services/clusters.service';
 import { CommonDialogResult, CommonDialogType } from 'src/app/services/common-dialog/common-dialog-data-types';
 import { CommonDialogService } from 'src/app/services/common-dialog/common-dialog.service';
+import { ComponentDialogUsage } from 'src/app/services/component-dialog/component-dialog-options';
 import { ComponentDialogService } from 'src/app/services/component-dialog/component-dialog.service';
 import { JobRunnersService } from 'src/app/services/job-runners.service';
 import { ToastService } from 'src/app/services/toast/toast.service';
+import { CreateJobRunnerComponent } from '../create-job-runner/create-job-runner.component';
 
 @Component({
   selector: 'app-job-runners',
@@ -53,6 +55,31 @@ export class JobRunnersComponent implements OnInit, OnDestroy {
     this.subscriptions.push(this.clustersService.getClusterTypes()
       .subscribe(response => this.clusterTypes = response.body));
 
+  }
+
+  onAddClicked(): void {
+    this.subscriptions.push(this.componentDialogService.open(CreateJobRunnerComponent, {
+      clusterTypes: this.clusterTypes,
+      jobRunner: {
+        clusterType: this.clusterTypes![0]
+      }
+    }, {
+      title: 'Create Job Runner',
+      usage: ComponentDialogUsage.Create
+    }).subscribe(result => {
+      if (result) {
+        const jr = result.jobRunner as JobRunner;
+        this.subscriptions.push(this.jobRunnersService.createJobRunner(jr)
+          .pipe(catchError(err => {
+            this.toastService.error(err.error);
+            return throwError(err);
+          }))
+          .subscribe(responseId => {
+            this.toastService.success('Job runner created successfully.');
+            this.router.navigate(['/job-runners/details', responseId])
+          }));
+      }
+    }));
   }
 
   onDeleteClicked(event: any) {

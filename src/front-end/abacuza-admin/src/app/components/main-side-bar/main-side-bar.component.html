@@ -24,8 +24,15 @@
     <nav class="mt-2">
       <ul class="nav nav-pills nav-sidebar flex-column nav-child-indent" data-widget="treeview" role="menu"
         data-accordion="false">
-        <!-- Add icons to the links using the .nav-icon class
-               with font-awesome or any other icon font library -->
+        <li class="nav-header">DATA PROCESSING</li>
+        <li class="nav-item">
+          <a href="/projects" class="nav-link">
+            <i class="nav-icon fas fa-project-diagram"></i>
+            <p>
+              Projects
+            </p>
+          </a>
+        </li>
         <li class="nav-header" *ngIf="isAdmin">ADMINISTRATION</li>
         <li class="nav-item" *ngIf="isAdmin">
           <a href="/cluster-connections" class="nav-link">
