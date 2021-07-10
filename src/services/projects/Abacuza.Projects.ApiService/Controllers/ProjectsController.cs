@@ -24,6 +24,7 @@ using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
@@ -38,8 +39,8 @@ namespace Abacuza.Projects.ApiService.Controllers
 
         private const int DefaultMaxReservedRevisions = 20;
         private const string MaxReservedRevisionsConfigKey = "options:maxReservedRevisions";
-        private readonly static IEnumerable<Func<string, ProjectEntity, Guid, JobRunner, string>> PayloadTemplateFuncs
-             = new List<Func<string, ProjectEntity, Guid, JobRunner, string>>
+        private readonly static IEnumerable<Func<string, Project, Guid, JobRunner, string>> PayloadTemplateFuncs
+             = new List<Func<string, Project, Guid, JobRunner, string>>
              {
                  // replace binary file names defined in the job runner.
                  (input, project, revisionId, jobRunner) =>
@@ -61,19 +62,17 @@ namespace Abacuza.Projects.ApiService.Controllers
 
                  // replace the input endpoint name.
                  (input, project, revisionId, jobRunner) =>
-                    input.Replace("${proj:input-endpoint}", $"input_endpoint:{project.InputEndpointName}"),
-
-                 // replace the input endpoint settings.
-                 (input, project, revisionId, jobRunner) =>
-                    input.Replace("${proj:input-endpoint-settings}", $"input_endpoint_settings:{project.InputEndpointSettings?.Replace("\"", "\\\"").Replace("\r\n", "")}"),
+                 {
+                     var inputEndpointDefinitions = JsonConvert.SerializeObject(project.InputEndpoints);
+                     return input.Replace("${proj:input-endpoint}", $"input_endpoint:{Convert.ToBase64String(Encoding.UTF8.GetBytes(inputEndpointDefinitions))}");
+                 },
 
                  // replace the output endpoint name.
                  (input, project, revisionId, jobRunner) =>
-                    input.Replace("${proj:output-endpoint}", $"output_endpoint:{project.OutputEndpointName}"),
-
-                 // replace the output endpoint settings.
-                 (input, project, revisionId, jobRunner) =>
-                    input.Replace("${proj:output-endpoint-settings}", $"output_endpoint_settings:{project.OutputEndpointSettings?.Replace("\"", "\\\"").Replace("\r\n", "")}"),
+                 {
+                     var outputEndpointDefinition = JsonConvert.SerializeObject(project.OutputEndpoint);
+                     return input.Replace("${proj:output-endpoint}", $"output_endpoint:{Convert.ToBase64String(Encoding.UTF8.GetBytes(outputEndpointDefinition))}");
+                 },
 
                  // replace the project context.
                  (input, project, revisionId, jobRunner) =>
@@ -114,8 +113,8 @@ namespace Abacuza.Projects.ApiService.Controllers
             IConfiguration configuration)
         {
             (_jobsApiService, _dao, _logger, _configuration) = (jobsApiService, dao, logger, configuration);
-            maxReservedRevisions = configuration[MaxReservedRevisionsConfigKey] == null ? 
-                DefaultMaxReservedRevisions : 
+            maxReservedRevisions = configuration[MaxReservedRevisionsConfigKey] == null ?
+                DefaultMaxReservedRevisions :
                 Convert.ToInt32(configuration[MaxReservedRevisionsConfigKey]);
         }
 
@@ -132,16 +131,16 @@ namespace Abacuza.Projects.ApiService.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<IActionResult> CheckJobRunnerUsageAsync(Guid jobRunnerId)
         {
-            var projects = await _dao.FindBySpecificationAsync<ProjectEntity>(x => x.JobRunnerId == jobRunnerId);
+            var projects = await _dao.FindBySpecificationAsync<Project>(x => x.JobRunnerId == jobRunnerId);
             return Ok(projects.Select(p => p.Id).ToArray());
         }
 
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status409Conflict)]
-        public async Task<IActionResult> CreateProjectAsync([FromBody] ProjectEntity projectEntity)
+        public async Task<IActionResult> CreateProjectAsync([FromBody] Project projectEntity)
         {
-            var existingModel = await _dao.FindBySpecificationAsync<ProjectEntity>(p => p.Name == projectEntity.Name);
+            var existingModel = await _dao.FindBySpecificationAsync<Project>(p => p.Name == projectEntity.Name);
             if (existingModel.FirstOrDefault() != null)
             {
                 return Conflict($"Project '{projectEntity.Name}' already exists.");
@@ -158,7 +157,7 @@ namespace Abacuza.Projects.ApiService.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> CreateProjectRevisionAsync(Guid projectId)
         {
-            var project = await _dao.GetByIdAsync<ProjectEntity>(projectId);
+            var project = await _dao.GetByIdAsync<Project>(projectId);
             if (project == null)
             {
                 return NotFound($"Project {projectId} doesn't exist.");
@@ -166,7 +165,7 @@ namespace Abacuza.Projects.ApiService.Controllers
 
             // Set the revision id.
             var revisionId = Guid.NewGuid();
-            var revision = new RevisionEntity
+            var revision = new Revision
             {
                 Id = revisionId,
                 ProjectId = projectId,
@@ -201,27 +200,27 @@ namespace Abacuza.Projects.ApiService.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> DeleteProjectByIdAsync(Guid id)
         {
-            var project = await _dao.GetByIdAsync<ProjectEntity>(id);
+            var project = await _dao.GetByIdAsync<Project>(id);
             if (project == null)
             {
                 return NotFound($"The project {id} doesn't exist.");
             }
 
-            await _dao.DeleteByIdAsync<ProjectEntity>(id);
+            await _dao.DeleteByIdAsync<Project>(id);
             return Ok();
         }
 
         [HttpGet]
-        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ProjectEntity[]))]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(Project[]))]
         public async Task<IActionResult> GetAllProjectsAsync()
-            => Ok(await _dao.GetAllAsync<ProjectEntity>());
+            => Ok(await _dao.GetAllAsync<Project>());
 
         [HttpGet("{id}")]
-        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ProjectEntity))]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(Project))]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> GetProjectByIdAsync(Guid id)
         {
-            var project = await _dao.GetByIdAsync<ProjectEntity>(id);
+            var project = await _dao.GetByIdAsync<Project>(id);
             if (project == null)
             {
                 return NotFound($"The project {id} doesn't exist.");
@@ -235,13 +234,13 @@ namespace Abacuza.Projects.ApiService.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> GetProjectRevisionJobsAsync(Guid projectId)
         {
-            var project = await _dao.GetByIdAsync<ProjectEntity>(projectId);
+            var project = await _dao.GetByIdAsync<Project>(projectId);
             if (project == null)
             {
                 return NotFound($"Project {projectId} doesn't exist.");
             }
 
-            var revisions = await _dao.FindBySpecificationAsync<RevisionEntity>(r => r.ProjectId == projectId);
+            var revisions = await _dao.FindBySpecificationAsync<Revision>(r => r.ProjectId == projectId);
             var jobSubmissionNames = revisions.Select(r => r.JobSubmissionName).Where(n => !string.IsNullOrEmpty(n));
             return Ok(await _jobsApiService.GetJobsBySubmissionNames(jobSubmissionNames));
         }
@@ -251,13 +250,13 @@ namespace Abacuza.Projects.ApiService.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> GetProjectRevisionsAsync(Guid projectId, [FromQuery(Name = "job-info")] bool jobInfo = false)
         {
-            var project = await _dao.GetByIdAsync<ProjectEntity>(projectId);
+            var project = await _dao.GetByIdAsync<Project>(projectId);
             if (project == null)
             {
                 return NotFound($"Project {projectId} doesn't exist.");
             }
 
-            var revisions = (await _dao.FindBySpecificationAsync<RevisionEntity>(r => r.ProjectId == projectId))
+            var revisions = (await _dao.FindBySpecificationAsync<Revision>(r => r.ProjectId == projectId))
                 .OrderByDescending(r => r.CreatedDate)
                 .Take(maxReservedRevisions);
             if (jobInfo)
@@ -299,9 +298,9 @@ namespace Abacuza.Projects.ApiService.Controllers
         [HttpPatch("{id}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<IActionResult> PatchProjectAsync(Guid id, [FromBody] JsonPatchDocument<ProjectEntity> patchDoc)
+        public async Task<IActionResult> PatchProjectAsync(Guid id, [FromBody] JsonPatchDocument<Project> patchDoc)
         {
-            var updatingEntity = await _dao.GetByIdAsync<ProjectEntity>(id);
+            var updatingEntity = await _dao.GetByIdAsync<Project>(id);
             if (updatingEntity == null)
             {
                 return NotFound($"Project {id} doesn't exist.");
