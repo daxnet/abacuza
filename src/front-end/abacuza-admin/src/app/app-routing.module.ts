@@ -9,6 +9,7 @@ import { JobRunnersComponent } from './pages/job-runners/job-runners.component';
 import { NotFoundComponent } from './pages/not-found/not-found.component';
 import { ProjectsComponent } from './pages/projects/projects.component';
 import { AuthGuardService } from './services/auth-guard.service';
+import { ProjectDetailsComponent } from './pages/project-details/project-details.component';
 
 const routes: Routes = [
   { path: 'auth-callback', component: AuthCallbackComponent },
@@ -18,6 +19,7 @@ const routes: Routes = [
   { path: 'job-runners', component: JobRunnersComponent, canActivate: [AuthGuardService] },
   { path: 'job-runners/details/:id', component: JobRunnerDetailsComponent, canActivate: [AuthGuardService] },
   { path: 'projects', component: ProjectsComponent, canActivate: [AuthGuardService] },
+  { path: 'projects/details/:id', component: ProjectDetailsComponent, canActivate: [AuthGuardService] },
   { path: '', redirectTo: '/dashboard', pathMatch: 'full' },
   { path: '**', component: DashboardComponent, canActivate: [AuthGuardService] }
 ];

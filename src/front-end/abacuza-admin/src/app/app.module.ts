@@ -28,6 +28,9 @@ import { FileListComponent } from './components/file-list/file-list.component';
 import { FileUploadComponent } from './services/file-upload/file-upload.component';
 import { CreateJobRunnerComponent } from './pages/create-job-runner/create-job-runner.component';
 import { ProjectsComponent } from './pages/projects/projects.component';
+import { CreateProjectComponent } from './pages/create-project/create-project.component';
+import { ProjectDetailsComponent } from './pages/project-details/project-details.component';
+import { ProjectEndpointEditorComponent } from './components/project-endpoint-editor/project-endpoint-editor.component';
 
 @NgModule({
   declarations: [
@@ -50,7 +53,10 @@ import { ProjectsComponent } from './pages/projects/projects.component';
     FileListComponent,
     FileUploadComponent,
     CreateJobRunnerComponent,
-    ProjectsComponent
+    ProjectsComponent,
+    CreateProjectComponent,
+    ProjectDetailsComponent,
+    ProjectEndpointEditorComponent
   ],
   imports: [
     BrowserModule,

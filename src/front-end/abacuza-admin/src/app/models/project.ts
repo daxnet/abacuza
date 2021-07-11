@@ -1,16 +1,14 @@
+import { ProjectEndpointDefinition } from './project-endpoint-definition';
+
 export interface Project {
-    id: string;
+    id?: string;
     name: string;
     description: string;
-    dateCreated: Date;
+    dateCreated?: Date;
     jobRunnerId: string;
     jobRunnerName?: string;
-    inputEndpointName: string;
-    inputEndpointDisplayName: string;
-    inputEndpointSettings: string;
-    outputEndpointName: string;
-    outputEndpointDisplayName: string;
-    outputEndpointSettings: string;
-    inputEndpointUIComponentData: any;
-    outputEndpointUIComponentData: any;
+    inputEndpoints: ProjectEndpointDefinition[];
+    outputEndpoint: ProjectEndpointDefinition;
+    inputEndpointUIComponentData?: any;
+    outputEndpointUIComponentData?: any;
 }

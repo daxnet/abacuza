@@ -1,0 +1,56 @@
+<section class="content-header">
+    <div class="container-fluid">
+        <div class="row mb-2">
+            <div class="col-sm-6">
+                <h4>Project Details</h4>
+            </div>
+        </div>
+    </div><!-- /.container-fluid -->
+</section>
+<section class="content">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-6">
+                <div class="card" *ngIf="project">
+                    <div class="card-header">
+                        <h3 class="card-title">Basic settings</h3>
+                    </div>
+                    <div class="card-body">
+                        <div class="form-group">
+                            <label for="name">Name</label>
+                            <input ngbAutofocus class="form-control" type="text" id="name" name="name" required
+                                [(ngModel)]="project.name">
+                        </div>
+                        <div class="form-group">
+                            <label for="description">Description</label>
+                            <input class="form-control" type="text" id="description" name="description"
+                                [(ngModel)]="project.description">
+                        </div>
+                        <div class="form-group">
+                            <label for="jobRunner">Job runner</label>
+                            <select id="jobRunner" name="jobRunner" class="form-control"
+                                [(ngModel)]="project.jobRunnerId">
+                                <option *ngFor="let jr of jobRunners" [ngValue]="jr.id">{{jr.name}}</option>
+                            </select>
+                        </div>
+                        <app-project-endpoint-editor title="Input endpoints" [endpoints]="inputEndpoints" [definitions]="project.inputEndpoints"></app-project-endpoint-editor>
+                    </div>
+                    <div class="card-footer text-right">
+                        <button class="btn btn-primary">Save & Close</button>
+                        <button class="btn btn-secondary">Save</button>
+                        <button class="btn btn-secondary" (click)="close()">Close</button>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">Revisions</h3>
+                    </div>
+                    <div class="card-body">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>

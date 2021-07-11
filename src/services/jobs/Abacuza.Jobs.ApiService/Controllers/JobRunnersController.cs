@@ -152,7 +152,7 @@ namespace Abacuza.Jobs.ApiService.Controllers
             var projectsUsingJobRunner = await _projectService.CheckJobRunnerUsageAsync(id);
             if (projectsUsingJobRunner?.Count() > 0)
             {
-                return BadRequest($"Job runner {id} is used by one of the projects.");
+                return BadRequest($"Job runner {id} is in use.");
             }
 
             if (entity.BinaryFiles?.Count > 0)

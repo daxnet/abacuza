@@ -22,4 +22,18 @@ export class ProjectsService {
       observe: 'response',
     });
   }
+
+  public createProject(project: Project): Observable<string> {
+    return this.httpClient.post<string>(`${environment.apiBaseUrl}project-service/projects`, {
+      name: project.name,
+      description: project.description,
+      jobRunnerId: project.jobRunnerId,
+      inputEndpoints: project.inputEndpoints,
+      outputEndpoint: project.outputEndpoint
+    });
+  }
+
+  public deleteProject(id: string): Observable<any> {
+    return this.httpClient.delete(`${environment.apiBaseUrl}project-service/projects/${id}`);
+  }
 }
