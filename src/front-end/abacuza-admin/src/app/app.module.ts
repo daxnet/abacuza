@@ -31,6 +31,10 @@ import { ProjectsComponent } from './pages/projects/projects.component';
 import { CreateProjectComponent } from './pages/create-project/create-project.component';
 import { ProjectDetailsComponent } from './pages/project-details/project-details.component';
 import { ProjectEndpointEditorComponent } from './components/project-endpoint-editor/project-endpoint-editor.component';
+import { EndpointEditorHostDirective } from './components/project-endpoint-editor/endpoint-editor-host.directive';
+import { TextBoxComponent } from './components/ui-components/text-box.component';
+import { TextAreaComponent } from './components/ui-components/text-area.component';
+import { CheckBoxComponent } from './components/ui-components/check-box.component';
 
 @NgModule({
   declarations: [
@@ -56,7 +60,11 @@ import { ProjectEndpointEditorComponent } from './components/project-endpoint-ed
     ProjectsComponent,
     CreateProjectComponent,
     ProjectDetailsComponent,
-    ProjectEndpointEditorComponent
+    ProjectEndpointEditorComponent,
+    EndpointEditorHostDirective,
+    TextBoxComponent,
+    TextAreaComponent,
+    CheckBoxComponent
   ],
   imports: [
     BrowserModule,

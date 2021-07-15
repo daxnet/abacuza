@@ -91,10 +91,10 @@
         "Options"
       ],
       "SwaggerKey": "EndpointService",
-      "AuthenticationOptions": {
-        "AuthenticationProviderKey": "authKey",
-        "AllowedScopes": []
-      }
+      //"AuthenticationOptions": {
+      //  "AuthenticationProviderKey": "authKey",
+      //  "AllowedScopes": []
+      //}
     },
     {
       "DownstreamPathTemplate": "/api/{everything}",
