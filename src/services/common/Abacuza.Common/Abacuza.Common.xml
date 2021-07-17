@@ -273,15 +273,15 @@
             An <see cref="T:System.Collections.IEnumerator" /> object that can be used to iterate through the collection.
             </returns>
         </member>
-        <member name="T:Abacuza.Common.UIComponents.CheckboxAttribute">
+        <member name="T:Abacuza.Common.UIComponents.CheckBoxAttribute">
             <summary>
             Represents the Checkbox UI component.
             </summary>
             <seealso cref="T:Abacuza.Common.UIComponents.UIComponentAttribute" />
         </member>
-        <member name="M:Abacuza.Common.UIComponents.CheckboxAttribute.#ctor(System.String,System.String)">
+        <member name="M:Abacuza.Common.UIComponents.CheckBoxAttribute.#ctor(System.String,System.String)">
             <summary>
-            Initializes a new instance of the <see cref="T:Abacuza.Common.UIComponents.CheckboxAttribute"/> class.
+            Initializes a new instance of the <see cref="T:Abacuza.Common.UIComponents.CheckBoxAttribute"/> class.
             </summary>
             <param name="name">The name of the UI component.</param>
             <param name="label">The label text of the UI component.</param>

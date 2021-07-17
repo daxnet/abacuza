@@ -11,6 +11,7 @@
 // Apache License Version 2.0
 // ==============================================================
 
+using System;
 using System.ComponentModel.DataAnnotations;
 
 namespace Abacuza.Projects.ApiService.Models
@@ -21,6 +22,8 @@ namespace Abacuza.Projects.ApiService.Models
     public abstract class ProjectEndpointDefinition
     {
         #region Public Properties
+
+        public string Id { get; set; } = Guid.NewGuid().ToString();
 
         /// <summary>
         /// Gets or sets the name of the endpoint, for example, endpoint.input.csv.

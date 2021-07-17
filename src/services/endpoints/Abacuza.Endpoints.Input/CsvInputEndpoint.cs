@@ -40,7 +40,7 @@ namespace Abacuza.Endpoints.Input
         /// <summary>
         /// Gets or sets a <see cref="bool"/> value which indicates whether the schema should be inferred from the raw data.
         /// </summary>
-        [Checkbox("chkInferSchema",
+        [CheckBox("chkInferSchema",
             "Infer schema",
             Ordinal = 186,
             Tooltip = "Whether the schema should be inferred.",
@@ -50,7 +50,7 @@ namespace Abacuza.Endpoints.Input
         /// <summary>
         /// Gets or sets a <see cref="bool"/> value which indicates whether a record in the file could span multiple lines.
         /// </summary>
-        [Checkbox("chkMultiline",
+        [CheckBox("chkMultiline",
             "Multi-line support",
             Ordinal = 160,
             Tooltip = "Whether a record can span multiple lines.",

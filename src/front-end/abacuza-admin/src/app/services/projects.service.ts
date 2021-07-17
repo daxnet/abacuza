@@ -33,6 +33,39 @@ export class ProjectsService {
     });
   }
 
+  public updateProject(id: string, entity: Project): Observable<Project> {
+    return this.httpClient.patch<Project>(`${environment.apiBaseUrl}project-service/projects/${id}`,
+    [
+      {
+        op: 'replace',
+        path: '/name',
+        value: entity.name,
+      },
+      {
+        op: 'replace',
+        path: '/description',
+        value: entity.description,
+      },
+      {
+        op: 'replace',
+        path: '/jobRunnerId',
+        value: entity.jobRunnerId,
+      },
+      {
+        op: 'replace',
+        path: '/inputEndpoints',
+        value: entity.inputEndpoints,
+      },
+      {
+        op: 'replace',
+        path: '/outputEndpoint',
+        value: entity.outputEndpoint,
+      }
+    ], {
+      observe: 'body',
+    });
+  }
+
   public deleteProject(id: string): Observable<any> {
     return this.httpClient.delete(`${environment.apiBaseUrl}project-service/projects/${id}`);
   }

@@ -1,0 +1,4 @@
+<div class="form-group">
+    <label [for]="id">{{attributes.label}}</label>
+    <json-editor [id]="id" [options]="editorOptions" [(ngModel)]="value" (change)="change($event)"></json-editor>
+</div>

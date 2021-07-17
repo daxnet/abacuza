@@ -8,7 +8,7 @@ import { AuthService } from './services/auth.service';
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss']
 })
-export class AppComponent /*extends AuthComponentBase*/ {
+export class AppComponent {
 
   constructor() {
   }

@@ -1,7 +1,7 @@
 <section class="content-header">
     <div class="container-fluid">
         <div class="row mb-2">
-            <div class="col-sm-6">
+            <div class="col-sm-12">
                 <h4>Project Details</h4>
             </div>
         </div>
@@ -10,11 +10,8 @@
 <section class="content">
     <div class="container-fluid">
         <div class="row">
-            <div class="col-md-6">
+            <div class="col-md-12">
                 <div class="card" *ngIf="project">
-                    <div class="card-header">
-                        <h3 class="card-title">Basic settings</h3>
-                    </div>
                     <div class="card-body">
                         <div class="form-group">
                             <label for="name">Name</label>
@@ -33,24 +30,68 @@
                                 <option *ngFor="let jr of jobRunners" [ngValue]="jr.id">{{jr.name}}</option>
                             </select>
                         </div>
-                        <app-project-endpoint-editor title="Input endpoints" [endpoints]="inputEndpoints" [definitions]="project.inputEndpoints"></app-project-endpoint-editor>
+
+                        <ul ngbNav #nav="ngbNav" class="nav-tabs">
+                            <li ngbNavItem>
+                                <a ngbNavLink>
+                                    <i class="fas fa-sign-in-alt"></i>
+                                    INPUT
+                                </a>
+                                <ng-template ngbNavContent>
+                                    <div class="tab-content">
+                                        <ngb-accordion #a="ngbAccordion" activeIds="acc-pnl-0">
+                                            <ngb-panel *ngFor='let ie of project.inputEndpoints; let i = index'
+                                                [id]="'acc-pnl-'+i.toString()">
+                                                <ng-template ngbPanelHeader let-opened="opened">
+                                                    <div class="d-flex align-items-center justify-content-between">
+                                                        <h6 class="m-0">{{getSelectedInputEndpointTitle(ie)}}</h6>
+                                                        <button ngbPanelToggle
+                                                            class="btn btn-sm btn-outline-primary ml-2">Toggle</button>
+                                                    </div>
+                                                </ng-template>
+                                                <ng-template ngbPanelContent>
+                                                    <app-project-endpoint-editor endpointType="input"
+                                                        [endpointDefinition]="ie" (settingsChange)="onInputEndpointSettingsChange($event)">
+                                                    </app-project-endpoint-editor>
+                                                </ng-template>
+                                            </ngb-panel>
+                                        </ngb-accordion>
+                                        <select [(ngModel)]='selectedAddingEndpointName' class="form-control mb-2">
+                                            <option *ngFor='let endpoint of inputEndpoints' [ngValue]='endpoint.name'>
+                                                {{endpoint.displayName}}</option>
+                                        </select>
+                                        <button class="btn btn-primary"
+                                            (click)="onAddInputEndpointClicked()">Add</button>
+                                    </div>
+                                </ng-template>
+                            </li>
+                            <li ngbNavItem>
+                                <a ngbNavLink>
+                                    <i class="fas fa-sign-out-alt"></i>
+                                    OUTPUT
+                                </a>
+                                <ng-template ngbNavContent>Second content</ng-template>
+                            </li>
+                            <li ngbNavItem>
+                                <a ngbNavLink>
+                                    <i class="fas fa-file-alt"></i>
+                                    REVISIONS
+                                </a>
+                                <ng-template ngbNavContent>Second content</ng-template>
+                            </li>
+                        </ul>
+                        <div [ngbNavOutlet]="nav"></div>
+
+
                     </div>
                     <div class="card-footer text-right">
-                        <button class="btn btn-primary">Save & Close</button>
-                        <button class="btn btn-secondary">Save</button>
+                        <button class="btn btn-primary" (click)="save(true)">Save & Close</button>
+                        <button class="btn btn-secondary" (click)="save(false)">Save</button>
                         <button class="btn btn-secondary" (click)="close()">Close</button>
                     </div>
                 </div>
             </div>
-            <div class="col-md-6">
-                <div class="card">
-                    <div class="card-header">
-                        <h3 class="card-title">Revisions</h3>
-                    </div>
-                    <div class="card-body">
-                    </div>
-                </div>
-            </div>
+
         </div>
     </div>
 </section>

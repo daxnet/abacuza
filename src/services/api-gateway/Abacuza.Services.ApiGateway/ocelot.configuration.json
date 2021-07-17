@@ -90,11 +90,7 @@
         "Delete",
         "Options"
       ],
-      "SwaggerKey": "EndpointService",
-      //"AuthenticationOptions": {
-      //  "AuthenticationProviderKey": "authKey",
-      //  "AllowedScopes": []
-      //}
+      "SwaggerKey": "EndpointService"
     },
     {
       "DownstreamPathTemplate": "/api/{everything}",

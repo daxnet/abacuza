@@ -27,14 +27,14 @@ namespace Abacuza.Endpoints.Output
     {
         #region Public Properties
 
-        [Checkbox("chkEscapeQuotes",
+        [CheckBox("chkEscapeQuotes",
             "Escape quotes",
             DefaultValue = "true",
             Ordinal = 120,
             Tooltip = "A flag indicating whether values containing quotes should always be enclosed in quotes.")]
         public bool EscapeQuotes { get; set; }
 
-        [Checkbox("chkQuoteAll",
+        [CheckBox("chkQuoteAll",
             "Quote all",
             DefaultValue = "false",
             Ordinal = 115,

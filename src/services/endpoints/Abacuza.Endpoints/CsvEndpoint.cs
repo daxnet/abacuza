@@ -47,21 +47,21 @@ namespace Abacuza.Endpoints
                     Tooltip = "Sets the single character used for escaping quotes inside an already quoted value.")]
         public string? Escape { get; set; }
 
-        [Checkbox("chkHeader",
+        [CheckBox("chkHeader",
                     "Header",
                     DefaultValue = "true",
                     Ordinal = 187,
                     Tooltip = "Specifies whether the first line is for the names of columns.")]
         public bool Header { get; set; }
 
-        [Checkbox("chkIgnoreLeadingWhiteSpace",
+        [CheckBox("chkIgnoreLeadingWhiteSpace",
                     "Ignore leading white space",
-                    DefaultValue = "false",
+                    DefaultValue = "true",
                     Ordinal = 160,
                     Tooltip = "Defines whether or not leading whitespaces from values should be skipped.")]
         public bool IgnoreLeadingWhiteSpace { get; set; }
 
-        [Checkbox("chkIgnoreTrailingWhiteSpace",
+        [CheckBox("chkIgnoreTrailingWhiteSpace",
                     "Ignore trailing white space",
                     DefaultValue = "false",
                     Ordinal = 155,

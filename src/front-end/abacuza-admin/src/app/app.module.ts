@@ -35,6 +35,8 @@ import { EndpointEditorHostDirective } from './components/project-endpoint-edito
 import { TextBoxComponent } from './components/ui-components/text-box.component';
 import { TextAreaComponent } from './components/ui-components/text-area.component';
 import { CheckBoxComponent } from './components/ui-components/check-box.component';
+import { DropDownBoxComponent } from './components/ui-components/drop-down-box.component';
+import { JsonTextAreaComponent } from './components/ui-components/json-text-area.component';
 
 @NgModule({
   declarations: [
@@ -64,7 +66,9 @@ import { CheckBoxComponent } from './components/ui-components/check-box.componen
     EndpointEditorHostDirective,
     TextBoxComponent,
     TextAreaComponent,
-    CheckBoxComponent
+    CheckBoxComponent,
+    DropDownBoxComponent,
+    JsonTextAreaComponent
   ],
   imports: [
     BrowserModule,

@@ -15,6 +15,7 @@ import { catchError } from 'rxjs/operators';
 import { ToastService } from 'src/app/services/toast/toast.service';
 import { Router } from '@angular/router';
 import { CommonDialogType, CommonDialogResult } from 'src/app/services/common-dialog/common-dialog-data-types';
+import { Guid } from 'guid-typescript';
 
 @Component({
   selector: 'app-projects',
@@ -95,9 +96,11 @@ export class ProjectsComponent implements OnInit, OnDestroy {
           name: result.project.name,
           description: result.project.description,
           inputEndpoints: [{
+            id: Guid.create().toString(),
             name: result.selectedInputEndpointName
           }],
           outputEndpoint: {
+            id: Guid.create().toString(),
             name: result.selectedOutputEndpointName
           },
           jobRunnerId: result.project.jobRunnerId
