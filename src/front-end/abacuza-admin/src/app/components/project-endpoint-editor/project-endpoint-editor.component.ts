@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, Output, EventEmitter, ViewChild, ComponentFactoryResolver, OnDestroy, AfterViewInit } from '@angular/core';
+import { Component, OnInit, Input, Output, EventEmitter, ViewChild, ComponentFactoryResolver, OnDestroy, AfterViewInit, OnChanges, SimpleChanges } from '@angular/core';
 import { Endpoint } from 'src/app/models/endpoint';
 import { EndpointSettingsChangedEvent } from './endpoint-settings-changed-event';
 import { EndpointEditorHostDirective } from './endpoint-editor-host.directive';
@@ -13,7 +13,8 @@ import { EndpointsService } from 'src/app/services/endpoints.service';
   templateUrl: './project-endpoint-editor.component.html',
   styleUrls: ['./project-endpoint-editor.component.scss']
 })
-export class ProjectEndpointEditorComponent implements OnInit, OnDestroy {
+export class ProjectEndpointEditorComponent implements OnInit, OnDestroy, OnChanges {
+  
 
   @Input() endpointDefinition?: ProjectEndpointDefinition;
   @Input() endpointType: string = 'input';
@@ -29,7 +30,19 @@ export class ProjectEndpointEditorComponent implements OnInit, OnDestroy {
     private endpointsService: EndpointsService) { }
 
   ngOnInit(): void {
-      this.endpointsService.getEndpoints(this.endpointType)
+      this.reloadComponents();
+  }
+
+  ngOnDestroy(): void {
+    this.componentEventSubscriptions.forEach(s => s.unsubscribe());
+  }
+
+  ngOnChanges(changes: SimpleChanges): void {
+    this.reloadComponents();
+  }
+
+  private reloadComponents(): void {
+    this.endpointsService.getEndpoints(this.endpointType)
         .subscribe(response => {
           const endpoints = response.body;
           if (endpoints) {
@@ -40,10 +53,6 @@ export class ProjectEndpointEditorComponent implements OnInit, OnDestroy {
             }
           }
         });
-  }
-
-  ngOnDestroy(): void {
-    this.componentEventSubscriptions.forEach(s => s.unsubscribe());
   }
 
   private loadEndpointUIComponents(endpointDefinitionId: string, 

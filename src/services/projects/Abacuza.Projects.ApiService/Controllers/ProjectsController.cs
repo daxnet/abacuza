@@ -70,8 +70,15 @@ namespace Abacuza.Projects.ApiService.Controllers
                  // replace the output endpoint name.
                  (input, project, revisionId, jobRunner) =>
                  {
-                     var outputEndpointDefinition = JsonConvert.SerializeObject(project.OutputEndpoint);
-                     return input.Replace("${proj:output-endpoint}", $"output_endpoint:{Convert.ToBase64String(Encoding.UTF8.GetBytes(outputEndpointDefinition))}");
+                     var outputEndpointDefinition = project.OutputEndpoints.FirstOrDefault(oe => oe.Id == project.SelectedOutputEndpointId);
+                     if (outputEndpointDefinition != null)
+                     {
+                         var outputEndpointDefinitionJson = JsonConvert.SerializeObject(outputEndpointDefinition);
+                        return input.Replace("${proj:output-endpoint}", $"output_endpoint:{Convert.ToBase64String(Encoding.UTF8.GetBytes(outputEndpointDefinitionJson))}");
+                     }
+
+                     // TODO
+                     return string.Empty;
                  },
 
                  // replace the project context.

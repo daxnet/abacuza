@@ -17,16 +17,16 @@ namespace Abacuza.Common.UIComponents
     /// Represents the Checkbox UI component.
     /// </summary>
     /// <seealso cref="Abacuza.Common.UIComponents.UIComponentAttribute" />
-    public sealed class CheckBoxAttribute : UIComponentAttribute
+    public sealed class CheckboxAttribute : UIComponentAttribute
     {
         #region Public Constructors
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="CheckBoxAttribute"/> class.
+        /// Initializes a new instance of the <see cref="CheckboxAttribute"/> class.
         /// </summary>
         /// <param name="name">The name of the UI component.</param>
         /// <param name="label">The label text of the UI component.</param>
-        public CheckBoxAttribute(string name, string label)
+        public CheckboxAttribute(string name, string label)
             : base(name, label)
         { }
 

@@ -38,8 +38,8 @@
                         <tr *ngFor='let proj of projects'>
                             <td>{{proj.name}}</td>
                             <td>{{proj.description}}</td>
-                            <td>{{proj.inputEndpoints && proj.inputEndpoints.length > 0 ? (proj.inputEndpoints.length > 1 ? '(multiple)' : proj.inputEndpoints[0].name) : '(not defined)'}}</td>
-                            <td>{{proj.outputEndpoint ? proj.outputEndpoint.name : '(not defined)'}}</td>
+                            <td>{{getProjectInputEndpointDescription(proj)}}</td>
+                            <td>{{getProjectOutputEndpointDescription(proj)}}</td>
                             <td>{{proj.dateCreated}}</td>
                             <td class="text-center">
                                 <a [routerLink]="['/projects/details', proj.id]" title="Edit" class="m-1">

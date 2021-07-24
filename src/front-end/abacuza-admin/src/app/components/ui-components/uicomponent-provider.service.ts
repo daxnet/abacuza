@@ -20,7 +20,7 @@ export class UIComponentProviderService {
         component: TextBoxComponent
       },
       {
-        name: 'CheckBox',
+        name: 'Checkbox',
         component: CheckBoxComponent
       },
       {

@@ -1,28 +1,18 @@
-<section class="content-header">
-    <div class="container-fluid">
-        <div class="row mb-2">
-            <div class="col-sm-12">
-                <h4>Project Details</h4>
-            </div>
-        </div>
-    </div><!-- /.container-fluid -->
-</section>
-<section class="content">
+<section class="content mt-3">
     <div class="container-fluid">
         <div class="row">
             <div class="col-md-12">
                 <div class="card" *ngIf="project">
+                    <div class="card-header">
+                        <div class="d-flex align-items-center justify-content-between">
+                            <div>
+                                <h5>{{project.name}}</h5>
+                                <small class="text-muted">{{project.description}}</small>
+                            </div>
+                            <span>text</span>
+                        </div>
+                    </div>
                     <div class="card-body">
-                        <div class="form-group">
-                            <label for="name">Name</label>
-                            <input ngbAutofocus class="form-control" type="text" id="name" name="name" required
-                                [(ngModel)]="project.name">
-                        </div>
-                        <div class="form-group">
-                            <label for="description">Description</label>
-                            <input class="form-control" type="text" id="description" name="description"
-                                [(ngModel)]="project.description">
-                        </div>
                         <div class="form-group">
                             <label for="jobRunner">Job runner</label>
                             <select id="jobRunner" name="jobRunner" class="form-control"
@@ -39,29 +29,54 @@
                                 </a>
                                 <ng-template ngbNavContent>
                                     <div class="tab-content">
+
                                         <ngb-accordion #a="ngbAccordion" activeIds="acc-pnl-0">
                                             <ngb-panel *ngFor='let ie of project.inputEndpoints; let i = index'
                                                 [id]="'acc-pnl-'+i.toString()">
                                                 <ng-template ngbPanelHeader let-opened="opened">
                                                     <div class="d-flex align-items-center justify-content-between">
                                                         <h6 class="m-0">{{getSelectedInputEndpointTitle(ie)}}</h6>
-                                                        <button ngbPanelToggle
-                                                            class="btn btn-sm btn-outline-primary ml-2">Toggle</button>
+                                                        <div>
+                                                            <button *ngIf='project.inputEndpoints.length > 1' class="btn btn-sm btn-outline-primary ml-1" (click)="expandCollapseAll(a)">
+                                                                <i *ngIf="!inputEndpointExpandAll" class="fas fa-expand" title="Expand All"></i>
+                                                                <i *ngIf="inputEndpointExpandAll" class="fas fa-compress" title="Collapse All"></i>
+                                                            </button>
+                                                            <button ngbPanelToggle
+                                                                class="btn btn-sm btn-outline-primary ml-1">
+                                                                <i *ngIf='!opened' class="fas fa-plus-square"
+                                                                    title="Expand"></i>
+                                                                <i *ngIf='opened' class="fas fa-minus-square"
+                                                                    title="Collapse"></i>
+                                                            </button>
+                                                            
+                                                            <button *ngIf="project.inputEndpoints.length > 1" class="btn btn-sm btn-outline-danger ml-1"
+                                                                (click)="onRemoveInputEndpoint(ie)">
+                                                                <i class="fas fa-trash-alt" title="Remove">
+                                                                </i>
+                                                            </button>
+                                                        </div>
                                                     </div>
                                                 </ng-template>
                                                 <ng-template ngbPanelContent>
                                                     <app-project-endpoint-editor endpointType="input"
-                                                        [endpointDefinition]="ie" (settingsChange)="onInputEndpointSettingsChange($event)">
+                                                        [endpointDefinition]="ie"
+                                                        (settingsChange)="onEndpointSettingsChange($event, 'input')">
                                                     </app-project-endpoint-editor>
                                                 </ng-template>
                                             </ngb-panel>
                                         </ngb-accordion>
-                                        <select [(ngModel)]='selectedAddingEndpointName' class="form-control mb-2">
-                                            <option *ngFor='let endpoint of inputEndpoints' [ngValue]='endpoint.name'>
-                                                {{endpoint.displayName}}</option>
-                                        </select>
-                                        <button class="btn btn-primary"
-                                            (click)="onAddInputEndpointClicked()">Add</button>
+
+                                        <div class="input-group">
+                                            <select [(ngModel)]='selectedAddingEndpointName' class="custom-select">
+                                                <option *ngFor='let endpoint of inputEndpoints'
+                                                    [ngValue]='endpoint.name'>
+                                                    {{endpoint.displayName}}</option>
+                                            </select>
+                                            <div class="input-group-append">
+                                                <button class="btn btn-outline-primary" type="button" title="Add a new input endpoint"
+                                                    (click)="onAddInputEndpointClicked()">Add</button>
+                                            </div>
+                                        </div>
                                     </div>
                                 </ng-template>
                             </li>
@@ -70,7 +85,29 @@
                                     <i class="fas fa-sign-out-alt"></i>
                                     OUTPUT
                                 </a>
-                                <ng-template ngbNavContent>Second content</ng-template>
+                                <ng-template ngbNavContent>
+                                    <div class="tab-content">
+                                        <div class="card">
+                                            <div class="card-header">
+                                                <label for="outputEndpointSelector">Choose the output endpoint:</label>
+                                                <select id="outputEndpointSelector" name="outputEndpointSelector"
+                                                    [(ngModel)]='selectedOutputEndpointName' class="form-control"
+                                                    (change)='onSelectedOutputEndpointNameChange($event)'>
+                                                    <option *ngFor='let endpoint of outputEndpoints'
+                                                        [ngValue]='endpoint.name'>
+                                                        {{endpoint.displayName}}
+                                                    </option>
+                                                </select>
+                                            </div>
+                                            <div class="card-body">
+                                                <app-project-endpoint-editor endpointType="output"
+                                                    [endpointDefinition]="selectedOutputEndpointDefinition"
+                                                    (settingsChange)="onEndpointSettingsChange($event, 'output')">
+                                                </app-project-endpoint-editor>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </ng-template>
                             </li>
                             <li ngbNavItem>
                                 <a ngbNavLink>

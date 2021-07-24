@@ -8,7 +8,6 @@ export interface Project {
     jobRunnerId: string;
     jobRunnerName?: string;
     inputEndpoints: ProjectEndpointDefinition[];
-    outputEndpoint: ProjectEndpointDefinition;
-    inputEndpointUIComponentData?: any;
-    outputEndpointUIComponentData?: any;
+    selectedOutputEndpointId: string;
+    outputEndpoints: ProjectEndpointDefinition[];
 }

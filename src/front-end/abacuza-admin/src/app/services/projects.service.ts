@@ -29,7 +29,8 @@ export class ProjectsService {
       description: project.description,
       jobRunnerId: project.jobRunnerId,
       inputEndpoints: project.inputEndpoints,
-      outputEndpoint: project.outputEndpoint
+      selectedOutputEndpointId: project.selectedOutputEndpointId,
+      outputEndpoints: project.outputEndpoints
     });
   }
 
@@ -58,8 +59,13 @@ export class ProjectsService {
       },
       {
         op: 'replace',
-        path: '/outputEndpoint',
-        value: entity.outputEndpoint,
+        path: '/selectedOutputEndpointId',
+        value: entity.selectedOutputEndpointId
+      },
+      {
+        op: 'replace',
+        path: '/outputEndpoints',
+        value: entity.outputEndpoints,
       }
     ], {
       observe: 'body',

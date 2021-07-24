@@ -16,6 +16,7 @@ import { ToastService } from 'src/app/services/toast/toast.service';
 import { Router } from '@angular/router';
 import { CommonDialogType, CommonDialogResult } from 'src/app/services/common-dialog/common-dialog-data-types';
 import { Guid } from 'guid-typescript';
+import { ProjectEndpointDefinition } from 'src/app/models/project-endpoint-definition';
 
 @Component({
   selector: 'app-projects',
@@ -77,6 +78,21 @@ export class ProjectsComponent implements OnInit, OnDestroy {
       }));
   }
 
+  getProjectInputEndpointDescription(proj: Project): string {
+    return proj.inputEndpoints && proj.inputEndpoints.length > 0 ? (proj.inputEndpoints.length > 1 ? '(multiple)' : proj.inputEndpoints[0].name) : '(not defined)';
+  }
+
+  getProjectOutputEndpointDescription(proj: Project): string {
+    if (proj.selectedOutputEndpointId && proj.outputEndpoints && proj.outputEndpoints.length > 0) {
+      const outputEndpointDefinition = proj.outputEndpoints?.find(oe => oe.id === proj.selectedOutputEndpointId);
+      if (outputEndpointDefinition) {
+        return outputEndpointDefinition.name;
+      }
+    }
+
+    return '(not defined)';
+  }
+
   onAddClicked(): void {
     this.subscriptions.push(this.componentDialogService.open(CreateProjectComponent, {
       jobRunners: this.jobRunners,
@@ -92,17 +108,20 @@ export class ProjectsComponent implements OnInit, OnDestroy {
       usage: ComponentDialogUsage.Create
     }).subscribe(result => {
       if (result) {
+        const inputEndpointId = Guid.create().toString();
+        const outputEndpointId = Guid.create().toString();
         const project: Project = {
           name: result.project.name,
           description: result.project.description,
-          inputEndpoints: [{
-            id: Guid.create().toString(),
-            name: result.selectedInputEndpointName
-          }],
-          outputEndpoint: {
-            id: Guid.create().toString(),
-            name: result.selectedOutputEndpointName
-          },
+          inputEndpoints: [new ProjectEndpointDefinition(
+            inputEndpointId,
+            result.selectedInputEndpointName
+          )],
+          selectedOutputEndpointId: outputEndpointId,
+          outputEndpoints: [new ProjectEndpointDefinition(
+            outputEndpointId,
+            result.selectedOutputEndpointName
+          )],
           jobRunnerId: result.project.jobRunnerId
         };
 

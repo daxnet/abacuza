@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef, ChangeDetectionStrategy } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Subscription, throwError } from 'rxjs';
 import { ProjectsService } from 'src/app/services/projects.service';
@@ -12,6 +12,7 @@ import { ProjectEndpointDefinition } from 'src/app/models/project-endpoint-defin
 import { EndpointSettingsChangedEvent } from 'src/app/components/project-endpoint-editor/endpoint-settings-changed-event';
 import { catchError } from 'rxjs/operators';
 import { ToastService } from 'src/app/services/toast/toast.service';
+import { cloneDeep } from 'lodash';
 
 @Component({
   selector: 'app-project-details',
@@ -21,10 +22,15 @@ import { ToastService } from 'src/app/services/toast/toast.service';
 export class ProjectDetailsComponent implements OnInit {
 
   private subscriptions: Subscription[] = [];
+
   project: Project | null = null;
   jobRunners: JobRunner[] | null = [];
   inputEndpoints: Endpoint[] | null = [];
+  outputEndpoints: Endpoint[] | null = [];
   selectedAddingEndpointName?: string;
+  selectedOutputEndpointName?: string;
+  selectedOutputEndpointDefinition?: ProjectEndpointDefinition;
+  inputEndpointExpandAll: boolean = true;
 
   constructor(private activatedRoute: ActivatedRoute,
     private router: Router,
@@ -38,6 +44,10 @@ export class ProjectDetailsComponent implements OnInit {
       this.subscriptions.push(this.projectsService.getProjectById(params.id)
         .subscribe(response => {
           this.project = response.body;
+          this.selectedOutputEndpointDefinition = this.project?.outputEndpoints.find(oed => oed.id === this.project?.selectedOutputEndpointId);
+          if (this.selectedOutputEndpointDefinition) {
+            this.selectedOutputEndpointName = this.selectedOutputEndpointDefinition.name;
+          }
         }));
       this.subscriptions.push(this.jobRunnersService.getJobRunners()
         .subscribe(response => {
@@ -50,7 +60,21 @@ export class ProjectDetailsComponent implements OnInit {
             this.selectedAddingEndpointName = this.inputEndpoints[0].name;
           }
         }));
+      this.subscriptions.push(this.endpointsService.getEndpoints('output')
+        .subscribe(response => {
+          this.outputEndpoints = response.body;
+        }));
     }));
+  }
+
+  expandCollapseAll(accordion: any): void {
+    if (this.inputEndpointExpandAll) {
+      accordion.collapseAll();
+    } else {
+      accordion.expandAll();
+    }
+
+    this.inputEndpointExpandAll = !this.inputEndpointExpandAll;
   }
 
   onAddInputEndpointClicked(): void {
@@ -61,28 +85,48 @@ export class ProjectDetailsComponent implements OnInit {
     }
   }
 
-  onInputEndpointSettingsChange(event: EndpointSettingsChangedEvent) {
+  onRemoveInputEndpoint(event: ProjectEndpointDefinition): void {
     console.log(event);
-    const inputEndpoint = this.project?.inputEndpoints.find(ie => ie.id === event.endpointDefinitionId);
-    if (inputEndpoint) {
-      if (!inputEndpoint.settingsObject) {
-        inputEndpoint.settingsObject = [];
-      }
+  }
 
-      const uiComponentData = inputEndpoint.settingsObject?.find(d => d.component === event.component);
-      if (uiComponentData) {
-        uiComponentData.value = event.data;
-      } else {
-        inputEndpoint.settingsObject?.push({
-          component: event.component,
-          value: event.data
-        });
-      }
+  onEndpointSettingsChange(event: EndpointSettingsChangedEvent, type: string) {
+    if (event) {
+      const endpointDefinitions = type === 'input' ? this.project?.inputEndpoints : this.project?.outputEndpoints;
+      const endpointDefinition = endpointDefinitions?.find(oe => oe.id === event.endpointDefinitionId);
+      if (endpointDefinition) {
+        if (!endpointDefinition.settingsObject) {
+          endpointDefinition.settingsObject = [];
+        }
 
-      inputEndpoint.settings = JSON.stringify(inputEndpoint.settingsObject);
+        const uiComponentData = endpointDefinition.settingsObject?.find(d => d.component === event.component);
+        if (uiComponentData) {
+          uiComponentData.value = event.data;
+        } else {
+          endpointDefinition.settingsObject?.push({
+            component: event.component,
+            value: event.data
+          });
+        }
+
+        endpointDefinition.settings = JSON.stringify(endpointDefinition.settingsObject);
+      }
     }
+  }
 
-    console.log(this.project);
+  onSelectedOutputEndpointNameChange(event: any): void {
+    if (this.project && this.selectedOutputEndpointName) {
+      let outputEndpointDefinition = this.project?.outputEndpoints.find(oed => oed.name === this.selectedOutputEndpointName);
+      if (outputEndpointDefinition) {
+        this.project.selectedOutputEndpointId = outputEndpointDefinition.id;
+        this.selectedOutputEndpointDefinition = outputEndpointDefinition;
+      } else {
+        const id = Guid.create().toString();
+        outputEndpointDefinition = new ProjectEndpointDefinition(id, this.selectedOutputEndpointName);
+        this.project.selectedOutputEndpointId = id;
+        this.project.outputEndpoints.push(outputEndpointDefinition);
+        this.selectedOutputEndpointDefinition = outputEndpointDefinition;
+      }
+    }
   }
 
   save(close: boolean): void {
