@@ -2,6 +2,7 @@
 using IdentityModel;
 using IdentityServer4;
 using IdentityServer4.Models;
+using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -44,8 +45,12 @@ namespace Abacuza.Services.Identity.Models
                 })
             };
 
-        public static IEnumerable<Client> GetClients() =>
-            new[]
+        public static IEnumerable<Client> GetClients(IConfiguration configuration)
+        {
+            var redirectUris = configuration["id4:redirectUris"].Split(";");
+            var postLogoutRedirectUris = configuration["id4:postLogoutRedirectUris"].Split(";");
+            var allowedCorsOrigins = configuration["id4:allowedCorsOrigins"].Split(";");
+            return new[]
             {
                 new Client
                 {
@@ -61,14 +66,15 @@ namespace Abacuza.Services.Identity.Models
                         "roles",
                         "api"
                     },
-                    RedirectUris = { "http://localhost:4200/auth-callback" },
-                    PostLogoutRedirectUris = {"http://localhost:4200/"},
-                    AllowedCorsOrigins = {"http://localhost:4200", "http://localhost:9050"},
+                    RedirectUris = redirectUris,
+                    PostLogoutRedirectUris = postLogoutRedirectUris,
+                    AllowedCorsOrigins = allowedCorsOrigins,
                     AllowAccessTokensViaBrowser = true,
                     AlwaysSendClientClaims = true,
                     AlwaysIncludeUserClaimsInIdToken = true,
                     AccessTokenLifetime = 3600,
                 }
             };
+        }
     }
 }

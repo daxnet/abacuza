@@ -15,6 +15,15 @@ http {
       proxy_pass http://client;
     }
 
+    location ~ ^/auth/(.*)$ {
+      proxy_http_version 1.1;
+      rewrite ^ $request_uri;
+      rewrite ^/auth/(.*)$ $1 break;
+      return 400;
+
+      proxy_pass http://auth/$1;
+    }
+
     location ~* (^/cluster-service|/job-service|/common-service|/endpoint-service|/project-service|/swagger) {
       proxy_http_version 1.1;
       proxy_pass http://api-gateway;
@@ -34,5 +43,9 @@ http {
 
   upstream api-gateway {
     server {{ .Env.APPLICATION_NAME }}-api-gateway:9099;
+  }
+
+  upstream auth {
+    server {{ .Env.APPLICATION_NAME }}-auth:9050;
   }
 }

@@ -153,18 +153,29 @@ services:
             - abacuza-project-service
         environment:
             - APPLICATION_NAME=abacuza
+            - ids__authority=http://abacuza-auth:9050
+    abacuza-auth:
+        image: daxnet/abacuza-auth
+        environment:
+            - ConnectionStrings__DefaultConnection=User ID=postgres;Password=postgres;Host=abacuza-postgres;Port=5432;Database=abacuza
+            - id4__redirectUris=/auth-callback
+            - id4__postLogoutRedirectUris=/
+            - id4__allowedCorsOrigins=/
     abacuza-client:
         image: daxnet/abacuza-client
         depends_on:
             - abacuza-api-gateway
+            - abacuza-auth
     abacuza-nginx:
         image: daxnet/abacuza-nginx
         depends_on:
             - abacuza-api-gateway
             - abacuza-client
+            - abacuza-auth
         links:
             - abacuza-api-gateway
             - abacuza-client
+            - abacuza-auth
         environment:
             - APPLICATION_NAME=abacuza
         ports:

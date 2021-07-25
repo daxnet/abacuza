@@ -114,7 +114,7 @@ namespace Abacuza.Services.Identity
                 .AddInMemoryIdentityResources(IdentityConfig.GetIdentityResources())
                 .AddInMemoryApiResources(IdentityConfig.GetApiResources())
                 .AddInMemoryApiScopes(IdentityConfig.ApiScopes)
-                .AddInMemoryClients(IdentityConfig.GetClients())
+                .AddInMemoryClients(IdentityConfig.GetClients(Configuration))
                 .AddProfileService<ProfileService>();
 
             services.AddTransient<IProfileService, ProfileService>();
