@@ -23,6 +23,8 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using System;
+using IdentityServer4.Extensions;
+using Microsoft.AspNetCore.HttpOverrides;
 
 namespace Abacuza.Services.Identity
 {
@@ -31,9 +33,7 @@ namespace Abacuza.Services.Identity
         #region Public Constructors
 
         public Startup(IConfiguration configuration)
-        {
-            Configuration = configuration;
-        }
+            => Configuration = configuration;
 
         #endregion Public Constructors
 
@@ -57,20 +57,40 @@ namespace Abacuza.Services.Identity
             {
                 app.UseExceptionHandler("/Home/Error");
                 // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
+                // 
+                var forwardedHeaderOptions = new ForwardedHeadersOptions
+                {
+                    ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto
+                };
+                forwardedHeaderOptions.KnownNetworks.Clear();
+                forwardedHeaderOptions.KnownProxies.Clear();
+                app.UseForwardedHeaders(forwardedHeaderOptions);
                 app.UseHsts();
+                
+                app.Use(async (c, next) =>
+                {
+                    var originOverride = string.IsNullOrEmpty(Configuration?["id4:originOverride"])
+                        ? "http://localhost:9050"
+                        : Configuration["id4:originOverride"];
+                    
+                    c.SetIdentityServerOrigin(originOverride);
+                    await next();
+                });
             }
+            
             app.UseCors("AllowAll");
-            //app.UseHttpsRedirection();
             app.UseStaticFiles();
 
-            if (env.IsDevelopment())
-            {
-                app.UseCookiePolicy();
-            }
+            // if (env.IsDevelopment())
+            // {
+            //     app.UseCookiePolicy();
+            // }
+            
+            app.UseCookiePolicy();
 
             app.UseRouting();
             app.UseIdentityServer();
-
+            
             app.UseAuthentication();
             app.UseAuthorization();
 
@@ -103,7 +123,8 @@ namespace Abacuza.Services.Identity
                         options.Authentication.CookieLifetime = TimeSpan.FromDays(30);
                         options.Authentication.CookieSlidingExpiration = true;
                     }
-                ).AddDeveloperSigningCredential()
+                )
+                .AddDeveloperSigningCredential()
                 .AddOperationalStore(options =>
                 {
                     options.ConfigureDbContext = builder => builder.UseNpgsql(Configuration.GetConnectionString("DefaultConnection"),

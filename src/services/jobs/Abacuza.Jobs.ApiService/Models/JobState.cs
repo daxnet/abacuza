@@ -1,5 +1,4 @@
-using System.Diagnostics.Contracts;
-namespace Abacuza.JobSchedulers.Models
+namespace Abacuza.Jobs.ApiService.Models
 {
     /// <summary>
     /// Represents the job states.

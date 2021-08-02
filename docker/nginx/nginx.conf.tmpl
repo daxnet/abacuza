@@ -15,13 +15,34 @@ http {
       proxy_pass http://client;
     }
 
-    location ~ ^/auth/(.*)$ {
+    location /auth/ {
+      proxy_pass http://identity-server/;
+      proxy_http_version 1.1;
+      proxy_set_header Upgrade $http_upgrade;
+      proxy_set_header Connection keep-alive;
+      proxy_set_header Host $http_host;
+      proxy_cache_bypass $http_upgrade;
+      proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+      proxy_set_header X-Forwarded-Proto $scheme;
+    }
+
+
+    location ~ ^/lib/(.*)$ {
       proxy_http_version 1.1;
       rewrite ^ $request_uri;
-      rewrite ^/auth/(.*)$ $1 break;
+      rewrite ^/lib/(.*)$ $1 break;
       return 400;
 
-      proxy_pass http://auth/$1;
+      proxy_pass http://identity-server/lib/$1;
+    }
+
+    location ~ ^/css/(.*)$ {
+      proxy_http_version 1.1;
+      rewrite ^ $request_uri;
+      rewrite ^/css/(.*)$ $1 break;
+      return 400;
+
+      proxy_pass http://identity-server/css/$1;
     }
 
     location ~* (^/cluster-service|/job-service|/common-service|/endpoint-service|/project-service|/swagger) {
@@ -30,6 +51,7 @@ http {
       proxy_set_header   Upgrade $http_upgrade;
       proxy_set_header   Connection keep-alive;
       proxy_set_header   Host $http_host;
+      proxy_set_header   X-Real-IP $remote_addr;
       proxy_cache_bypass $http_upgrade;
       proxy_set_header   X-Forwarded-For $proxy_add_x_forwarded_for;
       proxy_set_header   X-Forwarded-Port $server_port;
@@ -45,7 +67,7 @@ http {
     server {{ .Env.APPLICATION_NAME }}-api-gateway:9099;
   }
 
-  upstream auth {
+  upstream identity-server {
     server {{ .Env.APPLICATION_NAME }}-auth:9050;
   }
 }

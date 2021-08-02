@@ -47,9 +47,18 @@ namespace Abacuza.Services.Identity.Models
 
         public static IEnumerable<Client> GetClients(IConfiguration configuration)
         {
-            var redirectUris = configuration["id4:redirectUris"].Split(";");
-            var postLogoutRedirectUris = configuration["id4:postLogoutRedirectUris"].Split(";");
-            var allowedCorsOrigins = configuration["id4:allowedCorsOrigins"].Split(";");
+            var redirectUris = string.IsNullOrEmpty(configuration?["id4:redirectUris"]) ? new [] {
+                "http://localhost:4200/auth-callback"
+            } : configuration["id4:redirectUris"].Split(";");
+            
+            var postLogoutRedirectUris = string.IsNullOrEmpty(configuration?["id4:postLogoutRedirectUris"]) ? new [] {
+                "http://localhost:4200/"
+            } : configuration["id4:postLogoutRedirectUris"].Split(";");
+            
+            var allowedCorsOrigins = string.IsNullOrEmpty(configuration?["id4:allowedCorsOrigins"]) ? new [] {
+                "http://localhost:4200", "http://localhost:9050"
+            } : configuration["id4:allowedCorsOrigins"].Split(";");
+            
             return new[]
             {
                 new Client

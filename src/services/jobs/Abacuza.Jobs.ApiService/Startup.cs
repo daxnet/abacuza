@@ -11,13 +11,18 @@
 // Apache License Version 2.0
 // ==============================================================
 
+using System;
+using System.Collections.Generic;
+using System.Collections.Specialized;
+using System.IO;
+using System.Linq;
+using System.Reflection;
 using Abacuza.Common.DataAccess;
 using Abacuza.Common.Utilities;
 using Abacuza.DataAccess.DistributedCached;
 using Abacuza.DataAccess.Mongo;
+using Abacuza.Jobs.ApiService.Models;
 using Abacuza.Jobs.ApiService.Services;
-using Abacuza.JobSchedulers.Models;
-using Abacuza.JobSchedulers.Services;
 using McMaster.NETCore.Plugins;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -33,14 +38,8 @@ using Newtonsoft.Json.Serialization;
 using Polly;
 using Quartz.Impl;
 using Quartz.Spi;
-using System;
-using System.Collections.Generic;
-using System.Collections.Specialized;
-using System.IO;
-using System.Linq;
-using System.Reflection;
 
-namespace Abacuza.JobSchedulers
+namespace Abacuza.Jobs.ApiService
 {
     public class Startup
     {
