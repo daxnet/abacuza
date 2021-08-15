@@ -34,6 +34,12 @@ export class ProjectsService {
     });
   }
 
+  public createRevision(projectId: string): Observable<string> {
+    return this.httpClient.post<string>(`${environment.apiBaseUrl}project-service/projects/${projectId}/revisions`, null, {
+      observe: 'body'
+    });
+  }
+
   public updateProject(id: string, entity: Project): Observable<Project> {
     return this.httpClient.patch<Project>(`${environment.apiBaseUrl}project-service/projects/${id}`,
     [

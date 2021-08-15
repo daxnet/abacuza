@@ -5,6 +5,7 @@ import { TextAreaComponent } from './text-area.component';
 import { UIComponentBase } from './uicomponent-base';
 import { DropDownBoxComponent } from './drop-down-box.component';
 import { JsonTextAreaComponent } from './json-text-area.component';
+import { FilePickerComponent } from './file-picker.component';
 
 @Injectable({
   providedIn: 'root'
@@ -34,6 +35,10 @@ export class UIComponentProviderService {
       {
         name: 'JsonTextArea',
         component: JsonTextAreaComponent
+      },
+      {
+        name: 'FilePicker',
+        component: FilePickerComponent
       }
     ];
   }

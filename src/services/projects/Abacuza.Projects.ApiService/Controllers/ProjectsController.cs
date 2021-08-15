@@ -64,7 +64,7 @@ namespace Abacuza.Projects.ApiService.Controllers
                  (input, project, revisionId, jobRunner) =>
                  {
                      var inputEndpointDefinitions = JsonConvert.SerializeObject(project.InputEndpoints);
-                     return input.Replace("${proj:input-endpoint}", $"input_endpoint:{Convert.ToBase64String(Encoding.UTF8.GetBytes(inputEndpointDefinitions))}");
+                     return input.Replace("${proj:input-defs}", $"input_defs:{Convert.ToBase64String(Encoding.UTF8.GetBytes(inputEndpointDefinitions))}");
                  },
 
                  // replace the output endpoint name.
@@ -74,7 +74,7 @@ namespace Abacuza.Projects.ApiService.Controllers
                      if (outputEndpointDefinition != null)
                      {
                          var outputEndpointDefinitionJson = JsonConvert.SerializeObject(outputEndpointDefinition);
-                        return input.Replace("${proj:output-endpoint}", $"output_endpoint:{Convert.ToBase64String(Encoding.UTF8.GetBytes(outputEndpointDefinitionJson))}");
+                        return input.Replace("${proj:output-defs}", $"output_defs:{Convert.ToBase64String(Encoding.UTF8.GetBytes(outputEndpointDefinitionJson))}");
                      }
 
                      // TODO

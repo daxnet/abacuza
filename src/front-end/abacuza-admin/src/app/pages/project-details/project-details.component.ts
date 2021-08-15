@@ -13,6 +13,8 @@ import { EndpointSettingsChangedEvent } from 'src/app/components/project-endpoin
 import { catchError } from 'rxjs/operators';
 import { ToastService } from 'src/app/services/toast/toast.service';
 import { cloneDeep } from 'lodash';
+import { CommonDialogService } from 'src/app/services/common-dialog/common-dialog.service';
+import { CommonDialogType, CommonDialogResult } from 'src/app/services/common-dialog/common-dialog-data-types';
 
 @Component({
   selector: 'app-project-details',
@@ -31,13 +33,15 @@ export class ProjectDetailsComponent implements OnInit {
   selectedOutputEndpointName?: string;
   selectedOutputEndpointDefinition?: ProjectEndpointDefinition;
   inputEndpointExpandAll: boolean = true;
+  activeTabId: any;
 
   constructor(private activatedRoute: ActivatedRoute,
     private router: Router,
     private projectsService: ProjectsService,
     private jobRunnersService: JobRunnersService,
     private endpointsService: EndpointsService,
-    private toastService: ToastService) { }
+    private toastService: ToastService,
+    private comonDialogService: CommonDialogService) { }
 
   ngOnInit(): void {
     this.subscriptions.push(this.activatedRoute.params.subscribe(params => {
@@ -86,7 +90,21 @@ export class ProjectDetailsComponent implements OnInit {
   }
 
   onRemoveInputEndpoint(event: ProjectEndpointDefinition): void {
-    console.log(event);
+    if (event) {
+      this.subscriptions.push(this.comonDialogService.open('Confirm', 'Are you sure you want to delete the selected endpoint?', CommonDialogType.Confirm)
+        .subscribe(dr => {
+          if (dr) {
+            switch(dr) {
+              case CommonDialogResult.Yes:
+                if (this.project) {
+                  this.project.inputEndpoints = this.project?.inputEndpoints.filter(x => x.id !== event.id);
+                }
+                break;
+            }
+          }
+        })
+      );
+    }
   }
 
   onEndpointSettingsChange(event: EndpointSettingsChangedEvent, type: string) {
@@ -143,6 +161,30 @@ export class ProjectDetailsComponent implements OnInit {
           }
         }));
     }
+  }
+
+  submit(): void {
+    if (this.project && this.project.id) {
+      this.subscriptions.push(this.projectsService.updateProject(this.project.id, this.project)
+        .pipe(catchError(err => {
+          this.toastService.error(`Failed to update project. Error message: ${err.message}`);
+          return throwError(err.message);
+        }))
+        .subscribe(() => {
+          this.subscriptions.push(this.projectsService.createRevision(this.project!.id!)
+            .pipe(catchError(err => {
+              this.toastService.error(err.message);
+              return throwError(err.message);
+            }))
+            .subscribe(revisionId => {
+              this.toastService.success(`Revision created: ${revisionId}`);
+            })
+          )
+        })
+      );
+      this.activeTabId = 3;
+    }
+    
   }
 
   getSelectedInputEndpointTitle(definition: ProjectEndpointDefinition): string | null {
