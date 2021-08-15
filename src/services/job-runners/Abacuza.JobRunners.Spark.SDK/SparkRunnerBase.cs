@@ -17,13 +17,13 @@ using Abacuza.JobRunners.Spark.SDK.OutputWriters;
 using Microsoft.Spark;
 using Microsoft.Spark.Sql;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text;
-using Newtonsoft.Json.Linq;
 
 namespace Abacuza.JobRunners.Spark.SDK
 {
@@ -33,6 +33,7 @@ namespace Abacuza.JobRunners.Spark.SDK
     /// </summary>
     public abstract class SparkRunnerBase
     {
+
         #region Protected Fields
 
         protected readonly string[] _args;
@@ -42,25 +43,17 @@ namespace Abacuza.JobRunners.Spark.SDK
         #region Private Fields
 
         private const string AppNameKey = "appname";
-        private const string InputEndpointsKey = "input_endpoints";
-        private const string OutputEndpointsKey = "output_endpoints";
+        private const string InputEndpointDefinitionsKey = "input_defs";
+        private const string OutputEndpointDefinitionsKey = "output_defs";
         private const string ProjectContextKey = "project_context";
 
-        private static readonly Lazy<IEnumerable<Type>> InputEndpointTypes = new Lazy<IEnumerable<Type>>(() =>
-            DiscoverDerivedTypes<IInputEndpoint>(typeof(EndpointAttribute))
-        );
+        private static readonly Lazy<IEnumerable<Type>> _inputEndpointTypes = new(() => DiscoverDerivedTypes<IInputEndpoint>(typeof(EndpointAttribute)));
 
-        private static readonly Lazy<IEnumerable<Type>> InputReaderTypes = new Lazy<IEnumerable<Type>>(() =>
-            DiscoverDerivedTypes<IInputReader>()
-        );
+        private static readonly Lazy<IEnumerable<Type>> _inputReaderTypes = new(() => DiscoverDerivedTypes<IInputReader>());
 
-        private static readonly Lazy<IEnumerable<Type>> OutputEndpointTypes = new Lazy<IEnumerable<Type>>(() =>
-                    DiscoverDerivedTypes<IOutputEndpoint>(typeof(EndpointAttribute))
-        );
+        private static readonly Lazy<IEnumerable<Type>> _outputEndpointTypes = new(() => DiscoverDerivedTypes<IOutputEndpoint>(typeof(EndpointAttribute)));
 
-        private static readonly Lazy<IEnumerable<Type>> OutputWriterTypes = new Lazy<IEnumerable<Type>>(() =>
-            DiscoverDerivedTypes<IOutputWriter>()
-        );
+        private static readonly Lazy<IEnumerable<Type>> _outputWriterTypes = new(() => DiscoverDerivedTypes<IOutputWriter>());
 
         #endregion Private Fields
 
@@ -84,12 +77,12 @@ namespace Abacuza.JobRunners.Spark.SDK
         /// </summary>
         public void Run()
         {
-            if (!TryParseBase64Value(_args, InputEndpointsKey, out var inputEndpointDefinitions))
+            if (!TryParseSingleBase64Value(_args, InputEndpointDefinitionsKey, out var inputEndpointDefinitionsJson))
             {
                 throw new SparkRunnerException("Input endpoint definitions are not specified in the argument list.");
             }
 
-            if (!TryParseBase64Value(_args, OutputEndpointsKey, out var outputEndpointDefinitions))
+            if (!TryParseSingleBase64Value(_args, OutputEndpointDefinitionsKey, out var outputEndpointDefinitionsJson))
             {
                 throw new SparkRunnerException("Output endpoint definitions are not specified in the argument list.");
             }
@@ -102,6 +95,10 @@ namespace Abacuza.JobRunners.Spark.SDK
             Console.WriteLine($"**** Project Context: {projectContextValue}");
 
             var projectContext = JsonConvert.DeserializeObject<ProjectContext>(projectContextValue);
+            if (projectContext == null)
+            {
+                throw new SparkRunnerException("Project context is failed to be initialized.");
+            }
 
             var builder = SparkSession.Builder();
             if (TryParseSingleValue(_args, AppNameKey, out var appName))
@@ -113,17 +110,37 @@ namespace Abacuza.JobRunners.Spark.SDK
             {
                 builder = builder.Config(conf);
             }
-            
+
             var sparkSession = builder.GetOrCreate();
-            // var inputEndpoint = CreateInputEndpoint(inputEndpointName, inputEndpointSettings);
-            var inputEndpoints = CreateInputEndpoints(inputEndpointDefinitions);
-            var inputReader = CreateInputReader(inputEndpointName);
-            var dataFrame = inputReader.ReadFrom(sparkSession, inputEndpoint, projectContext);
+            var inputEndpoints = CreateInputEndpoints(inputEndpointDefinitionsJson);
+            DataFrame? dataFrame = null;
+            foreach(var inputEndpoint in inputEndpoints)
+            {
+                var reader = CreateInputReader(inputEndpoint.Name);
+                if (dataFrame == null)
+                {
+                    dataFrame = reader.ReadFrom(sparkSession, inputEndpoint, projectContext);
+                }
+                else
+                {
+                    dataFrame = dataFrame.UnionByName(reader.ReadFrom(sparkSession, inputEndpoint, projectContext));
+                }
+            }
+
+            if (dataFrame == null)
+            {
+                throw new SparkRunnerException("Unable to initialize DataFrame, no input endpoint that could be inferred from command line arguments.");
+            }
 
             var dataFrameResult = RunInternal(sparkSession, dataFrame);
 
-            var outputEndpoint = CreateOutputEndpoint(outputEndpointName, outputEndpointSettings);
-            var outputWriter = CreateOutputWriter(outputEndpointName);
+            var outputEndpoint = CreateOutputEndpoint(outputEndpointDefinitionsJson);
+            if (outputEndpoint == null)
+            {
+                throw new SparkRunnerException("Unable to activate the output endpoint instance.");
+            }
+
+            var outputWriter = CreateOutputWriter(outputEndpoint.Name);
             outputWriter.WriteTo(dataFrameResult, outputEndpoint, projectContext);
         }
 
@@ -145,18 +162,21 @@ namespace Abacuza.JobRunners.Spark.SDK
         private static IEnumerable<IInputEndpoint> CreateInputEndpoints(string inputEndpointDefinitionsJson)
         {
             var inputEndpointDefinitionsArray = JArray.Parse(inputEndpointDefinitionsJson);
-            foreach (var inputEndpointDefinition in inputEndpointDefinitionsArray)
+            foreach (var definition in inputEndpointDefinitionsArray)
             {
-                var curName = inputEndpointDefinition["Name"]?.Value<string>();
-                var curSettings = inputEndpointDefinition["Settings"]?.Value<string>();
-                if (!string.IsNullOrEmpty(curName) && !string.IsNullOrEmpty(curSettings))
+                var inputEndpointName = definition["Name"]?.ToObject<string>();
+                var inputEndpointSettings = definition["Settings"]?.ToObject<string>();
+                if (!string.IsNullOrEmpty(inputEndpointName))
                 {
-                    var inputEndpointType = InputEndpointTypes.Value.FirstOrDefault(t =>
-                        t.GetCustomAttribute<EndpointAttribute>().Name == curName);
+                    var inputEndpointType = _inputEndpointTypes.Value.FirstOrDefault(iet => iet.GetCustomAttribute<EndpointAttribute>().Name == inputEndpointName);
                     if (inputEndpointType != null)
                     {
                         var inputEndpoint = (IInputEndpoint)Activator.CreateInstance(inputEndpointType);
-                        inputEndpoint.ApplySettings(curSettings);
+                        if (!string.IsNullOrEmpty(inputEndpointSettings))
+                        {
+                            inputEndpoint.ApplySettings(inputEndpointSettings);
+                        }
+
                         yield return inputEndpoint;
                     }
                 }
@@ -165,13 +185,13 @@ namespace Abacuza.JobRunners.Spark.SDK
 
         private static IInputReader CreateInputReader(string inputEndpointName)
         {
-            var inputEndpointType = InputEndpointTypes.Value.FirstOrDefault(t => t.GetCustomAttribute<EndpointAttribute>().Name == inputEndpointName);
+            var inputEndpointType = _inputEndpointTypes.Value.FirstOrDefault(t => t.GetCustomAttribute<EndpointAttribute>().Name == inputEndpointName);
             if (inputEndpointType == null)
             {
                 throw new SparkRunnerException($"Can't find the input endpoint {inputEndpointName}.");
             }
 
-            var inputReaderType = (from type in InputReaderTypes.Value
+            var inputReaderType = (from type in _inputReaderTypes.Value
                                    where type.BaseType?.IsGenericType ?? false &&
                                    type.BaseType?.GetGenericTypeDefinition() == typeof(InputReader<>)
                                    let genericArguments = type.BaseType?.GetGenericArguments()
@@ -185,29 +205,44 @@ namespace Abacuza.JobRunners.Spark.SDK
             return (IInputReader)Activator.CreateInstance(inputReaderType);
         }
 
-        private static IOutputEndpoint CreateOutputEndpoint(string outputEndpointName, string outputEndpointSettings)
+        private static IOutputEndpoint? CreateOutputEndpoint(string outputEndpointDefinitionJson)
         {
-            var outputEndpointType = OutputEndpointTypes.Value.FirstOrDefault(t => t.GetCustomAttribute<EndpointAttribute>().Name == outputEndpointName);
-            if (outputEndpointType == null)
+            var outputEndpointDefinition = JObject.Parse(outputEndpointDefinitionJson);
+            var outputEndpointName = outputEndpointDefinition["Name"]?.ToObject<string>();
+            var outputEndpointSettings = outputEndpointDefinition["Settings"]?.ToObject<string>();
+
+            if (!string.IsNullOrEmpty(outputEndpointName))
             {
-                throw new SparkRunnerException($"Can't find the output endpoint {outputEndpointName}.");
+                var outputEndpointType = _outputEndpointTypes.Value.FirstOrDefault(oet => oet.GetCustomAttribute<EndpointAttribute>().Name == outputEndpointName);
+                if (outputEndpointType != null)
+                {
+                    var outputEndpoint = (IOutputEndpoint)Activator.CreateInstance(outputEndpointType);
+                    if (!string.IsNullOrEmpty(outputEndpointSettings))
+                    {
+                        // As for each project, there will be only one output endpoint settings defined, so the 
+                        // endpoint settings JSON passed in is a JSON object rather than an array. However, the
+                        // ApplySettings method requires that the JSON should be an array, so append the `[` and `]`
+                        // to the outputEndpointSettings JSON string.
+                        outputEndpointSettings = $"[{outputEndpointSettings}]";
+                        outputEndpoint.ApplySettings(outputEndpointSettings);
+                    }
+
+                    return outputEndpoint;
+                }
             }
 
-            var outputEndpoint = (IOutputEndpoint)Activator.CreateInstance(outputEndpointType);
-            outputEndpoint.ApplySettings(outputEndpointSettings);
-
-            return outputEndpoint;
+            return null;
         }
 
         private static IOutputWriter CreateOutputWriter(string outputEndpointName)
         {
-            var outputEndpointType = OutputEndpointTypes.Value.FirstOrDefault(t => t.GetCustomAttribute<EndpointAttribute>().Name == outputEndpointName);
+            var outputEndpointType = _outputEndpointTypes.Value.FirstOrDefault(t => t.GetCustomAttribute<EndpointAttribute>().Name == outputEndpointName);
             if (outputEndpointType == null)
             {
                 throw new SparkRunnerException($"Can't find the input endpoint {outputEndpointName}.");
             }
 
-            var outputWriterType = (from type in OutputWriterTypes.Value
+            var outputWriterType = (from type in _outputWriterTypes.Value
                                     where type.BaseType?.IsGenericType ?? false &&
                                     type.BaseType?.GetGenericTypeDefinition() == typeof(OutputWriter<>)
                                     let genericArguments = type.BaseType?.GetGenericArguments()
@@ -256,6 +291,23 @@ namespace Abacuza.JobRunners.Spark.SDK
             return types;
         }
 
+        private static bool TryParseSingleBase64Value(string[] args, string key, out string value, Encoding? encoding = null)
+        {
+            if (TryParseSingleValue(args, key, out var base64))
+            {
+                if (encoding == null)
+                {
+                    encoding = Encoding.UTF8;
+                }
+
+                value = encoding!.GetString(Convert.FromBase64String(base64));
+                return true;
+            }
+
+            value = string.Empty;
+            return false;
+        }
+
         private static bool TryParseSingleValue(string[] args, string key, out string value)
         {
             var item = args?.FirstOrDefault(x => x.StartsWith($"{key}:", StringComparison.InvariantCultureIgnoreCase));
@@ -269,19 +321,6 @@ namespace Abacuza.JobRunners.Spark.SDK
             value = string.Empty;
             return false;
         }
-
-        private static bool TryParseBase64Value(string[] args, string key, out string originalValue)
-        {
-            if (TryParseSingleValue(args, key, out var base64Value))
-            {
-                originalValue = Encoding.UTF8.GetString(Convert.FromBase64String(base64Value));
-                return true;
-            }
-
-            originalValue = string.Empty;
-            return false;
-        }
-
         private static bool TryParseSparkConfig(string[] args, out SparkConf? conf)
         {
             var configEntries = args.Where(a => a.StartsWith("config:", StringComparison.InvariantCultureIgnoreCase))
@@ -307,5 +346,6 @@ namespace Abacuza.JobRunners.Spark.SDK
         }
 
         #endregion Private Methods
+
     }
 }

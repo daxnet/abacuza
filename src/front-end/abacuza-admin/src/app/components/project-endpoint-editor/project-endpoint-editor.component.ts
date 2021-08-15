@@ -7,6 +7,7 @@ import { UIComponentProviderService } from '../ui-components/uicomponent-provide
 import { UIComponentBase } from '../ui-components/uicomponent-base';
 import { ProjectEndpointDefinition } from 'src/app/models/project-endpoint-definition';
 import { EndpointsService } from 'src/app/services/endpoints.service';
+import { Project } from 'src/app/models/project';
 
 @Component({
   selector: 'app-project-endpoint-editor',
@@ -15,7 +16,7 @@ import { EndpointsService } from 'src/app/services/endpoints.service';
 })
 export class ProjectEndpointEditorComponent implements OnInit, OnDestroy, OnChanges {
   
-
+  @Input() project?: Project;
   @Input() endpointDefinition?: ProjectEndpointDefinition;
   @Input() endpointType: string = 'input';
   @Output() settingsChange = new EventEmitter<EndpointSettingsChangedEvent>();
@@ -68,8 +69,12 @@ export class ProjectEndpointEditorComponent implements OnInit, OnDestroy, OnChan
       if (item) {
         const componentFactory = this.componentFactoryResolver.resolveComponentFactory(item.component);
         const componentRef = viewContainerRef.createComponent<UIComponentBase>(componentFactory);
-        componentRef.instance.attributes = e;
         componentRef.instance.id = id;
+        componentRef.instance.attributes = e;
+        if (this.project) {
+          componentRef.instance.attributes.projectId = this.project.id;
+        }
+        
         let componentDataAssigned = false;
         if (endpointSettingsObject && endpointSettingsObject.length > 0) {
           const uiComponentData = endpointSettingsObject.find((o: { component: string; }) => o.component === id);

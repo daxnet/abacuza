@@ -66,12 +66,17 @@ export class FileListComponent implements OnInit, OnDestroy, AfterViewInit {
       .subscribe(files => {
         if (files) {
           this.onFileAdded.emit(files);
+          if (!this.initFiles) {
+            this.initFiles = [];
+          }
+
           files.forEach(file => {
             if (!this.initFiles.find(f => f.bucket === file.bucket && f.file === file.file && f.key === file.key)) {
               this.initFiles.push(file);
             }
           });
           this.rerender();
+          this.onFilesChangedCompleted.emit(files);
         }
       });
   }
@@ -84,6 +89,10 @@ export class FileListComponent implements OnInit, OnDestroy, AfterViewInit {
             case CommonDialogResult.Yes:
               const s3File: S3File = event;
               this.onFileDeleted.emit(event);
+              if (!this.initFiles) {
+                this.initFiles = [];
+              }
+
               const idx = this.initFiles.findIndex(f => f.bucket === s3File.bucket && f.file === s3File.file && f.key === s3File.key);
               if (idx > -1) {
                 this.initFiles.splice(idx, 1);

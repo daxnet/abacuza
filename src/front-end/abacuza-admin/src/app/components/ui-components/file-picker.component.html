@@ -1,0 +1,5 @@
+<div class="form-group">
+    <app-file-list [id]='id' [title]='attributes.label' [initFiles]='value' bucket='data' [key]='s3Key'
+        [allowedExts]='attributes.allowedExtensions' [allowMultipleSelection]='attributes.allowMultipleSelection'
+        (onFilesChangedCompleted)='onFilesChangedCompleted($event)'></app-file-list>
+</div>

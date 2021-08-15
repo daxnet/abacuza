@@ -9,7 +9,12 @@
                                 <h5>{{project.name}}</h5>
                                 <small class="text-muted">{{project.description}}</small>
                             </div>
-                            <span>text</span>
+                            <span class="btn-span">
+                                <button class="btn btn-primary" (click)="save(true)">Save & Close</button>
+                                <button class="btn btn-secondary" (click)="save(false)">Save</button>
+                                <button class="btn btn-secondary" (click)="submit()">Submit</button>
+                                <button class="btn btn-secondary" (click)="close()">Close</button>
+                            </span>
                         </div>
                     </div>
                     <div class="card-body">
@@ -21,15 +26,14 @@
                             </select>
                         </div>
 
-                        <ul ngbNav #nav="ngbNav" class="nav-tabs">
-                            <li ngbNavItem>
+                        <ul ngbNav #nav="ngbNav" class="nav-tabs" [(activeId)]="activeTabId">
+                            <li [ngbNavItem]="1">
                                 <a ngbNavLink>
                                     <i class="fas fa-sign-in-alt"></i>
                                     INPUT
                                 </a>
                                 <ng-template ngbNavContent>
                                     <div class="tab-content">
-
                                         <ngb-accordion #a="ngbAccordion" activeIds="acc-pnl-0">
                                             <ngb-panel *ngFor='let ie of project.inputEndpoints; let i = index'
                                                 [id]="'acc-pnl-'+i.toString()">
@@ -37,9 +41,13 @@
                                                     <div class="d-flex align-items-center justify-content-between">
                                                         <h6 class="m-0">{{getSelectedInputEndpointTitle(ie)}}</h6>
                                                         <div>
-                                                            <button *ngIf='project.inputEndpoints.length > 1' class="btn btn-sm btn-outline-primary ml-1" (click)="expandCollapseAll(a)">
-                                                                <i *ngIf="!inputEndpointExpandAll" class="fas fa-expand" title="Expand All"></i>
-                                                                <i *ngIf="inputEndpointExpandAll" class="fas fa-compress" title="Collapse All"></i>
+                                                            <button *ngIf='project.inputEndpoints.length > 1'
+                                                                class="btn btn-sm btn-outline-primary ml-1"
+                                                                (click)="expandCollapseAll(a)">
+                                                                <i *ngIf="!inputEndpointExpandAll" class="fas fa-expand"
+                                                                    title="Expand All"></i>
+                                                                <i *ngIf="inputEndpointExpandAll"
+                                                                    class="fas fa-compress" title="Collapse All"></i>
                                                             </button>
                                                             <button ngbPanelToggle
                                                                 class="btn btn-sm btn-outline-primary ml-1">
@@ -48,8 +56,9 @@
                                                                 <i *ngIf='opened' class="fas fa-minus-square"
                                                                     title="Collapse"></i>
                                                             </button>
-                                                            
-                                                            <button *ngIf="project.inputEndpoints.length > 1" class="btn btn-sm btn-outline-danger ml-1"
+
+                                                            <button *ngIf="project.inputEndpoints.length > 1"
+                                                                class="btn btn-sm btn-outline-danger ml-1"
                                                                 (click)="onRemoveInputEndpoint(ie)">
                                                                 <i class="fas fa-trash-alt" title="Remove">
                                                                 </i>
@@ -59,7 +68,7 @@
                                                 </ng-template>
                                                 <ng-template ngbPanelContent>
                                                     <app-project-endpoint-editor endpointType="input"
-                                                        [endpointDefinition]="ie"
+                                                        [endpointDefinition]="ie" [project]="project"
                                                         (settingsChange)="onEndpointSettingsChange($event, 'input')">
                                                     </app-project-endpoint-editor>
                                                 </ng-template>
@@ -73,14 +82,15 @@
                                                     {{endpoint.displayName}}</option>
                                             </select>
                                             <div class="input-group-append">
-                                                <button class="btn btn-outline-primary" type="button" title="Add a new input endpoint"
+                                                <button class="btn btn-outline-primary" type="button"
+                                                    title="Add a new input endpoint"
                                                     (click)="onAddInputEndpointClicked()">Add</button>
                                             </div>
                                         </div>
                                     </div>
                                 </ng-template>
                             </li>
-                            <li ngbNavItem>
+                            <li [ngbNavItem]="2">
                                 <a ngbNavLink>
                                     <i class="fas fa-sign-out-alt"></i>
                                     OUTPUT
@@ -102,6 +112,7 @@
                                             <div class="card-body">
                                                 <app-project-endpoint-editor endpointType="output"
                                                     [endpointDefinition]="selectedOutputEndpointDefinition"
+                                                    [project]="project"
                                                     (settingsChange)="onEndpointSettingsChange($event, 'output')">
                                                 </app-project-endpoint-editor>
                                             </div>
@@ -109,7 +120,7 @@
                                     </div>
                                 </ng-template>
                             </li>
-                            <li ngbNavItem>
+                            <li [ngbNavItem]="3">
                                 <a ngbNavLink>
                                     <i class="fas fa-file-alt"></i>
                                     REVISIONS
@@ -118,12 +129,11 @@
                             </li>
                         </ul>
                         <div [ngbNavOutlet]="nav"></div>
-
-
                     </div>
                     <div class="card-footer text-right">
                         <button class="btn btn-primary" (click)="save(true)">Save & Close</button>
                         <button class="btn btn-secondary" (click)="save(false)">Save</button>
+                        <button class="btn btn-secondary" (click)="submit()">Submit</button>
                         <button class="btn btn-secondary" (click)="close()">Close</button>
                     </div>
                 </div>
