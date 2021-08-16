@@ -1,0 +1,4 @@
+<div class="form-group">
+    <label [for]="id" class="form-label">{{attributes.label}}</label>
+    <input class="form-control" [(ngModel)]='value' [title]='attributes.tooltip' type="text" [id]="id" (blur)='onBlur($event)'>
+</div>

@@ -18,7 +18,7 @@ using System;
 namespace Abacuza.Projects.ApiService.Models
 {
     [StorageModel("revisions")]
-    public sealed class RevisionEntity : IEntity
+    public sealed class Revision : IEntity
     {
         #region Public Properties
 

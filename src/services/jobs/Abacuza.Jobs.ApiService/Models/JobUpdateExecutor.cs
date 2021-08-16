@@ -1,14 +1,13 @@
-﻿using Abacuza.Common.DataAccess;
-using Abacuza.JobSchedulers.Services;
-using Microsoft.Extensions.Logging;
-using Newtonsoft.Json;
-using Quartz;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Abacuza.Common.DataAccess;
+using Abacuza.Jobs.ApiService.Services;
+using Microsoft.Extensions.Logging;
+using Quartz;
 
-namespace Abacuza.JobSchedulers.Models
+namespace Abacuza.Jobs.ApiService.Models
 {
     [DisallowConcurrentExecution]
     public sealed class JobUpdateExecutor : IJob

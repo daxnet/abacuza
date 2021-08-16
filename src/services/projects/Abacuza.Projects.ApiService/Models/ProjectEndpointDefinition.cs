@@ -11,42 +11,39 @@
 // Apache License Version 2.0
 // ==============================================================
 
-using Abacuza.Common;
-using Abacuza.Common.DataAccess;
 using System;
 using System.ComponentModel.DataAnnotations;
 
 namespace Abacuza.Projects.ApiService.Models
 {
-    [StorageModel("projects")]
-    public sealed class ProjectEntity : IEntity
+    /// <summary>
+    /// Represents the base class for the endpoint definition in a project.
+    /// </summary>
+    public abstract class ProjectEndpointDefinition
     {
         #region Public Properties
 
-        public DateTime DateCreated { get; set; }
-        public string? Description { get; set; }
-        public Guid Id { get; set; }
+        public string Id { get; set; } = Guid.NewGuid().ToString();
 
-        [Required]
-        public string InputEndpointName { get; set; } = string.Empty;
-
-        public string? InputEndpointSettings { get; set; }
-
-        [Required]
-        public Guid JobRunnerId { get; set; }
-
+        /// <summary>
+        /// Gets or sets the name of the endpoint, for example, endpoint.input.csv.
+        /// </summary>
         [Required]
         public string Name { get; set; } = string.Empty;
 
-        [Required]
-        public string OutputEndpointName { get; set; } = string.Empty;
-
-        public string? OutputEndpointSettings { get; set; }
+        /// <summary>
+        /// Gets or sets the JSON that represents the settings of the endpoint.
+        /// </summary>
+        public string? Settings { get; set; }
 
         #endregion Public Properties
 
         #region Public Methods
 
+        /// <summary>
+        /// Gets the string representation of the endpoint definition.
+        /// </summary>
+        /// <returns>The string representation of the endpoint definition.</returns>
         public override string ToString() => Name;
 
         #endregion Public Methods

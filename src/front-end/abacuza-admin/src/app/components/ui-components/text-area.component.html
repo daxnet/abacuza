@@ -1,0 +1,4 @@
+<div class="form-group">
+    <label class="form-label" [for]="id">{{attributes.label}}</label>
+    <textarea class="form-control" [(ngModel)]='value' [id]="id" [rows]='attributes.minLines === 0 ? 5 : attributes.minLines' (blur)='onBlur($event)'></textarea>
+</div>

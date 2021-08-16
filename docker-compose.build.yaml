@@ -45,6 +45,11 @@ services:
         build:
             context: src/services
             dockerfile: api-gateway/Abacuza.Services.ApiGateway/Dockerfile
+    abacuza-auth:
+        image: daxnet/abacuza-auth
+        build:
+            context: src/services
+            dockerfile: auth/Abacuza.Services.Identity/Dockerfile
     abacuza-livy-spark:
         image: daxnet/abacuza-livy-spark
         build:
@@ -53,7 +58,7 @@ services:
     abacuza-client:
         image: daxnet/abacuza-client
         build:
-            context: src/client
+            context: src/front-end/abacuza-admin
             dockerfile: Dockerfile
     abacuza-nginx:
         image: daxnet/abacuza-nginx

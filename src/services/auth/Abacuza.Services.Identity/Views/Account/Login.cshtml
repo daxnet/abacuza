@@ -1,10 +1,10 @@
 @model LoginViewModel
 
 <div class="login-page">
-    <div class="lead">
-        <h1>Login</h1>
-        <p>Choose how to login</p>
-    </div>
+    @*<div class="lead">
+            <h1>Login</h1>
+            <p>Choose how to login</p>
+        </div>*@
 
     <partial name="_ValidationSummary" />
 
@@ -12,10 +12,13 @@
 
         @if (Model.EnableLocalLogin)
         {
-            <div class="col-sm-6">
+            <div class="col-sm-4">
+
+            </div>
+            <div class="col-sm-4">
                 <div class="card">
                     <div class="card-header">
-                        <h2>Local Account</h2>
+                        <h5>Login to Abacuza</h5>
                     </div>
 
                     <div class="card-body">
@@ -30,22 +33,29 @@
                                 <label asp-for="Password"></label>
                                 <input type="password" class="form-control" placeholder="Password" asp-for="Password" autocomplete="off">
                             </div>
-                            @if (Model.AllowRememberLogin)
-                            {
-                                <div class="form-group">
-                                    <div class="form-check">
-                                        <input class="form-check-input" asp-for="RememberLogin">
-                                        <label class="form-check-label" asp-for="RememberLogin">
-                                            Remember My Login
-                                        </label>
+
+                            <div class="text-right">
+                                @if (Model.AllowRememberLogin)
+                                {
+                                    <div class="form-group">
+                                        <div class="form-check">
+                                            <input class="form-check-input" asp-for="RememberLogin">
+                                            <label class="form-check-label" asp-for="RememberLogin">
+                                                Remember My Login
+                                            </label>
+                                        </div>
                                     </div>
-                                </div>
-                            }
-                            <button class="btn btn-primary" name="button" value="login">Login</button>
-                            <button class="btn btn-secondary" name="button" value="cancel">Cancel</button>
+                                }
+                                <button class="btn btn-primary" name="button" value="login">Login</button>
+                            </div>
+
+                            @*<button class="btn btn-secondary" name="button" value="cancel">Cancel</button>*@
                         </form>
                     </div>
                 </div>
+            </div>
+            <div class="col-sm-4">
+
             </div>
         }
 

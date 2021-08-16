@@ -13,8 +13,6 @@ COPY ["common/Abacuza.DataAccess.Mongo/Abacuza.DataAccess.Mongo.csproj", "common
 COPY ["common/Abacuza.DataAccess.DistributedCached/Abacuza.DataAccess.DistributedCached.csproj", "common/Abacuza.DataAccess.DistributedCached/"]
 RUN dotnet restore "jobs/Abacuza.Jobs.ApiService/Abacuza.Jobs.ApiService.csproj"
 COPY . .
-#WORKDIR "/src/jobs/Abacuza.Jobs.ApiService"
-#RUN dotnet build "Abacuza.Jobs.ApiService.csproj" -c Release -o /app/build
 
 FROM build AS publish
 WORKDIR "/src/jobs/Abacuza.Jobs.ApiService"
@@ -22,6 +20,7 @@ RUN dotnet publish -p:IncludeLicenseWhenGeneratePackage=false "Abacuza.Jobs.ApiS
 
 FROM base AS final
 COPY ["jobs/Abacuza.Jobs.ApiService/wait-for-it.sh", "/wait-for-it.sh"]
+RUN chmod +x /wait-for-it.sh
 WORKDIR /app
 COPY --from=publish /app/publish .
 CMD ["dotnet", "Abacuza.Jobs.ApiService.dll"]

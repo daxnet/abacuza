@@ -72,14 +72,19 @@ namespace Abacuza.Services.ApiGateway
         {
             var idsAuthority = Configuration["ids:authority"] ?? "https://localhost:9051";
             var authenticationProviderKey = "authKey";
-            Action<JwtBearerOptions> jwtBearerOptions = o =>
+            void jwtBearerOptions(JwtBearerOptions o)
             {
                 o.Authority = idsAuthority;
-                o.RequireHttpsMetadata = true;
-            };
+                o.RequireHttpsMetadata = false;
+                o.Audience = "api";
+            }
 
             services.AddOcelot();
-            services.AddAuthentication().AddJwtBearer(authenticationProviderKey, jwtBearerOptions);
+            services.AddAuthentication(options =>
+            {
+                options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+            }).AddJwtBearer(authenticationProviderKey, jwtBearerOptions);
 
             services.AddCors(options => options.AddPolicy("AllowAll", p =>
                 p.AllowAnyOrigin()

@@ -11,12 +11,12 @@
 // Apache License Version 2.0
 // ==============================================================
 
-using Abacuza.Common;
-using Abacuza.Common.DataAccess;
 using System;
 using System.Collections.Generic;
+using Abacuza.Common;
+using Abacuza.Common.DataAccess;
 
-namespace Abacuza.JobSchedulers.Models
+namespace Abacuza.Jobs.ApiService.Models
 {
     [StorageModel("jobs")]
     public sealed class JobEntity : IEntity

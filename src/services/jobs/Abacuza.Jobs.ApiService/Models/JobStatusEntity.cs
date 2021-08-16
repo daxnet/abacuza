@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
-namespace Abacuza.JobSchedulers.Models
+namespace Abacuza.Jobs.ApiService.Models
 {
     public class JobStatusEntity
     {

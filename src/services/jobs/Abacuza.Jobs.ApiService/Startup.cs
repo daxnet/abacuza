@@ -11,13 +11,18 @@
 // Apache License Version 2.0
 // ==============================================================
 
+using System;
+using System.Collections.Generic;
+using System.Collections.Specialized;
+using System.IO;
+using System.Linq;
+using System.Reflection;
 using Abacuza.Common.DataAccess;
 using Abacuza.Common.Utilities;
 using Abacuza.DataAccess.DistributedCached;
 using Abacuza.DataAccess.Mongo;
+using Abacuza.Jobs.ApiService.Models;
 using Abacuza.Jobs.ApiService.Services;
-using Abacuza.JobSchedulers.Models;
-using Abacuza.JobSchedulers.Services;
 using McMaster.NETCore.Plugins;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -33,14 +38,8 @@ using Newtonsoft.Json.Serialization;
 using Polly;
 using Quartz.Impl;
 using Quartz.Spi;
-using System;
-using System.Collections.Generic;
-using System.Collections.Specialized;
-using System.IO;
-using System.Linq;
-using System.Reflection;
 
-namespace Abacuza.JobSchedulers
+namespace Abacuza.Jobs.ApiService
 {
     public class Startup
     {
@@ -103,6 +102,12 @@ namespace Abacuza.JobSchedulers
                 config.BaseAddress = new Uri(Configuration["services:commonService:url"]);
                 config.Timeout = Utils.ParseTimeSpanExpression(Configuration["services:commonService:timeout"], TimeSpan.FromSeconds(2));
             }).AddTransientHttpErrorPolicy(builder => builder.RetryAsync(Convert.ToInt32(Configuration["services:commonService:retries"])));
+
+            services.AddHttpClient<ProjectApiService>(config =>
+            {
+                config.BaseAddress = new Uri(Configuration["services:projectService:url"]);
+                config.Timeout = Utils.ParseTimeSpanExpression(Configuration["services:projectService:timeout"], TimeSpan.FromSeconds(2));
+            }).AddTransientHttpErrorPolicy(builder => builder.RetryAsync(Convert.ToInt32(Configuration["services:projectService:retries"])));
 
             // Initializes the job scheduler
             var quartzSchedulerSettings = new NameValueCollection

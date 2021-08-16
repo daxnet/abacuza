@@ -1,17 +1,17 @@
-﻿using Abacuza.JobSchedulers.Models;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Logging;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using Abacuza.Jobs.ApiService.Models;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
-namespace Abacuza.JobSchedulers.Services
+namespace Abacuza.Jobs.ApiService.Services
 {
     /// <summary>
     /// Represents the service client that communicates with the cluster service and
@@ -62,7 +62,7 @@ namespace Abacuza.JobSchedulers.Services
                 var failedClusterJob = JObject.Parse(await responseMessage.Content.ReadAsStringAsync(cancellationToken));
                 var failedJobEntity = new JobEntity
                 {
-                    ConnectionId = Guid.Parse(failedClusterJob["connectionId"]!.Value<string>()),
+                    ConnectionId = failedClusterJob["connectionId"] == null ? (Guid?)null : Guid.Parse(failedClusterJob["connectionId"]!.Value<string>()!),
                     LocalJobId = failedClusterJob["localJobId"]!.Value<string>(),
                     Name = failedClusterJob["name"]!.Value<string>(),
                     State = JobState.Failed,

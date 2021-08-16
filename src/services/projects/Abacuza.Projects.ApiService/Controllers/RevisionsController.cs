@@ -24,11 +24,11 @@ namespace Abacuza.Projects.ApiService.Controllers
             => (_dao, _logger, _jobsApiService) = (dao, logger, jobsApiService);
 
         [HttpGet("{id}", Name = "GetRevisionById")]
-        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(RevisionEntity))]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(Revision))]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> GetRevisionByIdAsync(Guid id)
         {
-            var revision = await _dao.GetByIdAsync<RevisionEntity>(id);
+            var revision = await _dao.GetByIdAsync<Revision>(id);
             if (revision == null)
             {
                 return NotFound($"The revision {id} doesn't exist.");
@@ -38,10 +38,10 @@ namespace Abacuza.Projects.ApiService.Controllers
         }
 
         [HttpGet("{id}/logs")]
-        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(RevisionEntity))]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(Revision))]
         public async Task<IActionResult> GetRevisionLogsByIdAsync(Guid id)
         {
-            var revision = await _dao.GetByIdAsync<RevisionEntity>(id);
+            var revision = await _dao.GetByIdAsync<Revision>(id);
             if (revision == null)
             {
                 return NotFound($"The revision {id} doesn't exist.");

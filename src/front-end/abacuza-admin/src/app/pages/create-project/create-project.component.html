@@ -1,0 +1,28 @@
+<div class="form-group">
+    <label for="name">Name</label>
+    <input ngbAutofocus type="text" class="form-control" id="name" required [(ngModel)]="data.project.name"
+        name="name" placeholder="Name of the project">
+</div>
+<div class="form-group">
+    <label for="description">Description</label>
+    <input type="text" class="form-control" id="description" [(ngModel)]="data.project.description"
+        name="description" placeholder="Description of the project">
+</div>
+<div class="form-group">
+    <label for="inputEndpointSelection">Input endpoint</label>
+    <select id="inputEndpointSelection" name="inputEndpointSelection" class="form-control" [(ngModel)]="data.selectedInputEndpointName">
+        <option *ngFor="let inputEndpoint of data.inputEndpoints" [ngValue]="inputEndpoint.name">{{inputEndpoint.displayName}}</option>
+    </select>
+</div>
+<div class="form-group">
+    <label for="outputEndpointSelection">Output endpoint</label>
+    <select id="outputEndpointSelection" name="outputEndpointSelection" class="form-control" [(ngModel)]="data.selectedOutputEndpointName">
+        <option *ngFor="let outputEndpoint of data.outputEndpoints" [ngValue]="outputEndpoint.name">{{outputEndpoint.displayName}}</option>
+    </select>
+</div>
+<div class="form-group">
+    <label for="jobRunner">Job runner</label>
+    <select id="jobRunner" name="jobRunner" class="form-control" [(ngModel)]="data.project.jobRunnerId">
+        <option *ngFor="let jr of data.jobRunners" [ngValue]="jr.id">{{jr.name}}</option>
+    </select>
+</div>
