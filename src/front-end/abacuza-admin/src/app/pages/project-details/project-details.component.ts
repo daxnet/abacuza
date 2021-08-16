@@ -1,6 +1,6 @@
-import { Component, OnInit, ChangeDetectorRef, ChangeDetectionStrategy } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef, ChangeDetectionStrategy, OnDestroy, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { Subscription, throwError } from 'rxjs';
+import { Subject, Subscription, throwError } from 'rxjs';
 import { ProjectsService } from 'src/app/services/projects.service';
 import { Project } from 'src/app/models/project';
 import { JobRunnersService } from 'src/app/services/job-runners.service';
@@ -15,13 +15,15 @@ import { ToastService } from 'src/app/services/toast/toast.service';
 import { cloneDeep } from 'lodash';
 import { CommonDialogService } from 'src/app/services/common-dialog/common-dialog.service';
 import { CommonDialogType, CommonDialogResult } from 'src/app/services/common-dialog/common-dialog-data-types';
+import { ProjectRevision } from 'src/app/models/project-revision';
+import { DataTableDirective } from 'angular-datatables';
 
 @Component({
   selector: 'app-project-details',
   templateUrl: './project-details.component.html',
   styleUrls: ['./project-details.component.scss']
 })
-export class ProjectDetailsComponent implements OnInit {
+export class ProjectDetailsComponent implements OnInit, OnDestroy {
 
   private subscriptions: Subscription[] = [];
 
@@ -29,11 +31,17 @@ export class ProjectDetailsComponent implements OnInit {
   jobRunners: JobRunner[] | null = [];
   inputEndpoints: Endpoint[] | null = [];
   outputEndpoints: Endpoint[] | null = [];
+  revisions: ProjectRevision[] | null = [];
   selectedAddingEndpointName?: string;
   selectedOutputEndpointName?: string;
   selectedOutputEndpointDefinition?: ProjectEndpointDefinition;
   inputEndpointExpandAll: boolean = true;
   activeTabId: any;
+  timerId: any;
+  dtTableOptions: DataTables.Settings = {};
+  dtTrigger: Subject<any> = new Subject<any>();
+  @ViewChild(DataTableDirective, { static: false })
+  dtElement!: DataTableDirective;
 
   constructor(private activatedRoute: ActivatedRoute,
     private router: Router,
@@ -44,6 +52,11 @@ export class ProjectDetailsComponent implements OnInit {
     private comonDialogService: CommonDialogService) { }
 
   ngOnInit(): void {
+    this.dtTableOptions = {
+      responsive: true,
+      pagingType: 'full_numbers'
+    };
+
     this.subscriptions.push(this.activatedRoute.params.subscribe(params => {
       this.subscriptions.push(this.projectsService.getProjectById(params.id)
         .subscribe(response => {
@@ -69,6 +82,11 @@ export class ProjectDetailsComponent implements OnInit {
           this.outputEndpoints = response.body;
         }));
     }));
+  }
+
+  ngOnDestroy(): void {
+    this.dtTrigger.unsubscribe();
+    this.subscriptions.forEach(s => s.unsubscribe());
   }
 
   expandCollapseAll(accordion: any): void {
@@ -183,6 +201,7 @@ export class ProjectDetailsComponent implements OnInit {
         })
       );
       this.activeTabId = 3;
+      // this.startTimer();
     }
     
   }
@@ -193,5 +212,47 @@ export class ProjectDetailsComponent implements OnInit {
 
   close(): void {
     this.router.navigate(['/projects']);
+  }
+
+  activeIdChange(event: any): void {
+    this.updateRevisions(this.project!, this.projectsService, this.subscriptions, this.revisions);
+    if (event === 3) {
+      this.startTimer();
+    } else {
+      this.stopTimer();
+    }
+  }
+
+  private stopTimer(): void {
+    if (this.timerId) {
+      clearInterval(this.timerId);
+    }
+  }
+
+  private startTimer(): void {
+    this.stopTimer();
+    this.timerId = setInterval(this.updateRevisions,
+      5000, this.project, this.projectsService, this.subscriptions, this.revisions);
+  }
+
+  private updateRevisions(project: Project, 
+    projectsService: ProjectsService, 
+    subscriptions: Subscription[],
+    revisions: ProjectRevision[] | null): void {
+    if (project && project.id) {
+      subscriptions.push(projectsService.getRevisions(project?.id)
+        .subscribe(rev => {
+          revisions = rev;
+          this.rerender();
+        }));
+    }
+    
+  }
+
+  private rerender(): void {
+    this.dtElement.dtInstance.then((dtInstance: DataTables.Api) => {
+      dtInstance.destroy();
+      this.dtTrigger.next();
+    });
   }
 }
