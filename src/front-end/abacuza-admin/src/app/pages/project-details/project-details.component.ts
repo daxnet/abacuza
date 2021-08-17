@@ -17,6 +17,12 @@ import { CommonDialogService } from 'src/app/services/common-dialog/common-dialo
 import { CommonDialogType, CommonDialogResult } from 'src/app/services/common-dialog/common-dialog-data-types';
 import { ProjectRevision } from 'src/app/models/project-revision';
 import { DataTableDirective } from 'angular-datatables';
+import { LocalDataSource } from 'ng2-smart-table';
+import { SmartTableDateCellRenderComponent } from 'src/app/components/smart-table-date-cell-render/smart-table-date-cell-render.component';
+import { SmartTableJobStatusRenderComponent } from 'src/app/components/smart-table-job-status-render/smart-table-job-status-render.component';
+import { ComponentDialogService } from 'src/app/services/component-dialog/component-dialog.service';
+import { TextMessageAreaComponent } from 'src/app/components/text-message-area/text-message-area.component';
+import { ComponentDialogOptions, ComponentDialogUsage } from 'src/app/services/component-dialog/component-dialog-options';
 
 @Component({
   selector: 'app-project-details',
@@ -38,10 +44,44 @@ export class ProjectDetailsComponent implements OnInit, OnDestroy {
   inputEndpointExpandAll: boolean = true;
   activeTabId: any;
   timerId: any;
-  dtTableOptions: DataTables.Settings = {};
-  dtTrigger: Subject<any> = new Subject<any>();
-  @ViewChild(DataTableDirective, { static: false })
-  dtElement!: DataTableDirective;
+
+  revisionsSource: LocalDataSource = new LocalDataSource();
+
+  revisionsTableSettings = {
+    hideSubHeader: true,
+    columns: {
+      createdDate: {
+        title: 'Created At',
+        type: 'custom',
+        renderComponent: SmartTableDateCellRenderComponent
+      },
+      jobSubmissionName: {
+        title: 'Job Ref',
+        type: 'text'
+      },
+      jobStatusName: {
+        title: 'Job Status',
+        type: 'custom',
+        renderComponent: SmartTableJobStatusRenderComponent
+      },
+    },
+    actions: {
+      add: false,
+      edit: false,
+      delete: false,
+      custom: [
+        {
+          name: 'viewLogs',
+          title: '<i class="fas fa-file-alt" title="View logs"></i>',
+        },
+      ],
+      position: 'right',
+    },
+    mode: 'external',
+    pager: {
+      perPage: 8,
+    },
+  };
 
   constructor(private activatedRoute: ActivatedRoute,
     private router: Router,
@@ -49,13 +89,10 @@ export class ProjectDetailsComponent implements OnInit, OnDestroy {
     private jobRunnersService: JobRunnersService,
     private endpointsService: EndpointsService,
     private toastService: ToastService,
-    private comonDialogService: CommonDialogService) { }
+    private comonDialogService: CommonDialogService,
+    private componentDialogService: ComponentDialogService) { }
 
   ngOnInit(): void {
-    this.dtTableOptions = {
-      responsive: true,
-      pagingType: 'full_numbers'
-    };
 
     this.subscriptions.push(this.activatedRoute.params.subscribe(params => {
       this.subscriptions.push(this.projectsService.getProjectById(params.id)
@@ -64,6 +101,9 @@ export class ProjectDetailsComponent implements OnInit, OnDestroy {
           this.selectedOutputEndpointDefinition = this.project?.outputEndpoints.find(oed => oed.id === this.project?.selectedOutputEndpointId);
           if (this.selectedOutputEndpointDefinition) {
             this.selectedOutputEndpointName = this.selectedOutputEndpointDefinition.name;
+          }
+          if (this.project) {
+            this.updateRevisions(this.project, this.projectsService, this.subscriptions, this.revisionsSource);
           }
         }));
       this.subscriptions.push(this.jobRunnersService.getJobRunners()
@@ -85,7 +125,6 @@ export class ProjectDetailsComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    this.dtTrigger.unsubscribe();
     this.subscriptions.forEach(s => s.unsubscribe());
   }
 
@@ -112,7 +151,7 @@ export class ProjectDetailsComponent implements OnInit, OnDestroy {
       this.subscriptions.push(this.comonDialogService.open('Confirm', 'Are you sure you want to delete the selected endpoint?', CommonDialogType.Confirm)
         .subscribe(dr => {
           if (dr) {
-            switch(dr) {
+            switch (dr) {
               case CommonDialogResult.Yes:
                 if (this.project) {
                   this.project.inputEndpoints = this.project?.inputEndpoints.filter(x => x.id !== event.id);
@@ -203,7 +242,7 @@ export class ProjectDetailsComponent implements OnInit, OnDestroy {
       this.activeTabId = 3;
       // this.startTimer();
     }
-    
+
   }
 
   getSelectedInputEndpointTitle(definition: ProjectEndpointDefinition): string | null {
@@ -215,12 +254,39 @@ export class ProjectDetailsComponent implements OnInit, OnDestroy {
   }
 
   activeIdChange(event: any): void {
-    this.updateRevisions(this.project!, this.projectsService, this.subscriptions, this.revisions);
+    this.updateRevisions(this.project!, this.projectsService, this.subscriptions, this.revisionsSource);
     if (event === 3) {
       this.startTimer();
     } else {
       this.stopTimer();
     }
+  }
+
+  onRevisionsCustomAction(event: any): void {
+    switch (event.action) {
+      case 'viewLogs':
+        this.showLogs(event.data.id);
+        // console.log(event.data.id);
+        break;
+    }
+  }
+
+  private showLogs(revisionId: string): void {
+    this.subscriptions.push(this.projectsService.getRevisionLogs(revisionId)
+      .subscribe(logEntries => {
+        let log = '';
+        logEntries.forEach(le => log = log.concat(le).concat('\r\n'));
+        this.subscriptions.push(this.componentDialogService.open(TextMessageAreaComponent, {
+          message: log,
+          style: 'font-family: \'Courier New\', Courier, monospace; font-size: x-small;'
+        }, {
+          title: 'Job Logs',
+          usage: ComponentDialogUsage.Create,
+          acceptButtonText: 'OK',
+          cancelButtonText: 'Close'
+        }, 'lg').subscribe(_ => { }));
+      })
+    );
   }
 
   private stopTimer(): void {
@@ -232,27 +298,23 @@ export class ProjectDetailsComponent implements OnInit, OnDestroy {
   private startTimer(): void {
     this.stopTimer();
     this.timerId = setInterval(this.updateRevisions,
-      5000, this.project, this.projectsService, this.subscriptions, this.revisions);
+      5000,
+      this.project,
+      this.projectsService,
+      this.subscriptions,
+      this.revisionsSource);
   }
 
-  private updateRevisions(project: Project, 
-    projectsService: ProjectsService, 
+  private updateRevisions(project: Project,
+    projectsService: ProjectsService,
     subscriptions: Subscription[],
-    revisions: ProjectRevision[] | null): void {
+    revisionsSource: LocalDataSource): void {
     if (project && project.id) {
       subscriptions.push(projectsService.getRevisions(project?.id)
         .subscribe(rev => {
-          revisions = rev;
-          this.rerender();
+          revisionsSource.load(rev);
         }));
     }
-    
-  }
 
-  private rerender(): void {
-    this.dtElement.dtInstance.then((dtInstance: DataTables.Api) => {
-      dtInstance.destroy();
-      this.dtTrigger.next();
-    });
   }
 }

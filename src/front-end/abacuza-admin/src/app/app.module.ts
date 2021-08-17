@@ -38,6 +38,10 @@ import { CheckBoxComponent } from './components/ui-components/check-box.componen
 import { DropDownBoxComponent } from './components/ui-components/drop-down-box.component';
 import { JsonTextAreaComponent } from './components/ui-components/json-text-area.component';
 import { FilePickerComponent } from './components/ui-components/file-picker.component';
+import { Ng2SmartTableModule } from 'ng2-smart-table';
+import { SmartTableDateCellRenderComponent } from './components/smart-table-date-cell-render/smart-table-date-cell-render.component';
+import { SmartTableJobStatusRenderComponent } from './components/smart-table-job-status-render/smart-table-job-status-render.component';
+import { TextMessageAreaComponent } from './components/text-message-area/text-message-area.component';
 
 @NgModule({
   declarations: [
@@ -70,7 +74,10 @@ import { FilePickerComponent } from './components/ui-components/file-picker.comp
     CheckBoxComponent,
     DropDownBoxComponent,
     JsonTextAreaComponent,
-    FilePickerComponent
+    FilePickerComponent,
+    SmartTableDateCellRenderComponent,
+    SmartTableJobStatusRenderComponent,
+    TextMessageAreaComponent
   ],
   imports: [
     BrowserModule,
@@ -79,7 +86,8 @@ import { FilePickerComponent } from './components/ui-components/file-picker.comp
     FormsModule,
     NgbModule,
     DataTablesModule,
-    NgJsonEditorModule
+    NgJsonEditorModule,
+    Ng2SmartTableModule
   ],
   providers: [
     {

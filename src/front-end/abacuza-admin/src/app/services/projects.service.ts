@@ -88,4 +88,10 @@ export class ProjectsService {
   public deleteProject(id: string): Observable<any> {
     return this.httpClient.delete(`${environment.apiBaseUrl}project-service/projects/${id}`);
   }
+
+  public getRevisionLogs(revisionId: string): Observable<string[]> {
+    return this.httpClient.get<string[]>(`${environment.apiBaseUrl}project-service/revisions/${revisionId}/logs`, {
+      observe: 'body',
+    });
+  }
 }

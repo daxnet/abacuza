@@ -126,27 +126,8 @@
                                     REVISIONS
                                 </a>
                                 <ng-template ngbNavContent>
-                                    <table datatable [dtOptions]='dtTableOptions' [dtTrigger]='dtTrigger'
-                                        class="table table-bordered table-striped table-hover">
-                                        <thead>
-                                            <tr>
-                                                <th>Created At</th>
-                                                <th>Job Ref</th>
-                                                <th>Job Status</th>
-                                                <th class="text-center">Actions</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            <tr *ngFor='let rev of revisions'>
-                                                <td>{{rev.createdDate}}</td>
-                                                <td>{{rev.jobSubmissionName}}</td>
-                                                <td>{{rev.jobStatusName}}</td>
-                                                <td class="text-center">
-                                                    
-                                                </td>
-                                            </tr>
-                                        </tbody>
-                                    </table>
+                                    <ng2-smart-table [settings]="revisionsTableSettings" [source]="revisionsSource" (custom)="onRevisionsCustomAction($event)">
+                                    </ng2-smart-table>
                                 </ng-template>
                             </li>
                         </ul>

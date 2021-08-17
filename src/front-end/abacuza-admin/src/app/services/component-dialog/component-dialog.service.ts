@@ -12,11 +12,19 @@ export class ComponentDialogService {
 
   constructor(private modalService: NgbModal) { }
 
-  open(component: Type<any>, data: any = undefined, options: ComponentDialogOptions | undefined = undefined): Observable<any> {
-    const modalRef = this.modalService.open(ComponentDialogComponent, {
+  open(component: Type<any>, 
+    data: any = undefined, 
+    options: ComponentDialogOptions | undefined = undefined,
+    size: 'lg' | 'xl' | 'sm' | undefined = undefined): Observable<any> {
+    let dlgOpts: any = {
       backdrop: 'static',
       keyboard: false
-    });
+    };
+    if (size) {
+      dlgOpts.size = size;
+    }
+
+    const modalRef = this.modalService.open(ComponentDialogComponent, dlgOpts);
     modalRef.componentInstance.component = component;
     const defaultOption = ComponentDialogOptions.createDefault();
     if (!options) {
