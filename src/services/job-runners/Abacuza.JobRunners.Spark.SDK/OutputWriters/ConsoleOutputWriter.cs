@@ -7,6 +7,9 @@ using System.Text;
 
 namespace Abacuza.JobRunners.Spark.SDK.OutputWriters
 {
+    /// <summary>
+    /// Represents the output writer that writes the output to the console.
+    /// </summary>
     internal sealed class ConsoleOutputWriter : OutputWriter<ConsoleOutputEndpoint>
     {
         protected override void WriteToInternal(DataFrame dataFrame, ConsoleOutputEndpoint outputEndpoint, ProjectContext projectContext)

@@ -1,0 +1,26 @@
+<label [for]='id'>{{title ? title: 'Files'}}</label>
+<table [id]='id' datatable [dtOptions]='dtTableOptions' [dtTrigger]='dtTrigger'
+    class="table table-bordered table-hover">
+    <thead>
+        <tr>
+            <th>File name</th>
+            <th class="text-center action-column">
+                <a href="javascript:void(0);" title="Add files" class="m-1" (click)="onAddFile()">
+                    <span class="fas fa-plus">
+                    </span>
+                </a>
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr *ngFor='let f of initFiles'>
+            <td>{{f.file}}</td>
+            <td class="text-center action-column">
+                <a href="javascript:void(0);" title="Delete" class="m-1" (click)="onDeleteFile(f)">
+                    <span class="fas fa-trash-alt">
+                    </span>
+                </a>
+            </td>
+        </tr>
+    </tbody>
+</table>

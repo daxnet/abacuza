@@ -152,21 +152,38 @@ services:
             - abacuza-job-service
             - abacuza-project-service
         environment:
-            - APPLICATION_NAME=abacuza
+            - APPLICATION_NAME=${APPLICATION_NAME}
+            - ids__authority=${ACCESS_SCHEME}://${ACCESS_HOST}:${ACCESS_PORT}/auth/
+    abacuza-auth:
+        image: daxnet/abacuza-auth
+        environment:
+            - ConnectionStrings__DefaultConnection=User ID=postgres;Password=postgres;Host=abacuza-postgres;Port=5432;Database=abacuza
+            - id4__redirectUris=${ACCESS_SCHEME}://${ACCESS_HOST}:${ACCESS_PORT}/auth-callback
+            - id4__postLogoutRedirectUris=${ACCESS_SCHEME}://${ACCESS_HOST}:${ACCESS_PORT}/
+            - id4__allowedCorsOrigins=${ACCESS_SCHEME}://${ACCESS_HOST}:${ACCESS_PORT}
+            - id4__originOverride=${ACCESS_SCHEME}://${ACCESS_HOST}:${ACCESS_PORT}/auth
     abacuza-client:
         image: daxnet/abacuza-client
         depends_on:
             - abacuza-api-gateway
+            - abacuza-auth
+        environment:
+            - API_BASE_URL=${ACCESS_SCHEME}://${ACCESS_HOST}:${ACCESS_PORT}/
+            - RETURN_URL=${ACCESS_SCHEME}://${ACCESS_HOST}:${ACCESS_PORT}/
+            - IDP_AUTHORITY=${ACCESS_SCHEME}://${ACCESS_HOST}:${ACCESS_PORT}/auth/
+            - IDP_REDIRECT_URL=${ACCESS_SCHEME}://${ACCESS_HOST}:${ACCESS_PORT}/auth-callback
     abacuza-nginx:
         image: daxnet/abacuza-nginx
         depends_on:
             - abacuza-api-gateway
             - abacuza-client
+            - abacuza-auth
         links:
             - abacuza-api-gateway
             - abacuza-client
+            - abacuza-auth
         environment:
-            - APPLICATION_NAME=abacuza
+            - APPLICATION_NAME=${APPLICATION_NAME}
         ports:
-            - 9320:80
+            - ${ACCESS_PORT}:80
         

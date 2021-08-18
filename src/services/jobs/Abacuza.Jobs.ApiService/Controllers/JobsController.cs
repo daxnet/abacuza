@@ -11,19 +11,19 @@
 // Apache License Version 2.0
 // ==============================================================
 
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Linq.Expressions;
+using System.Threading.Tasks;
 using Abacuza.Common.DataAccess;
-using Abacuza.JobSchedulers.Models;
+using Abacuza.Jobs.ApiService.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Quartz;
-using System;
-using System.Linq;
-using System.Collections.Generic;
-using System.Linq.Expressions;
-using System.Threading.Tasks;
 
-namespace Abacuza.JobSchedulers.Controllers
+namespace Abacuza.Jobs.ApiService.Controllers
 {
     [Route("api/jobs")]
     [ApiController]
@@ -134,7 +134,7 @@ namespace Abacuza.JobSchedulers.Controllers
             await _quartzScheduler.ScheduleJob(jobDetail, jobTrigger);
             var message = $"The job has been submitted successfully, scheduled job submission ID: {jobName}";
             _logger.LogInformation(message);
-            return CreatedAtAction(nameof(GetJobBySubmissionNameAsync), new { submissionName = jobName }, jobName);
+            return CreatedAtAction(nameof(this.GetJobBySubmissionNameAsync), new { submissionName = jobName }, jobName);
         }
 
         #endregion Public Methods

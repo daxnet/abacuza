@@ -1,5 +1,8 @@
 ﻿
+using IdentityModel;
+using IdentityServer4;
 using IdentityServer4.Models;
+using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,28 +19,47 @@ namespace Abacuza.Services.Identity.Models
                 new IdentityResources.OpenId(),
                 new IdentityResources.Email(),
                 new IdentityResources.Profile(),
-                new IdentityResources.Address(),
-                new IdentityResources.Phone()
+                new IdentityResource("roles", "User Roles", new[]{"role"})
             };
 
         public static IEnumerable<ApiResource> GetApiResources() =>
-            new []
+            new[]
             {
-                new ApiResource("api.common", "Common Service")
+                new ApiResource("api", "Default API Resource")
                 {
                     Scopes =
                     {
-                        "api.common.full_access"
-                    },
-                    UserClaims =
-                    {
-                        ClaimTypes.NameIdentifier, ClaimTypes.Name, ClaimTypes.Email, ClaimTypes.Role
+                        "api"
                     }
                 }
             };
 
-        public static IEnumerable<Client> GetClients() =>
-            new []
+        public static IEnumerable<ApiScope> ApiScopes =>
+            new[]
+            {
+                new ApiScope("api", "Default API Resource", new[]
+                {
+                    JwtClaimTypes.Name,
+                    JwtClaimTypes.Email,
+                    JwtClaimTypes.Role,
+                })
+            };
+
+        public static IEnumerable<Client> GetClients(IConfiguration configuration)
+        {
+            var redirectUris = string.IsNullOrEmpty(configuration?["id4:redirectUris"]) ? new [] {
+                "http://localhost:4200/auth-callback"
+            } : configuration["id4:redirectUris"].Split(";");
+            
+            var postLogoutRedirectUris = string.IsNullOrEmpty(configuration?["id4:postLogoutRedirectUris"]) ? new [] {
+                "http://localhost:4200/"
+            } : configuration["id4:postLogoutRedirectUris"].Split(";");
+            
+            var allowedCorsOrigins = string.IsNullOrEmpty(configuration?["id4:allowedCorsOrigins"]) ? new [] {
+                "http://localhost:4200", "http://localhost:9050"
+            } : configuration["id4:allowedCorsOrigins"].Split(";");
+            
+            return new[]
             {
                 new Client
                 {
@@ -45,13 +67,23 @@ namespace Abacuza.Services.Identity.Models
                     ClientId = "web",
                     ClientName = "Abacuza Administrator",
                     AllowedGrantTypes = GrantTypes.Implicit,
-                    AllowedScopes = { "openid", "profile", "email", "address", "phone", "api.common.full_access" },
-                    RedirectUris = {"http://localhost:4200/auth-callback"},
-                    PostLogoutRedirectUris = {"http://localhost:4200/"},
-                    AllowedCorsOrigins = {"http://localhost:4200"},
+                    AllowedScopes =
+                    {
+                        IdentityServerConstants.StandardScopes.OpenId,
+                        IdentityServerConstants.StandardScopes.Profile,
+                        IdentityServerConstants.StandardScopes.Email,
+                        "roles",
+                        "api"
+                    },
+                    RedirectUris = redirectUris,
+                    PostLogoutRedirectUris = postLogoutRedirectUris,
+                    AllowedCorsOrigins = allowedCorsOrigins,
                     AllowAccessTokensViaBrowser = true,
-                    AccessTokenLifetime = 3600
+                    AlwaysSendClientClaims = true,
+                    AlwaysIncludeUserClaimsInIdToken = true,
+                    AccessTokenLifetime = 3600,
                 }
             };
+        }
     }
 }

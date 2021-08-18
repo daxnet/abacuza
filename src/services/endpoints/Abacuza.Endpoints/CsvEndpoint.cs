@@ -56,7 +56,7 @@ namespace Abacuza.Endpoints
 
         [Checkbox("chkIgnoreLeadingWhiteSpace",
                     "Ignore leading white space",
-                    DefaultValue = "false",
+                    DefaultValue = "true",
                     Ordinal = 160,
                     Tooltip = "Defines whether or not leading whitespaces from values should be skipped.")]
         public bool IgnoreLeadingWhiteSpace { get; set; }

@@ -143,11 +143,23 @@ namespace Abacuza.Endpoints
         /// <param name="settings">The JSON setting to be applied to the current endpoint.</param>
         public void ApplySettings(string settings)
         {
+            // firstly apply the default values that are defined on the property attribute.
+            var propertyWithDefaultValue = from p in this.GetType().GetProperties(BindingFlags.Public | BindingFlags.Instance)
+                                           where p.CanWrite && p.GetCustomAttributes().Any(a => a.GetType().IsSubclassOf(typeof(UIComponentAttribute)))
+                                           let uiComponentAttribute = p.GetCustomAttributes().First(a => a.GetType().IsSubclassOf(typeof(UIComponentAttribute))) as UIComponentAttribute
+                                           where !string.IsNullOrEmpty(uiComponentAttribute.DefaultValue)
+                                           select new { Property = p, DefaultValue = ConvertStringValueToObject(uiComponentAttribute.DefaultValue, p.PropertyType) };
+            foreach (var p in propertyWithDefaultValue)
+            {
+                p.Property.SetValue(this, p.DefaultValue);
+            }
+
+            // then read in the settings configured from the project.
             var settingsArray = JArray.Parse(settings);
             foreach (var jobj in settingsArray)
             {
-                var id = jobj["id"]!.ToObject<string>()!;
-                var name = id.Substring(id.LastIndexOf('.') + 1, id.Length - id.LastIndexOf('.') - 1);
+                var componentId = jobj["component"]!.ToObject<string>()!;
+                var name = componentId.Substring(componentId.LastIndexOf('.') + 1, componentId.Length - componentId.LastIndexOf('.') - 1);
                 var value = jobj["value"]!.ToObject<object>();
                 var property = (from p in this.GetType().GetProperties(BindingFlags.Public | BindingFlags.Instance)
                                 where p.CanWrite && p.GetCustomAttributes().Any(a => a.GetType().IsSubclassOf(typeof(UIComponentAttribute)))
