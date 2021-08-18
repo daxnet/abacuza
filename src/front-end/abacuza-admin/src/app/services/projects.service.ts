@@ -3,6 +3,7 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { environment } from 'src/environments/environment';
 import { Project } from '../models/project';
+import { ProjectRevision } from '../models/project-revision';
 
 @Injectable({
   providedIn: 'root'
@@ -20,6 +21,12 @@ export class ProjectsService {
   public getProjectById(id: string): Observable<HttpResponse<Project>> {
     return this.httpClient.get<Project>(`${environment.apiBaseUrl}project-service/projects/${id}`, {
       observe: 'response',
+    });
+  }
+
+  public getRevisions(projectId: string, includeJobInformation: boolean = true): Observable<ProjectRevision[]> {
+    return this.httpClient.get<ProjectRevision[]>(`${environment.apiBaseUrl}project-service/projects/${projectId}/revisions?job-info=${includeJobInformation}`, {
+      observe: 'body'
     });
   }
 
@@ -80,5 +87,11 @@ export class ProjectsService {
 
   public deleteProject(id: string): Observable<any> {
     return this.httpClient.delete(`${environment.apiBaseUrl}project-service/projects/${id}`);
+  }
+
+  public getRevisionLogs(revisionId: string): Observable<string[]> {
+    return this.httpClient.get<string[]>(`${environment.apiBaseUrl}project-service/revisions/${revisionId}/logs`, {
+      observe: 'body',
+    });
   }
 }

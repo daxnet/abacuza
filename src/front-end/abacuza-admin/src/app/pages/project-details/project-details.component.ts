@@ -1,6 +1,6 @@
-import { Component, OnInit, ChangeDetectorRef, ChangeDetectionStrategy } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef, ChangeDetectionStrategy, OnDestroy, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { Subscription, throwError } from 'rxjs';
+import { Subject, Subscription, throwError } from 'rxjs';
 import { ProjectsService } from 'src/app/services/projects.service';
 import { Project } from 'src/app/models/project';
 import { JobRunnersService } from 'src/app/services/job-runners.service';
@@ -15,13 +15,21 @@ import { ToastService } from 'src/app/services/toast/toast.service';
 import { cloneDeep } from 'lodash';
 import { CommonDialogService } from 'src/app/services/common-dialog/common-dialog.service';
 import { CommonDialogType, CommonDialogResult } from 'src/app/services/common-dialog/common-dialog-data-types';
+import { ProjectRevision } from 'src/app/models/project-revision';
+import { DataTableDirective } from 'angular-datatables';
+import { LocalDataSource } from 'ng2-smart-table';
+import { SmartTableDateCellRenderComponent } from 'src/app/components/smart-table-date-cell-render/smart-table-date-cell-render.component';
+import { SmartTableJobStatusRenderComponent } from 'src/app/components/smart-table-job-status-render/smart-table-job-status-render.component';
+import { ComponentDialogService } from 'src/app/services/component-dialog/component-dialog.service';
+import { TextMessageAreaComponent } from 'src/app/components/text-message-area/text-message-area.component';
+import { ComponentDialogOptions, ComponentDialogUsage } from 'src/app/services/component-dialog/component-dialog-options';
 
 @Component({
   selector: 'app-project-details',
   templateUrl: './project-details.component.html',
   styleUrls: ['./project-details.component.scss']
 })
-export class ProjectDetailsComponent implements OnInit {
+export class ProjectDetailsComponent implements OnInit, OnDestroy {
 
   private subscriptions: Subscription[] = [];
 
@@ -29,11 +37,51 @@ export class ProjectDetailsComponent implements OnInit {
   jobRunners: JobRunner[] | null = [];
   inputEndpoints: Endpoint[] | null = [];
   outputEndpoints: Endpoint[] | null = [];
+  revisions: ProjectRevision[] | null = [];
   selectedAddingEndpointName?: string;
   selectedOutputEndpointName?: string;
   selectedOutputEndpointDefinition?: ProjectEndpointDefinition;
   inputEndpointExpandAll: boolean = true;
   activeTabId: any;
+  timerId: any;
+
+  revisionsSource: LocalDataSource = new LocalDataSource();
+
+  revisionsTableSettings = {
+    hideSubHeader: true,
+    columns: {
+      createdDate: {
+        title: 'Created At',
+        type: 'custom',
+        renderComponent: SmartTableDateCellRenderComponent
+      },
+      jobSubmissionName: {
+        title: 'Job Ref',
+        type: 'text'
+      },
+      jobStatusName: {
+        title: 'Job Status',
+        type: 'custom',
+        renderComponent: SmartTableJobStatusRenderComponent
+      },
+    },
+    actions: {
+      add: false,
+      edit: false,
+      delete: false,
+      custom: [
+        {
+          name: 'viewLogs',
+          title: '<i class="fas fa-file-alt" title="View logs"></i>',
+        },
+      ],
+      position: 'right',
+    },
+    mode: 'external',
+    pager: {
+      perPage: 8,
+    },
+  };
 
   constructor(private activatedRoute: ActivatedRoute,
     private router: Router,
@@ -41,9 +89,11 @@ export class ProjectDetailsComponent implements OnInit {
     private jobRunnersService: JobRunnersService,
     private endpointsService: EndpointsService,
     private toastService: ToastService,
-    private comonDialogService: CommonDialogService) { }
+    private comonDialogService: CommonDialogService,
+    private componentDialogService: ComponentDialogService) { }
 
   ngOnInit(): void {
+
     this.subscriptions.push(this.activatedRoute.params.subscribe(params => {
       this.subscriptions.push(this.projectsService.getProjectById(params.id)
         .subscribe(response => {
@@ -51,6 +101,9 @@ export class ProjectDetailsComponent implements OnInit {
           this.selectedOutputEndpointDefinition = this.project?.outputEndpoints.find(oed => oed.id === this.project?.selectedOutputEndpointId);
           if (this.selectedOutputEndpointDefinition) {
             this.selectedOutputEndpointName = this.selectedOutputEndpointDefinition.name;
+          }
+          if (this.project) {
+            this.updateRevisions(this.project, this.projectsService, this.subscriptions, this.revisionsSource);
           }
         }));
       this.subscriptions.push(this.jobRunnersService.getJobRunners()
@@ -69,6 +122,10 @@ export class ProjectDetailsComponent implements OnInit {
           this.outputEndpoints = response.body;
         }));
     }));
+  }
+
+  ngOnDestroy(): void {
+    this.subscriptions.forEach(s => s.unsubscribe());
   }
 
   expandCollapseAll(accordion: any): void {
@@ -94,7 +151,7 @@ export class ProjectDetailsComponent implements OnInit {
       this.subscriptions.push(this.comonDialogService.open('Confirm', 'Are you sure you want to delete the selected endpoint?', CommonDialogType.Confirm)
         .subscribe(dr => {
           if (dr) {
-            switch(dr) {
+            switch (dr) {
               case CommonDialogResult.Yes:
                 if (this.project) {
                   this.project.inputEndpoints = this.project?.inputEndpoints.filter(x => x.id !== event.id);
@@ -183,8 +240,9 @@ export class ProjectDetailsComponent implements OnInit {
         })
       );
       this.activeTabId = 3;
+      // this.startTimer();
     }
-    
+
   }
 
   getSelectedInputEndpointTitle(definition: ProjectEndpointDefinition): string | null {
@@ -193,5 +251,70 @@ export class ProjectDetailsComponent implements OnInit {
 
   close(): void {
     this.router.navigate(['/projects']);
+  }
+
+  activeIdChange(event: any): void {
+    this.updateRevisions(this.project!, this.projectsService, this.subscriptions, this.revisionsSource);
+    if (event === 3) {
+      this.startTimer();
+    } else {
+      this.stopTimer();
+    }
+  }
+
+  onRevisionsCustomAction(event: any): void {
+    switch (event.action) {
+      case 'viewLogs':
+        this.showLogs(event.data.id);
+        // console.log(event.data.id);
+        break;
+    }
+  }
+
+  private showLogs(revisionId: string): void {
+    this.subscriptions.push(this.projectsService.getRevisionLogs(revisionId)
+      .subscribe(logEntries => {
+        let log = '';
+        logEntries.forEach(le => log = log.concat(le).concat('\r\n'));
+        this.subscriptions.push(this.componentDialogService.open(TextMessageAreaComponent, {
+          message: log,
+          style: 'font-family: \'Courier New\', Courier, monospace; font-size: x-small;'
+        }, {
+          title: 'Job Logs',
+          usage: ComponentDialogUsage.Create,
+          acceptButtonText: 'OK',
+          cancelButtonText: 'Close'
+        }, 'lg').subscribe(_ => { }));
+      })
+    );
+  }
+
+  private stopTimer(): void {
+    if (this.timerId) {
+      clearInterval(this.timerId);
+    }
+  }
+
+  private startTimer(): void {
+    this.stopTimer();
+    this.timerId = setInterval(this.updateRevisions,
+      5000,
+      this.project,
+      this.projectsService,
+      this.subscriptions,
+      this.revisionsSource);
+  }
+
+  private updateRevisions(project: Project,
+    projectsService: ProjectsService,
+    subscriptions: Subscription[],
+    revisionsSource: LocalDataSource): void {
+    if (project && project.id) {
+      subscriptions.push(projectsService.getRevisions(project?.id)
+        .subscribe(rev => {
+          revisionsSource.load(rev);
+        }));
+    }
+
   }
 }
