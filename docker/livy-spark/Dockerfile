@@ -37,13 +37,13 @@ ENV DOTNET_WORKER_DIR=/Microsoft.Spark.Worker
 # WORKDIR /
 
 # Getting Spark
-RUN wget https://archive.apache.org/dist/spark/spark-$SPARK_VERSION/spark-$SPARK_VERSION-bin-without-hadoop.tgz && \
+RUN wget https://daxnetarchivestorage.blob.core.windows.net/artifacts/spark-$SPARK_VERSION-bin-without-hadoop.tgz && \
     tar -xzf spark-$SPARK_VERSION-bin-without-hadoop.tgz && \
     mv spark-$SPARK_VERSION-bin-without-hadoop spark && \
     rm -f spark-$SPARK_VERSION-bin-without-hadoop.tgz
 
 # Getting Hadoop
-RUN wget https://archive.apache.org/dist/hadoop/common/hadoop-$HADOOP_VERSION/hadoop-$HADOOP_VERSION.tar.gz && \
+RUN wget https://daxnetarchivestorage.blob.core.windows.net/artifacts/hadoop-$HADOOP_VERSION.tar.gz && \
     tar -xzf hadoop-$HADOOP_VERSION.tar.gz && \
     mv hadoop-$HADOOP_VERSION hadoop && \
     rm -f hadoop-$HADOOP_VERSION.tar.gz
@@ -54,7 +54,7 @@ RUN cd /spark/jars && \
     wget https://repo.maven.apache.org/maven2/com/amazonaws/aws-java-sdk-bundle/$AWS_JAVA_SDK_VERSION/aws-java-sdk-bundle-$AWS_JAVA_SDK_VERSION.jar
 
 # Getting Livy
-RUN wget http://archive.apache.org/dist/incubator/livy/$LIVY_VERSION-incubating/apache-livy-$LIVY_VERSION-incubating-bin.zip && \
+RUN wget https://daxnetarchivestorage.blob.core.windows.net/artifacts/apache-livy-$LIVY_VERSION-incubating-bin.zip && \
     unzip apache-livy-$LIVY_VERSION-incubating-bin.zip && \
     mv apache-livy-$LIVY_VERSION-incubating-bin livy && \
     rm -f apache-livy-$LIVY_VERSION-incubating-bin.zip
