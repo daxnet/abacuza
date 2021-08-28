@@ -1,0 +1,4 @@
+# Ignore the binary packages
+*.zip
+*.tar.gz
+*.tgz
