@@ -5,7 +5,7 @@
   </div> -->
 
   <app-nav-bar></app-nav-bar>
-  <app-main-side-bar></app-main-side-bar>
+  <app-main-side-bar *ngIf='user !== null'></app-main-side-bar>
   <div class="content-wrapper">
     <!-- Main content -->
     <router-outlet></router-outlet>
