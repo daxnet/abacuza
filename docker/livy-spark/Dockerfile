@@ -19,22 +19,12 @@ RUN wget https://packages.microsoft.com/config/debian/10/packages-microsoft-prod
     rm -f packages-microsoft-prod.deb
 
 # Getting Microsoft.Spark.Worker
-RUN wget https://github.com/dotnet/spark/releases/download/v$DOTNET_SPARK_WROKER_VERSION/Microsoft.Spark.Worker.netcoreapp3.1.linux-x64-$DOTNET_SPARK_WROKER_VERSION.tar.gz && \
+RUN wget https://daxnetarchivestorage.blob.core.windows.net/artifacts/Microsoft.Spark.Worker.netcoreapp3.1.linux-x64-$DOTNET_SPARK_WROKER_VERSION.tar.gz && \
     tar -zxf Microsoft.Spark.Worker.netcoreapp3.1.linux-x64-$DOTNET_SPARK_WROKER_VERSION.tar.gz && \
     mv Microsoft.Spark.Worker-$DOTNET_SPARK_WROKER_VERSION Microsoft.Spark.Worker && \
     rm -f Microsoft.Spark.Worker.netcoreapp3.1.linux-x64-$DOTNET_SPARK_WROKER_VERSION.tar.gz
 
 ENV DOTNET_WORKER_DIR=/Microsoft.Spark.Worker
-
-# Building .NET for Spark Runner
-# RUN mkdir /runners
-# WORKDIR /runners
-# COPY ["src/services/job-runners/Abacuza.JobRunners.Spark/Abacuza.JobRunners.Spark.csproj", "Abacuza.JobRunners.Spark/Abacuza.JobRunners.Spark.csproj"]
-# RUN dotnet restore "Abacuza.JobRunners.Spark/Abacuza.JobRunners.Spark.csproj"
-# COPY ["src/services/job-runners/Abacuza.JobRunners.Spark/", "Abacuza.JobRunners.Spark/"]
-# WORKDIR /runners/Abacuza.JobRunners.Spark
-# RUN dotnet build "Abacuza.JobRunners.Spark.csproj" -c Release -o /abacuza
-# WORKDIR /
 
 # Getting Spark
 RUN wget https://daxnetarchivestorage.blob.core.windows.net/artifacts/spark-$SPARK_VERSION-bin-without-hadoop.tgz && \
@@ -50,8 +40,8 @@ RUN wget https://daxnetarchivestorage.blob.core.windows.net/artifacts/hadoop-$HA
 
 # Getting hadoop-aws jars
 RUN cd /spark/jars && \
-    wget https://repo.maven.apache.org/maven2/org/apache/hadoop/hadoop-aws/$HADOOP_VERSION/hadoop-aws-$HADOOP_VERSION.jar && \
-    wget https://repo.maven.apache.org/maven2/com/amazonaws/aws-java-sdk-bundle/$AWS_JAVA_SDK_VERSION/aws-java-sdk-bundle-$AWS_JAVA_SDK_VERSION.jar
+    wget https://daxnetarchivestorage.blob.core.windows.net/artifacts/hadoop-aws-$HADOOP_VERSION.jar && \
+    wget https://daxnetarchivestorage.blob.core.windows.net/artifacts/aws-java-sdk-bundle-$AWS_JAVA_SDK_VERSION.jar
 
 # Getting Livy
 RUN wget https://daxnetarchivestorage.blob.core.windows.net/artifacts/apache-livy-$LIVY_VERSION-incubating-bin.zip && \
@@ -72,7 +62,7 @@ COPY log4j.properties /spark/conf/log4j.properties
 
 # Dockerize the parameters from env variables
 ENV DOCKERIZE_VERSION v0.6.1
-RUN wget https://github.com/jwilder/dockerize/releases/download/$DOCKERIZE_VERSION/dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz \
+RUN wget https://daxnetarchivestorage.blob.core.windows.net/artifacts/dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz \
     && tar -C /usr/local/bin -xzvf dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz \
     && rm dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz
 
