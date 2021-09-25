@@ -5,7 +5,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace IdentityServerHost.Quickstart.UI
+namespace Abacuza.Services.Identity.Controllers.Grants
 {
     public class GrantsViewModel
     {

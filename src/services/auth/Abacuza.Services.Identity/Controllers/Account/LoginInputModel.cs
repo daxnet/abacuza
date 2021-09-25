@@ -4,7 +4,7 @@
 
 using System.ComponentModel.DataAnnotations;
 
-namespace IdentityServerHost.Quickstart.UI
+namespace Abacuza.Services.Identity.Controllers.Account
 {
     /// <summary>
     /// Represents the login input model.

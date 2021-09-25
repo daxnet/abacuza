@@ -4,7 +4,7 @@
 
 using System.Collections.Generic;
 
-namespace IdentityServerHost.Quickstart.UI
+namespace Abacuza.Services.Identity.Controllers.Consent
 {
     public class ConsentViewModel : ConsentInputModel
     {

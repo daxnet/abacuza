@@ -3,7 +3,7 @@
 
 
 
-namespace IdentityServerHost.Quickstart.UI
+namespace Abacuza.Services.Identity.Controllers.Account
 {
     public class RedirectViewModel
     {

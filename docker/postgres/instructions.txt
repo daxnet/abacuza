@@ -1,0 +1,8 @@
+Use following command to export the schema of the database:
+
+$ pg_dump --file my.sql --username postgres -s --if-exists -c --schema "public" "abacuza"
+
+Use following command to export the data of the database:
+
+$ pg_dump --file my2.sql --username postgres -a --inserts --schema "public" "abacuza"
+

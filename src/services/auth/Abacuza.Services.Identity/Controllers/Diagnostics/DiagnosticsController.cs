@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
-namespace IdentityServerHost.Quickstart.UI
+namespace Abacuza.Services.Identity.Controllers.Diagnostics
 {
     [SecurityHeaders]
     [Authorize]

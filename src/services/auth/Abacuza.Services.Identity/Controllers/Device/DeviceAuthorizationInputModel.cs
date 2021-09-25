@@ -2,7 +2,9 @@
 // Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
 
 
-namespace IdentityServerHost.Quickstart.UI
+using Abacuza.Services.Identity.Controllers.Consent;
+
+namespace Abacuza.Services.Identity.Controllers.Device
 {
     public class DeviceAuthorizationInputModel : ConsentInputModel
     {
