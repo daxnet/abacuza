@@ -27,7 +27,7 @@
     "datatables.net-bs4": "^1.10.20",
     "guid-typescript": "^1.0.9",
     "jquery": "^3.4.1",
-    "jsoneditor": "^9.5.1",
+    "jsoneditor": "^9.5.6",
     "lodash": "^4.17.21",
     "ng2-completer": "^9.0.1",
     "ng2-smart-table": "^1.7.2",
