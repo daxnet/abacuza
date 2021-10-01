@@ -3,9 +3,10 @@
 #
 param (
 	[string]$assemblyVersion = "1.0.0.0",
-	[string]$packageVersion = "1.0.0-dev"
+	[string]$packageVersion = "1.0.0-dev.0"
 )
-
+echo $assemblyVersion
+echo $packageVersion
 $files = Get-ChildItem src/services -include Build.props -Recurse
 foreach ($file in $files)
 {
