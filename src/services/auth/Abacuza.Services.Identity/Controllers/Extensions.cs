@@ -1,8 +1,9 @@
 using System;
+using Abacuza.Services.Identity.Controllers.Account;
 using IdentityServer4.Models;
 using Microsoft.AspNetCore.Mvc;
 
-namespace IdentityServerHost.Quickstart.UI
+namespace Abacuza.Services.Identity.Controllers
 {
     public static class Extensions
     {
