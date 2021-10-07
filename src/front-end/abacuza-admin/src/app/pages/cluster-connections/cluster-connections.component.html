@@ -34,7 +34,9 @@
           </thead>
           <tbody>
             <tr *ngFor='let cc of clusterConnections'>
-              <td>{{cc.name}}</td>
+              <td><a href="javascript:void(0);" title="Edit" class="m-1" (click)="onEditClicked(cc)">
+                  {{cc.name}}
+                </a></td>
               <td>{{cc.description}}</td>
               <td>{{cc.clusterType}}</td>
               <td class="text-center">

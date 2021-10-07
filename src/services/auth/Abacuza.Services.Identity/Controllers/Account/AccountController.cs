@@ -130,6 +130,20 @@ namespace Abacuza.Services.Identity.Controllers.Account
             return Ok(new RegisterUserResponseViewModel(appUser));
         }
 
+        [HttpGet("api/[controller]/users")]
+        public IActionResult GetAccounts()
+        {
+            return Ok(_userManager
+                .Users
+                .Select(u => new
+                {
+                    u.Id,
+                    u.UserName,
+                    u.DisplayName,
+                    u.Email
+                }));
+        }
+
         [HttpGet]
         public IActionResult AccessDenied()
         {

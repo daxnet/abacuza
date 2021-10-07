@@ -36,7 +36,9 @@
                     </thead>
                     <tbody>
                         <tr *ngFor='let proj of projects'>
-                            <td>{{proj.name}}</td>
+                            <td><a [routerLink]="['/projects/details', proj.id]" title="Edit" class="m-1">
+                                    {{proj.name}}
+                                </a></td>
                             <td>{{proj.description}}</td>
                             <td>{{getProjectInputEndpointDescription(proj)}}</td>
                             <td>{{getProjectOutputEndpointDescription(proj)}}</td>
@@ -46,7 +48,8 @@
                                     <span class="fas fa-edit">
                                     </span>
                                 </a>
-                                <a href="javascript:void(0);" title="Delete" class="m-1" (click)="onDeleteClicked(proj)">
+                                <a href="javascript:void(0);" title="Delete" class="m-1"
+                                    (click)="onDeleteClicked(proj)">
                                     <span class="fas fa-trash-alt">
                                     </span>
                                 </a>

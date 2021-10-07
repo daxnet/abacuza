@@ -33,7 +33,7 @@
             </p>
           </a>
         </li>
-        <li class="nav-header" *ngIf="isAdmin">ADMINISTRATION</li>
+        <li class="nav-header" *ngIf="isAdmin">CONFIGURATION</li>
         <li class="nav-item" *ngIf="isAdmin">
           <a href="/cluster-connections" class="nav-link">
             <i class="nav-icon fas fa-server"></i>
@@ -50,14 +50,26 @@
             </p>
           </a>
         </li>
+        
+        
+        <li class="nav-header" *ngIf="isAdmin">USERS & PERMISSIONS</li>
         <li class="nav-item" *ngIf="isAdmin">
-          <a href="javascript:void(0);" class="nav-link">
+          <a href="/users" class="nav-link">
             <i class="nav-icon fas fa-user"></i>
             <p>
               Users
             </p>
           </a>
         </li>
+        <li class="nav-item" *ngIf="isAdmin">
+          <a href="javascript:void(0);" class="nav-link">
+            <i class="nav-icon fas fa-users"></i>
+            <p>
+              Groups
+            </p>
+          </a>
+        </li>
+        <li class="nav-header" *ngIf="isAdmin">SYSTEM SETTINGS</li>
         <li class="nav-item" *ngIf="isAdmin">
           <a href="/installed-plugins" class="nav-link">
             <i class="nav-icon fas fa-plug"></i>

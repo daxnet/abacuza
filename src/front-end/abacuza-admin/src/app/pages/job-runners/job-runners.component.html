@@ -34,7 +34,11 @@
           </thead>
           <tbody>
             <tr *ngFor='let jr of jobRunners'>
-              <td>{{jr.name}}</td>
+              <td>
+                <a [routerLink]="['/job-runners/details', jr.id]" title="Edit" class="m-1">
+                  {{jr.name}}
+                </a>
+              </td>
               <td>{{jr.description}}</td>
               <td>{{jr.clusterType}}</td>
               <td class="text-center">

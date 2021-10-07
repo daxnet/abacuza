@@ -42,6 +42,7 @@ import { Ng2SmartTableModule } from 'ng2-smart-table';
 import { SmartTableDateCellRenderComponent } from './components/smart-table-date-cell-render/smart-table-date-cell-render.component';
 import { SmartTableJobStatusRenderComponent } from './components/smart-table-job-status-render/smart-table-job-status-render.component';
 import { TextMessageAreaComponent } from './components/text-message-area/text-message-area.component';
+import { UsersComponent } from './pages/users/users.component';
 
 @NgModule({
   declarations: [
@@ -77,7 +78,8 @@ import { TextMessageAreaComponent } from './components/text-message-area/text-me
     FilePickerComponent,
     SmartTableDateCellRenderComponent,
     SmartTableJobStatusRenderComponent,
-    TextMessageAreaComponent
+    TextMessageAreaComponent,
+    UsersComponent
   ],
   imports: [
     BrowserModule,

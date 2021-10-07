@@ -1,7 +1,9 @@
+import { HttpClient, HttpResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { User, UserManager, UserManagerSettings } from 'oidc-client';
-import { Subject } from 'rxjs';
+import { Observable, Subject } from 'rxjs';
 import { environment } from 'src/environments/environment';
+import { AbacuzaUser } from '../models/abacuza-user';
 
 @Injectable({
   providedIn: 'root'
@@ -14,7 +16,7 @@ export class AuthService {
 
   public loginChanged = this.loginChangedSubject$.asObservable();
 
-  constructor() {
+  constructor(private httpClient: HttpClient) {
     this.userManager  = new UserManager(this.getUserManagerSettings());
   }
 
@@ -36,6 +38,12 @@ export class AuthService {
       this.user = user;
       this.loginChangedSubject$.next(this.checkUser(user));
     }
+  }
+
+  public getUsers(): Observable<HttpResponse<AbacuzaUser[]>> {
+    return this.httpClient.get<AbacuzaUser[]>(`${environment.idpAuthority}api/account/users`, {
+      observe: 'response'
+    });
   }
 
   public get authorizationHeaderValue(): string {
